@@ -1,0 +1,182 @@
+[
+    {
+        "Type": "Node",
+        "Label": "Person",
+        "Attributes": {
+            "person_id": "String",
+            "first_name": "String",
+            "last_name": "String",
+            "birth_date": "Date",
+            "email": "String",
+            "phone_number": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Address",
+        "Attributes": {
+            "address_id": "String",
+            "street": "String",
+            "city": "String",
+            "state": "String",
+            "postal_code": "String",
+            "country": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Department",
+        "Attributes": {
+            "department_id": "String",
+            "name": "String",
+            "phone": "String",
+            "email": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Employee",
+        "Attributes": {
+            "employee_id": "String",
+            "title": "String",
+            "start_date": "Date",
+            "end_date": "Date",
+            "email": "String",
+            "phone_number": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Service",
+        "Attributes": {
+            "service_id": "String",
+            "name": "String",
+            "description": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Application",
+        "Attributes": {
+            "application_id": "String",
+            "status": "String",
+            "submission_date": "Date",
+            "last_update_date": "Date"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Document",
+        "Attributes": {
+            "document_id": "String",
+            "type": "String",
+            "issue_date": "Date",
+            "expiration_date": "Date"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Payment",
+        "Attributes": {
+            "payment_id": "String",
+            "amount": "Float",
+            "payment_date": "Date",
+            "method": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Vehicle",
+        "Attributes": {
+            "vehicle_id": "String",
+            "make": "String",
+            "model": "String",
+            "year": "Integer"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "LIVES_AT",
+        "From": "Person",
+        "To": "Address",
+        "Attributes": {
+            "since": "Date"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "WORKS_IN",
+        "From": "Employee",
+        "To": "Department",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "REQUESTED",
+        "From": "Person",
+        "To": "Service",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "APPLIED_FOR",
+        "From": "Person",
+        "To": "Application",
+        "Attributes": {
+            "role": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "RELATES_TO",
+        "From": "Application",
+        "To": "Service",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "REQUIRES",
+        "From": "Service",
+        "To": "Document",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "SUBMITTED",
+        "From": "Person",
+        "To": "Document",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "MADE",
+        "From": "Person",
+        "To": "Payment",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "ASSOCIATED_WITH",
+        "From": "Payment",
+        "To": "Application",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "OWNS",
+        "From": "Person",
+        "To": "Vehicle",
+        "Attributes": {
+            "purchase_date": "Date"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "MANAGES",
+        "From": "Employee",
+        "To": "Employee",
+        "Attributes": {
+            "manager_since": "Date"
+        }
+    }
+]

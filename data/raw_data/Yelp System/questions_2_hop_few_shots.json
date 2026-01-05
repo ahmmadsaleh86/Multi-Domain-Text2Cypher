@@ -1,0 +1,198 @@
+[
+    {
+        "Category": "2-hop Node Level",
+        "Question": "List the names of users who reviewed businesses located in 'Springfield' and rated them 5 stars?",
+        "Cypher": "MATCH (user:User)-[wrote:WROTE]->(review:Review)-[reviews:REVIEWS]->(business:Business)-[inCity:IN_CITY]->(city:City)\nWHERE city.name=\"Springfield\" AND review.stars=5\nRETURN user, wrote, review, reviews, business, inCity, city, user.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the names of users who assessed businesses in 'Springfield' with a 5-star rating."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What are the categories of businesses that have photos with embeddings suggesting a similarity score greater than 0.9?",
+        "Cypher": "MATCH (business:Business)-[hasPhoto:HAS_PHOTO]->(photo:Photo)-[hasLabel:HAS_LABEL]->(label:Label)\nWHERE label.score > 0.9\nMATCH (business)-[inCategory:IN_CATEGORY]->(category:Category)\nRETURN business, hasPhoto, photo, hasLabel, label, inCategory, category, category.name",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Can you show the addresses and names of businesses that have reviews written on '1st January 2021' with more than 4 stars?",
+        "Cypher": "MATCH (review:Review)-[wroteReview:REVIEWS]->(business:Business)\nWHERE review.date = date(\"2021-01-01\") AND review.stars > 4\nRETURN review, wroteReview, business, business.name, business.address",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you display the names and addresses of companies that received reviews on '1st January 2021' with a rating above 4 stars?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What are the descriptions of labels associated with photos having a partition value of 5 and located in businesses within the city of 'Las Vegas'?",
+        "Cypher": "MATCH (city:City {name: \"Las Vegas\"})<-[inCity:IN_CITY]-(business:Business)-[hasPhoto:HAS_PHOTO]->(photo:Photo)-[hasLabel:HAS_LABEL]->(label:Label)\nWHERE photo.partition = 5\nRETURN city, inCity, business, hasPhoto, photo, hasLabel, label, label.description",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the descriptions of labels linked to photos that have a partition value of 5 and are situated in businesses in 'Las Vegas'?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Identify all business names that have been reviewed by users who are also authors of a tip with more than 100 likes.",
+        "Cypher": "MATCH (user:User)-[wroteReview:WROTE]->(review:Review)-[reviewed:REVIEWS]->(business:Business), (user)-[wroteTip:WROTE_TIP]->(business)\nWHERE wroteTip.likes > 100\nRETURN user, wroteReview, review, reviewed, business, wroteTip, business.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "List all companies that have received reviews from users who have also written a tip that garnered over 100 likes."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Which cities contain businesses that have been reviewed by 'John Doe' and have photos depicting 'elegant ambiance'?",
+        "Cypher": "MATCH (user:User {name:\"John Doe\"})-[wrote:WROTE]->(review:Review)-[reviews:REVIEWS]->(business:Business)-[hasPhoto:HAS_PHOTO]->(photo:Photo)-[hasLabel:HAS_LABEL]->(label:Label), (business)-[inCity:IN_CITY]->(city:City)\nWHERE label.description=\"elegant ambiance\"\nRETURN user, wrote, review, reviews, business, hasPhoto, photo, hasLabel, label, inCity, city, city.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "In which cities are there businesses reviewed by 'John Doe' that also feature photos showing 'elegant ambiance'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the scores of the HAS_LABEL relations for photos with captions containing 'mountain view' in businesses categorized as 'Outdoor Activities'?",
+        "Cypher": "MATCH (photo:Photo)-[hasLabel:HAS_LABEL]->(label:Label), (business:Business)-[categorized:IN_CATEGORY]->(category:Category)\nWHERE photo.caption CONTAINS \"mountain view\" AND category.name = \"Outdoor Activities\"\nRETURN photo, hasLabel, label, business, categorized, category, hasLabel.score",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the ratings for the HAS_LABEL relations in images with captions that include 'mountain view' from businesses classified under 'Outdoor Activities'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Can you find the relationship scores between users who are friends and have a similarity score greater than 0.75 on reviews of businesses in the 'Restaurant' category?",
+        "Cypher": "MATCH (user1:User)-[friendship:FRIENDS]->(user2:User)-[similarity:SIMILAR]->(user1)\nWHERE similarity.score > 0.75\nMATCH (user1)-[wrote1:WROTE]->(review1:Review)-[reviews1:REVIEWS]->(business:Business)-[inCategory:IN_CATEGORY]->(category:Category)\nWHERE category.name = \"Restaurant\"\nMATCH (user2)-[wrote2:WROTE]->(review2:Review)-[reviews2:REVIEWS]->(business)\nRETURN user1, user2, friendship, similarity, wrote1, review1, reviews1, wrote2, review2, reviews2, business, inCategory, category, similarity.score",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 7,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "What are the interactions and reviews shared between users who are friends and have a similarity score above 0.75 for businesses categorized under restaurants?",
+        "Max-Semantic-Score": 0.8549047708511353,
+        "Avg-Semantic-Score": 0.7837264776229859,
+        "Rewrite": "Could you determine the relationship scores for users who are friends and possess a similarity score above 0.75 when reviewing businesses categorized under 'Restaurant'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Retrieve the date and text attributes from the tip-writing relations for a user named 'Emily' who wrote tips for businesses with at least 10 reviews.",
+        "Cypher": "MATCH (user:User {name:\"Emily\"})-[wroteTip:WROTE_TIP]->(business:Business)-[reviewed:REVIEWS]->(review:Review)\nWITH user, wroteTip, business, COUNT(review) AS reviewCount\nWHERE reviewCount >= 10\nRETURN user, wroteTip, business, wroteTip.date, wroteTip.text",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User {name:\"Emily\"})-[wroteTip:WROTE_TIP]->(business:Business)-[reviewed:REVIEWS]-(review:Review)\nWITH user, wroteTip, business, COUNT(review) AS reviewCount\nWHERE reviewCount >= 10\nRETURN reviewed, review, user, wroteTip, business, wroteTip.date, wroteTip.text",
+        "num-hop": 2,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "List the 'score' attributes of SIMILAR relations where both users have given a review on the same business and rated it differently by 2 stars or more.",
+        "Cypher": "MATCH (user1:User)-[similar:SIMILAR]->(user2:User)\nMATCH (user1)-[wroteReview1:WROTE]->(review1:Review)-[forBusiness1:REVIEWS]->(business:Business),\n      (user2)-[wroteReview2:WROTE]->(review2:Review)-[forBusiness2:REVIEWS]->(business)\nWHERE ABS(review1.stars - review2.stars) >= 2\nRETURN user1, similar, user2, wroteReview1, review1, forBusiness1, business, forBusiness2, review2, wroteReview2, similar.score",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the 'score' attributes from SIMILAR relationships where each user involved has reviewed the same business and their ratings differ by at least 2 stars."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the average scores of the HAS_LABEL relation for all photos in a business under the category 'Hotels' with a minimum rating of 4 stars?",
+        "Cypher": "MATCH (business:Business)-[:IN_CATEGORY]->(category:Category), (business)-[:HAS_PHOTO]->(photo:Photo)-[hasLabel:HAS_LABEL]->(label:Label), (review:Review)-[:REVIEWS]->(business)\nWHERE category.name=\"Hotels\" AND review.stars >= 4\nRETURN business, category, photo, hasLabel, label, review, AVG(hasLabel.score)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (business:Business)-[relation5:IN_CATEGORY]->(category:Category), (business)-[relation6:HAS_PHOTO]->(photo:Photo)-[hasLabel:HAS_LABEL]->(label:Label), (review:Review)-[relation8:REVIEWS]->(business)\nWHERE category.name=\"Hotels\" AND review.stars >= 4\nRETURN relation8, relation6, relation5, business, category, photo, hasLabel, label, review, AVG(hasLabel.score)",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the mean scores for the HAS_LABEL relation across all images in a business listed under the 'Hotels' category that have at least a 4-star rating?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Detail the scores of IN_CATEGORY relationships where the business has a state address in 'California' and offers 'Spa services'.",
+        "Cypher": "MATCH (business:Business)-[inCategory:IN_CATEGORY]->(category:Category)\nWHERE business.state = \"California\" AND category.name = \"Spa services\"\nRETURN business, inCategory, category",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the ratings for IN_CATEGORY relationships where the enterprise is located in 'California' and provides 'Spa services'."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Calculate the average number of reviews written by users who have photos attached to their reviews for businesses located in 'New York City'.",
+        "Cypher": "MATCH (user:User)-[wrote:WROTE]->(review:Review)-[reviews:REVIEWS]->(business:Business)-[inCity:IN_CITY]->(city:City)\nWHERE city.name = \"New York City\"\nWITH user, COUNT(review) AS reviewsCount\nMATCH (user)-[:WROTE]->(:Review)-[revToPhoto:REVIEWS]->(:Business)-[:HAS_PHOTO]->(:Photo)\nRETURN AVG(reviewsCount)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)-[wrote:WROTE]->(review:Review)-[reviews:REVIEWS]->(business:Business)-[inCity:IN_CITY]->(city:City)\nWHERE city.name = \"New York City\"\nWITH user, COUNT(review) AS reviewsCount\nMATCH (user)-[relation10:WROTE]->(node4:Review)-[revToPhoto:REVIEWS]->(node5:Business)-[relation12:HAS_PHOTO]->(node6:Photo)\nRETURN AVG(reviewsCount)",
+        "num-hop": 6,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "For users who reviewed businesses in \"New York City,\" what is the average number of reviews they each wrote?",
+        "Max-Semantic-Score": 0.742053747177124,
+        "Avg-Semantic-Score": 0.7234910011291504,
+        "Rewrite": "Determine the mean count of reviews authored by users with photos included in their reviews for enterprises situated in 'New York City'."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Provide the maximum, minimum, and average scores in HAS_LABEL relations for photos tagged at businesses with more than 50 reviews.",
+        "Cypher": "MATCH (business:Business)-[reviews:REVIEWS]->(review:Review)\nWITH business, COUNT(review) AS totalReviews\nWHERE totalReviews > 50\nMATCH (business)-[:HAS_PHOTO]->(photo:Photo)-[hasLabel:HAS_LABEL]->(label:Label)\nRETURN MAX(hasLabel.score) AS MaximumScore, MIN(hasLabel.score) AS MinimumScore, AVG(hasLabel.score) AS AverageScore",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (business:Business)-[reviews:REVIEWS]-(review:Review)\nWITH business, COUNT(review) AS totalReviews\nWHERE totalReviews > 50\nMATCH (business)-[relation5:HAS_PHOTO]->(photo:Photo)-[hasLabel:HAS_LABEL]->(label:Label)\nRETURN MAX(hasLabel.score) AS MaximumScore, MIN(hasLabel.score) AS MinimumScore, AVG(hasLabel.score) AS AverageScore",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Supply the highest, lowest, and mean scores in HAS_LABEL relations for photos associated with businesses that have over 50 reviews."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the count of businesses reviewed by users who have written both reviews and tips for the same business and have ratings of either 1 or 5 stars?",
+        "Cypher": "MATCH (user:User)-[wroteReview:WROTE]->(review:Review)-[reviewed:REVIEWS]->(business:Business),\n      (user)-[wroteTip:WROTE_TIP]->(business)\nWHERE review.stars = 1 OR review.stars = 5\nRETURN COUNT(DISTINCT business)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many businesses have been reviewed by users who have provided both reviews and tips for those businesses and whose ratings are either 1 or 5 stars?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Can you calculate the total number of friendships where both users have reviewed the same business within the 'Tech Gadgets' category?",
+        "Cypher": "MATCH (user1:User)-[friendship:FRIENDS]-(user2:User)\nMATCH (user1)-[:WROTE]->(review1:Review)-[:REVIEWS]->(business:Business)\nMATCH (user2)-[:WROTE]->(review2:Review)-[:REVIEWS]->(business)\nMATCH (business)-[:IN_CATEGORY]->(category:Category {name:\"Tech Gadgets\"})\nRETURN COUNT(DISTINCT friendship)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user1:User)-[friendship:FRIENDS]-(user2:User)\nMATCH (user1)-[relation7:WROTE]->(review1:Review)-[relation10:REVIEWS]->(business:Business)\nMATCH (user2)-[relation8:WROTE]->(review2:Review)-[:REVIEWS]->(business)\nMATCH (business)-[relation11:IN_CATEGORY]->(category:Category {name:\"Tech Gadgets\"})\nRETURN COUNT(DISTINCT friendship)",
+        "num-hop": 6,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "Can you tell me the number of distinct friendships among users who wrote reviews for the same business categorized under \"Tech Gadgets\"?",
+        "Max-Semantic-Score": 0.8637683391571045,
+        "Avg-Semantic-Score": 0.8439015626907349,
+        "Rewrite": "Could you compute the aggregate count of friendships in which both members have reviewed an identical establishment under the 'Tech Gadgets' category?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Show the average, maximum and minimum similarity scores between users who are friends and have reviewed at least 3 common businesses.",
+        "Cypher": "MATCH (user1:User)-[friendship:FRIENDS]->(user2:User)\nMATCH (user1)-[wroteReview1:WROTE]->(review1:Review)-[reviewsBusiness:REVIEWS]->(business:Business)<-[reviewsBusiness2:REVIEWS]-(review2:Review)<-[wroteReview2:WROTE]-(user2)\nWITH user1, user2, COUNT(DISTINCT business) AS commonBusinesses\nMATCH (user1)-[similarity:SIMILAR]->(user2)\nWHERE commonBusinesses >= 3\nRETURN AVG(similarity.score) AS averageSimilarity, MAX(similarity.score) AS maxSimilarity, MIN(similarity.score) AS minSimilarity",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 6,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "What is the average, maximum, and minimum similarity score between users who are friends and have reviewed at least three common businesses?",
+        "Max-Semantic-Score": 0.9364708662033081,
+        "Avg-Semantic-Score": 0.8484599471092225,
+        "Rewrite": "Display the average, maximum, and minimum similarity scores among friends who have each reviewed at least three mutual businesses."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Find the average star rating of reviews linked to businesses that are in the 'Fast Food' category and have business photos taken in daytime.",
+        "Cypher": "MATCH (review:Review)-[:REVIEWS]->(business:Business)-[:IN_CATEGORY]->(category:Category)\nWHERE category.name=\"Fast Food\"\nMATCH (business)-[:HAS_PHOTO]->(photo:Photo)\nWHERE photo.label=\"daytime\"\nRETURN AVG(review.stars)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (review:Review)-[relation4:REVIEWS]->(business:Business)-[relation5:IN_CATEGORY]->(category:Category)\nWHERE category.name=\"Fast Food\"\nMATCH (business)-[relation6:HAS_PHOTO]->(photo:Photo)\nWHERE photo.label=\"daytime\"\nRETURN AVG(review.stars)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the mean star rating for reviews associated with 'Fast Food' category businesses that have daytime business photos."
+    }
+]

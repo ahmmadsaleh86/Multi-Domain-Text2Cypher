@@ -1,0 +1,124 @@
+[
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the model and operator of the train with train_id 'TR123'?",
+        "Cypher": "MATCH (train:Train)\nWHERE train.train_id=\"TR123\"\nRETURN train, train.model, train.operator",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the model and operator for the train identified by train_id 'TR123'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Retrieve the location and capacity of the station named 'Central Station'.",
+        "Cypher": "MATCH (station:Station)\nWHERE station.name=\"Central Station\"\nRETURN station, station.location, station.capacity",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Obtain the capacity and location of the station called 'Central Station'."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the name and population of the city with city_id 'C101'?",
+        "Cypher": "MATCH (city:City)\nWHERE city.city_id = 'C101'\nRETURN city, city.name, city.population",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the name and number of people living in the city identified by city_id 'C101'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Find the role and salary of the employee with employee_id 'EMP456'.",
+        "Cypher": "MATCH (employee:Employee)\nWHERE employee.employee_id=\"EMP456\"\nRETURN employee, employee.role, employee.salary",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Retrieve the position and wage for the employee identified by employee_id 'EMP456'."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "List the length and name of the route identified by route_id 'R789'.",
+        "Cypher": "MATCH (selectedRoute:Route)\nWHERE selectedRoute.route_id=\"R789\"\nRETURN selectedRoute, selectedRoute.length, selectedRoute.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the name and length of the route with the route_id 'R789'."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Provide the shift and employment date for the employee assigned to station with station_id 'ST112'.",
+        "Cypher": "MATCH (station:Station {station_id: 'ST112'})-[employmentRelation:EMPLOYS]->(employee:Employee)\nRETURN station, employmentRelation, employee, employmentRelation.shift, employmentRelation.employment_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Give the schedule and date of employment for the worker stationed at station with station_id 'ST112'."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Calculate the average capacity of all stations in the database.",
+        "Cypher": "MATCH (station:Station)\nRETURN AVG(station.capacity) AS average_station_capacity",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the mean capacity of all stations stored in the database."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the total population of all cities listed in the railway system?",
+        "Cypher": "MATCH (city:City)\nRETURN SUM(city.population) AS TotalPopulation",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the combined population of all the cities included in the railway system?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Determine the maximum salary among all employees working at the 'Downtown Station'.",
+        "Cypher": "MATCH (station:Station {name: \"Downtown Station\"})-[:EMPLOYS]->(employee:Employee)\nRETURN MAX(employee.salary)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (station:Station {name: \"Downtown Station\"})-[relation2:EMPLOYS]->(employee:Employee)\nRETURN MAX(employee.salary)",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Find the highest salary of employees at the 'Downtown Station'."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Find the minimum and maximum length of all routes in the database.",
+        "Cypher": "MATCH (route:Route)\nRETURN MIN(route.length) AS MinLength, MAX(route.length) AS MaxLength",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the shortest and longest route lengths recorded in the database."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many trains have a capacity greater than 200?",
+        "Cypher": "MATCH (train:Train)\nWHERE train.capacity > 200\nRETURN COUNT(train)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the number of trains that can accommodate more than 200 passengers?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Count the number of stations located in the city with city_id 'C303'.",
+        "Cypher": "MATCH (station:Station)-[:LOCATED_IN]->(city:City {city_id: 'C303'})\nRETURN COUNT(station)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (station:Station)-[relation2:LOCATED_IN]->(city:City {city_id: 'C303'})\nRETURN COUNT(station)",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate how many stations are situated in the city identified by city_id 'C303'."
+    }
+]

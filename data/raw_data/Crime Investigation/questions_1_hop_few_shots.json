@@ -1,0 +1,185 @@
+[
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the make and model of the vehicle with registration 'XYZ123' involved in the crime reported on January 1, 2022?",
+        "Cypher": "MATCH (vehicle:Vehicle {reg:\"XYZ123\"})-[involved:INVOLVED_IN]->(crime:Crime {date:date(\"2022-01-01\")})\nRETURN vehicle, involved, crime, vehicle.make, vehicle.model",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the make and model of the vehicle registered under 'XYZ123' that was implicated in the crime on January 1, 2022?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Can you provide the full name and age of the person with NHS number 'AB1234567' who has an email address ending in '@example.com'?",
+        "Cypher": "MATCH (person:Person {nhs_no:\"AB1234567\"})-[hasEmailRel:HAS_EMAIL]->(email:Email)\nWHERE email.email_address ENDS WITH '@example.com'\nRETURN person, hasEmailRel, email, person.name, person.surname, person.age",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the complete name and age of the individual whose NHS number is 'AB1234567' and possesses an email that concludes with '@example.com'?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What type of crime and its last outcome are associated with the crime ID 'CR1234XA' that occurred in the postcode 'AB12 3CD'?",
+        "Cypher": "MATCH (crime:Crime {id:\"CR1234XA\"})-[:OCCURRED_AT]->(location:Location)-[:HAS_POSTCODE]->(postcode:PostCode {code:\"AB12 3CD\"})\nRETURN crime, location, postcode, crime.type, crime.last_outcome",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (crime:Crime {id:\"CR1234XA\"})-[relation3:OCCURRED_AT]->(location:Location)-[relation4:HAS_POSTCODE]->(postcode:PostCode {code:\"AB12 3CD\"})\nRETURN relation4, relation3, crime, location, postcode, crime.type, crime.last_outcome",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What kind of criminal activity and final result correspond to the crime ID 'CR1234XA' that took place in the postcode 'AB12 3CD'?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What is the model year and registration number of the vehicle found at the crime scene for the crime with ID 'CRIME1234'?",
+        "Cypher": "MATCH (crime:Crime {id:\"CRIME1234\"})<-[involved:INVOLVED_IN]-(vehicle:Vehicle)\nRETURN crime, involved, vehicle, vehicle.year, vehicle.reg",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the model year and registration number of the vehicle discovered at the crime scene associated with crime ID 'CRIME1234'?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Display the names and badge numbers of officers who investigated crimes of type 'Burglary' in the postcode 'ZZ10 1XX'.",
+        "Cypher": "MATCH (crime:Crime {type:\"Burglary\"})-[investigated_by:INVESTIGATED_BY]->(officer:Officer), (crime)-[occurred_at:OCCURRED_AT]->(location:Location)-[has_postcode:HAS_POSTCODE]->(postcode:PostCode {code:\"ZZ10 1XX\"})\nRETURN crime, investigated_by, officer, location, occurred_at, has_postcode, postcode, officer.name, officer.badge_no",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Show the names and badge numbers of officers who conducted investigations into 'Burglary' in the postcode 'ZZ10 1XX'."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Who is the registered owner of the phone number '02077778888' that made a call on the date of a major crime event on 'November 20, 2022'?",
+        "Cypher": "MATCH (phoneCall:PhoneCall {call_date: date('2022-11-20')})-[:CALLER]->(phone:Phone {phoneNo: '02077778888'}), \n      (phoneCall)-[:CALLED]->(phone),\n      (owner:Person)-[:HAS_PHONE]->(phone),\n      (crime:Crime {date: date('2022-11-20'), type: 'major'})-[:PARTY_TO]->(person:Person)\nWHERE owner = person\nRETURN phoneCall, phone, owner, owner.name, owner.surname",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (phoneCall:PhoneCall {call_date: date('2022-11-20')})-[relation5:CALLER]-(phone:Phone {phoneNo: '02077778888'}), \n      (phoneCall)-[relation6:CALLED]->(phone),\n      (owner:Person)-[relation7:HAS_PHONE]->(phone),\n      (crime:Crime {date: date('2022-11-20'), type: 'major'})-[relation8:PARTY_TO]->(person:Person)\nWHERE owner = person\nRETURN relation8, relation7, relation6, relation5, person, crime, phoneCall, phone, owner, owner.name, owner.surname",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Who is listed as the owner of the telephone number '02077778888', which was used to make a call during the significant criminal incident on 'November 20, 2022'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What is the relationship type between 'John Doe' and 'Jane Smith' as per the 'FAMILY_REL' connection?",
+        "Cypher": "MATCH (johnDoe:Person {name:\"John\", surname:\"Doe\"})-[familyConnection:FAMILY_REL]->(janeSmith:Person {name:\"Jane\", surname:\"Smith\"})\nRETURN johnDoe, familyConnection, janeSmith, familyConnection.rel_type",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What type of familial relationship exists between 'John Doe' and 'Jane Smith' according to the 'FAMILY_REL' connection?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Identify the connection type ('KNOWS_PHONE', 'KNOWS_SN', 'KNOWS', or 'KNOWS_LW') between person 'Alice Johnson' and 'Bob Williams' who are both linked to the same crime 'CR2567'.",
+        "Cypher": "MATCH (alice:Person {name:\"Alice\", surname:\"Johnson\"})-[:PARTY_TO]->(crime:Crime {id:\"CR2567\"})<-[:PARTY_TO]-(bob:Person {name:\"Bob\", surname:\"Williams\"})\nMATCH (alice)-[connection:KNOWS_PHONE|KNOWS_SN|KNOWS|KNOWS_LW]->(bob)\nRETURN alice, bob, crime, connection, alice.name, alice.surname, bob.name, bob.surname, connection",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (alice:Person {name:\"Alice\", surname:\"Johnson\"})-[relation3:PARTY_TO]->(crime:Crime {id:\"CR2567\"})<-[relation4:PARTY_TO]-(bob:Person {name:\"Bob\", surname:\"Williams\"})\nMATCH (alice)-[connection:KNOWS_PHONE|KNOWS_SN|KNOWS|KNOWS_LW]->(bob)\nRETURN relation4, relation3, alice, bob, crime, connection, alice.name, alice.surname, bob.name, bob.surname",
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What are the nature of the calls (call_type) from 'PhoneCall' entity 'PC123' to 'Phone' entity 'PN456'?",
+        "Cypher": "MATCH (phoneCall:PhoneCall {id:\"PC123\"})-[called:CALLED]->(phone:Phone {phoneNo:\"PN456\"})\nRETURN phoneCall, called, phone, phoneCall.call_type",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What type of familial relationship exists between 'Sarah Connor' and 'John Connor' in relation 'FAMILY_REL'?",
+        "Cypher": "MATCH (sarah:Person {name:\"Sarah\", surname:\"Connor\"})-[familyRel:FAMILY_REL]->(john:Person {name:\"John\", surname:\"Connor\"})\nRETURN sarah, familyRel, john, familyRel.rel_type",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What kind of family connection is there between 'Sarah Connor' and 'John Connor' under the category 'FAMILY_REL'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Can you determine the kind of association between crime 'CR-001' and the location '123 Fake Street' through 'OCCURRED_AT'?",
+        "Cypher": "MATCH (crimeOccurrence:Crime {id:\"CR-001\"})-[occurrence:OCCURRED_AT]->(crimeLocation:Location {address:\"123 Fake Street\"})\nRETURN crimeOccurrence, occurrence, crimeLocation",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you identify the type of relationship 'OCCURRED_AT' signifies between the crime 'CR-001' and the address '123 Fake Street'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What connections does the crime with ID 'CRIM123' have with any officers through the 'INVESTIGATED_BY' relation?",
+        "Cypher": "MATCH (crime:Crime {id:\"CRIM123\"})-[investigatedBy:INVESTIGATED_BY]->(officer:Officer)\nRETURN crime, investigatedBy, officer, officer.name, officer.surname, officer.rank",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How is the crime labeled 'CRIM123' linked to any officers via the 'INVESTIGATED_BY' relationship?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many vehicles registered before 2010 are linked to more than one crime in our records?",
+        "Cypher": "MATCH (vehicle:Vehicle)-[involved:INVOLVED_IN]->(crime:Crime)\nWHERE vehicle.year < 2010\nWITH vehicle, COUNT(crime) AS NumberOfCrimesLinked\nWHERE NumberOfCrimesLinked > 1\nRETURN COUNT(vehicle)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many vehicles that were registered prior to 2010 are associated with multiple crimes in our records?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Can you provide the count of 'CALLER' relations where the call duration was less than 2 minutes on 'December 25, 2022'?",
+        "Cypher": "MATCH (phone_call:PhoneCall)-[caller_relation:CALLER]->(phone:Phone)\nWHERE phone_call.call_duration < 2 AND phone_call.call_date = date(\"2022-12-25\")\nRETURN COUNT(caller_relation)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the number of 'CALLER' relations with a call duration under 2 minutes on 'December 25, 2022'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the average duration of phone calls from the number '07892233445' involved in criminal activities last year?",
+        "Cypher": "MATCH (phone:Phone {phoneNo:\"07892233445\"})<-[has_phone:HAS_PHONE]-(person:Person)-[party_to:PARTY_TO]->(crime:Crime)\nWHERE crime.date.year = 2022\nMATCH (phone)<-[called:CALLED]-(phone_call:PhoneCall)\nRETURN AVG(phone_call.call_duration)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What was the typical length of phone calls made last year from the number '07892233445' that were linked to criminal activities?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many crimes occurred in the location marked by postcode 'PB123' in the year 2020?",
+        "Cypher": "MATCH (crime:Crime)-[:OCCURRED_AT]->(location:Location)-[:HAS_POSTCODE]->(postcode:PostCode {code:\"PB123\"})\nWHERE crime.date.year = 2020\nRETURN COUNT(crime)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (crime:Crime)-[relation3:OCCURRED_AT]->(location:Location)-[relation4:HAS_POSTCODE]->(postcode:PostCode {code:\"PB123\"})\nWHERE crime.date.year = 2020\nRETURN COUNT(crime)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "In the year 2020, how many criminal incidents were recorded in the area identified by the postcode 'PB123'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Calculate the total number of individuals connected to crime 'CR00123' via direct familial relationships ('FAMILY_REL').",
+        "Cypher": "MATCH (crime:Crime {id: \"CR00123\"})<-[:PARTY_TO]-(person:Person)-[family_rel:FAMILY_REL]->(related_person:Person)\nRETURN COUNT(DISTINCT related_person)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (crime:Crime {id: \"CR00123\"})<-[relation3:PARTY_TO]-(person:Person)-[family_rel:FAMILY_REL]->(related_person:Person)\nRETURN COUNT(DISTINCT related_person)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the total count of people linked through direct family connections ('FAMILY_REL') to the crime 'CR00123'."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the total number of emails sent by people under the age of 30 who are related ('KNOWS_PHONE') to phone number '03456011223'?",
+        "Cypher": "MATCH (phone:Phone {phoneNo: \"03456011223\"})<-[:KNOWS_PHONE]-(person:Person)-[:HAS_EMAIL]->(email:Email)\nWHERE person.age < 30\nRETURN COUNT(email)",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (phone:Phone {phoneNo: \"03456011223\"})<-[relation3:KNOWS_PHONE]-(person:Person)-[relation4:HAS_EMAIL]->(email:Email)\nWHERE person.age < 30\nRETURN COUNT(email)",
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    }
+]

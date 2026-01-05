@@ -1,0 +1,193 @@
+[
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Can you provide the names and the city of each airport from which flights by 'Delta Airlines' with an aircraft type of 'Boeing 737' depart?",
+        "Cypher": "MATCH (airline:Airline {name:\"Delta Airlines\"})-[operates:OPERATES]->(flight:Flight {aircraftType:\"Boeing 737\"})-[departs_from:DEPARTS_FROM]->(airport:Airport)\nRETURN airline, operates, flight, departs_from, airport, airport.name, airport.city",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the names and cities of all airports from which 'Delta Airlines' operates flights using 'Boeing 737' aircraft?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What are the details of passengers, including their nationality and passport number, who have tickets for flight number 'LAX123' booked under the status 'Confirmed'?",
+        "Cypher": "MATCH (flight:Flight {number:\"LAX123\"})\nMATCH (ticket:Ticket)-[ticket_for:TICKET_FOR_FLIGHT]->(flight)\nMATCH (reservation:Reservation {status:\"Confirmed\"})-[contains:CONTAINS_TICKET]->(ticket)\nMATCH (passenger:Passenger)-[booked:BOOKED_ON]->(reservation)\nRETURN passenger, booked, reservation, contains, ticket, ticket_for, flight, passenger.nationality, passenger.passportNumber",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the information of passengers, such as their nationality and passport number, who hold confirmed tickets for flight number 'LAX123'?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Could you identify the gate number and terminal name for the gate where flight 'BA2490' originally scheduled to depart today from 'Heathrow Airport'?",
+        "Cypher": "MATCH (flight:Flight)-[departs:DEPARTS_FROM]->(airport:Airport)\nMATCH (flight)-[uses:USES_GATE]->(gate:Gate)<-[terminal:HAS_TERMINAL]-(airport)\nWHERE flight.number=\"BA2490\" AND airport.name=\"Heathrow Airport\" AND departs.scheduledDeparture >= datetime({year: 2023, month: 3, day: 1}) AND departs.scheduledDeparture < datetime({year: 2023, month: 3, day: 2})\nRETURN flight, departs, airport, uses, gate, terminal, gate.number, terminal.terminalName",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you find out the terminal and gate number for flight 'BA2490', which was initially set to leave today from 'Heathrow Airport'?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "List the first name, last name, and nationality of all passengers booked on a reservation for flight number 'AA100' that departs from an airport in 'New York'.",
+        "Cypher": "MATCH (passenger:Passenger)-[booked_on:BOOKED_ON]->(reservation:Reservation)-[contains:CONTAINS_TICKET]->(ticket:Ticket)-[for_flight:TICKET_FOR_FLIGHT]->(flight:Flight)\nMATCH (flight)-[departs_from:DEPARTS_FROM]->(airport:Airport {city:\"New York\"})\nWHERE flight.number=\"AA100\"\nRETURN passenger, booked_on, reservation, contains, ticket, for_flight, flight, departs_from, airport, passenger.firstName, passenger.lastName, passenger.nationality",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the first name, last name, and nationality of every passenger with a booking on flight number 'AA100' departing from an airport in 'New York'."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "For the flight operated by 'Quantas' that departs from 'Sydney Airport', can you provide the headquarters of the airline and the destination airport name?",
+        "Cypher": "MATCH (airline:Airline)-[operates:OPERATES]->(flight:Flight)-[departs_from:DEPARTS_FROM]->(departure_airport:Airport)\nMATCH (flight)-[arrives_at:ARRIVES_AT]->(destination_airport:Airport)\nWHERE airline.name=\"Quantas\" AND departure_airport.name=\"Sydney Airport\"\nRETURN airline, operates, flight, departs_from, departure_airport, arrives_at, destination_airport, airline.headquarters, destination_airport.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you tell me the headquarters of 'Quantas' and the name of the destination airport for the flight departing from 'Sydney Airport'?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What are the names and timezone of airports that host flights carried by 'Emirates' to 'Dubai' with a flight distance greater than 5000 km?",
+        "Cypher": "MATCH (airline:Airline {name:\"Emirates\"})-[operates:OPERATES]->(flight:Flight)-[arrives_at:ARRIVES_AT]->(destination:Airport {name:\"Dubai\"})\nMATCH (flight)-[departs_from:DEPARTS_FROM]->(airport:Airport)\nWHERE flight.distance > 5000\nRETURN airline, operates, flight, departs_from, destination, arrives_at, airport, airport.name, airport.timezone",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the names and time zones of airports accommodating flights operated by 'Emirates' heading to 'Dubai', where the flight distance exceeds 5000 km?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What is the scheduled and actual departure time for flight number '3412' leaving 'San Francisco International Airport' and operated by 'United Airlines'?",
+        "Cypher": "MATCH (airport:Airport {name:\"San Francisco International Airport\"})<-[departs_from:DEPARTS_FROM]-(flight:Flight {number:\"3412\"})-[operated_by:OPERATES]->(airline:Airline {name:\"United Airlines\"})\nRETURN airport, departs_from, flight, operated_by, airline, departs_from.scheduledDeparture, departs_from.actualDeparture",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (airport:Airport {name:\"San Francisco International Airport\"})<-[departs_from:DEPARTS_FROM]-(flight:Flight {number:\"3412\"})-[operated_by:OPERATES]-(airline:Airline {name:\"United Airlines\"})\nRETURN airport, departs_from, flight, operated_by, airline, departs_from.scheduledDeparture, departs_from.actualDeparture",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the planned and actual times of departure for flight number '3412' departing from 'San Francisco International Airport' and operated by 'United Airlines'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What were the scheduled arrival times at 'JFK Airport' for all Emirates flights using 'Airbus A380' on '2023-09-15'?",
+        "Cypher": "MATCH (airline:Airline)-[operates:OPERATES]->(flight:Flight)-[arrives_at:ARRIVES_AT]->(airport:Airport)\nWHERE airline.name=\"Emirates\" AND flight.aircraftType=\"Airbus A380\" AND airport.name=\"JFK Airport\" AND arrives_at.scheduledArrival STARTS WITH \"2023-09-15\"\nRETURN airline, operates, flight, arrives_at, airport, arrives_at.scheduledArrival",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What were the times set for the arrival of all Emirates flights operating Airbus A380 at JFK Airport on 2023-09-15?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Could you tell me the baggage allowance and whether a meal is included for passengers with ticket number 'TK202020' flying on 'Flight 777'?",
+        "Cypher": "MATCH (ticket:Ticket {ticketId:\"TK202020\"})-[ticket_for_flight:TICKET_FOR_FLIGHT]->(flight:Flight {number:\"777\"})\nRETURN ticket, ticket_for_flight, flight, ticket_for_flight.baggageAllowance, ticket_for_flight.mealIncluded",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you inform me about the luggage limit and if a meal is provided for passengers holding the ticket number 'TK202020' on 'Flight 777'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "For the ticket number '981234', what were the scheduled and actual arrival times at 'Tokyo Airport'?",
+        "Cypher": "MATCH (ticket:Ticket {ticketId:\"981234\"})-[:TICKET_FOR_FLIGHT]->(flight:Flight)-[arrives_at:ARRIVES_AT]->(airport:Airport)\nWHERE airport.name = \"Tokyo Airport\"\nRETURN ticket, flight, arrives_at, airport, arrives_at.scheduledArrival, arrives_at.actualArrival",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (ticket:Ticket {ticketId:\"981234\"})-[relation3:TICKET_FOR_FLIGHT]->(flight:Flight)-[arrives_at:ARRIVES_AT]->(airport:Airport)\nWHERE airport.name = \"Tokyo Airport\"\nRETURN relation3, ticket, flight, arrives_at, airport, arrives_at.scheduledArrival, arrives_at.actualArrival",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What were the scheduled and actual arrival times at 'Tokyo Airport' for ticket number '981234'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the booking agents' names associated with passengers named 'John Doe' on flights departing from 'Chicago Airport' to 'Los Angeles Airport'?",
+        "Cypher": "MATCH (passenger:Passenger)-[booked_on:BOOKED_ON]->(reservation:Reservation)-[contains_ticket:CONTAINS_TICKET]->(ticket:Ticket)-[ticket_for_flight:TICKET_FOR_FLIGHT]->(flight:Flight)\nMATCH (flight)-[departs:DEPARTS_FROM]->(departureAirport:Airport)-[has_terminal_from:HAS_TERMINAL]->(departureGate:Gate)\nMATCH (flight)-[arrives:ARRIVES_AT]->(arrivalAirport:Airport)-[has_terminal_to:HAS_TERMINAL]->(arrivalGate:Gate)\nWHERE passenger.firstName=\"John\" AND passenger.lastName=\"Doe\" AND departureAirport.name=\"Chicago Airport\" AND arrivalAirport.name=\"Los Angeles Airport\"\nRETURN passenger, booked_on, reservation, contains_ticket, ticket, ticket_for_flight, flight, departs, departureAirport, has_terminal_from, departureGate, arrives, arrivalAirport, has_terminal_to, arrivalGate, booked_on.bookingAgent",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 7,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "What is the booking agent's name for John Doe's reservation involving a flight departing from Chicago Airport and arriving at Los Angeles Airport?",
+        "Max-Semantic-Score": 0.8475401401519775,
+        "Avg-Semantic-Score": 0.7428041934967041,
+        "Rewrite": "Can you tell me the names of the booking agents for passengers called 'John Doe' who are on flights leaving from 'Chicago Airport' to 'Los Angeles Airport'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Please provide the terminal names and gate numbers for all flights arriving at 'London Heathrow Airport' from 'New York JFK' on the previous day.",
+        "Cypher": "MATCH (originAirport:Airport {name: \"New York JFK\"})<-[departs:DEPARTS_FROM]-(flight:Flight)-[arrives:ARRIVES_AT]->(destinationAirport:Airport {name: \"London Heathrow Airport\"})\nMATCH (destinationAirport)-[terminal:HAS_TERMINAL]->(gate:Gate)\nWHERE date(arrives.scheduledArrival) = date(datetime() - duration({days: 1}))\nRETURN flight, departs, arrives, destinationAirport, terminal, gate, terminal.terminalName, gate.number",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (originAirport:Airport {name: \"New York JFK\"})<-[departs:DEPARTS_FROM]-(flight:Flight)-[arrives:ARRIVES_AT]->(destinationAirport:Airport {name: \"London Heathrow Airport\"})\nMATCH (destinationAirport)-[terminal:HAS_TERMINAL]->(gate:Gate)\nWHERE date(arrives.scheduledArrival) = date(datetime() - duration({days: 1}))\nRETURN originAirport, flight, departs, arrives, destinationAirport, terminal, gate, terminal.terminalName, gate.number",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the names of the terminals and the numbers of the gates for flights that arrived at 'London Heathrow Airport' from 'New York JFK' yesterday?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the average flight duration for all 'Boeing 747' flights operated by 'British Airways' to 'Heathrow Airport'?",
+        "Cypher": "MATCH (airline:Airline {name:\"British Airways\"})-[:OPERATES]->(flight:Flight {aircraftType:\"Boeing 747\"})-[:ARRIVES_AT]->(airport:Airport {name:\"Heathrow Airport\"})\nRETURN AVG(flight.duration)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (airline:Airline {name:\"British Airways\"})-[relation3:OPERATES]->(flight:Flight {aircraftType:\"Boeing 747\"})-[relation4:ARRIVES_AT]->(airport:Airport {name:\"Heathrow Airport\"})\nRETURN AVG(flight.duration)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical length of flight for 'Boeing 747' operated by 'British Airways' going to 'Heathrow Airport'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Can you calculate the sum of all ticket prices for reservations on 'Flight A380' departing from 'Paris Airport'?",
+        "Cypher": "MATCH (flight:Flight {number: \"A380\"})-[:DEPARTS_FROM]->(airport:Airport {name: \"Paris Airport\"})\nMATCH (ticket:Ticket)-[:TICKET_FOR_FLIGHT]->(flight)\nMATCH (reservation:Reservation)-[:CONTAINS_TICKET]->(ticket)\nRETURN SUM(ticket.price) AS totalTicketPrices",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (flight:Flight {number: \"A380\"})-[relation4:DEPARTS_FROM]->(airport:Airport {name: \"Paris Airport\"})\nMATCH (ticket:Ticket)-[relation5:TICKET_FOR_FLIGHT]->(flight)\nMATCH (reservation:Reservation)-[relation6:CONTAINS_TICKET]->(ticket)\nRETURN SUM(ticket.price) AS totalTicketPrices",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you compute the total cost of all tickets for bookings on 'Flight A380' leaving from 'Paris Airport'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the maximum baggage allowance permitted on any ticket for flights from 'Miami Airport' to 'Los Angeles Airport'?",
+        "Cypher": "MATCH (departureAirport:Airport {name:\"Miami Airport\"})-[:DEPARTS_FROM]->(flight:Flight)-[:ARRIVES_AT]->(arrivalAirport:Airport {name:\"Los Angeles Airport\"})\nMATCH (ticket:Ticket)-[ticketFor:TICKET_FOR_FLIGHT]->(flight)\nRETURN MAX(ticketFor.baggageAllowance)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (departureAirport:Airport {name:\"Miami Airport\"})-[relation4:DEPARTS_FROM]-(flight:Flight)-[relation5:ARRIVES_AT]->(arrivalAirport:Airport {name:\"Los Angeles Airport\"})\nMATCH (ticket:Ticket)-[ticketFor:TICKET_FOR_FLIGHT]->(flight)\nRETURN MAX(ticketFor.baggageAllowance)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest luggage limit allowed on any ticket for flights departing from 'Miami Airport' to 'Los Angeles Airport'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Please determine the total number of passengers on all 'Airbus A320' flights from 'Frankfurt Airport' to 'Berlin Airport' last month.",
+        "Cypher": "MATCH (departureAirport:Airport {name: \"Frankfurt Airport\"}), (arrivalAirport:Airport {name: \"Berlin Airport\"})\nMATCH (flight:Flight {aircraftType: \"Airbus A320\"})-[:DEPARTS_FROM]->(departureAirport)\nMATCH (flight)-[:ARRIVES_AT]->(arrivalAirport)\nMATCH (ticket:Ticket)-[:TICKET_FOR_FLIGHT]->(flight)\nMATCH (passenger:Passenger)-[:BOOKED_ON]->(:Reservation)-[:CONTAINS_TICKET]->(ticket)\nWHERE flight.scheduledDeparture >= datetime({year: date().year, month: date().month - 1, day: 1}) AND flight.scheduledDeparture < datetime({year: date().year, month: date().month, day: 1})\nRETURN COUNT(DISTINCT passenger) AS totalPassengers",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (departureAirport:Airport {name: \"Frankfurt Airport\"}), (arrivalAirport:Airport {name: \"Berlin Airport\"})\nMATCH (flight:Flight {aircraftType: \"Airbus A320\"})-[relation6:DEPARTS_FROM]->(departureAirport)\nMATCH (flight)-[relation7:ARRIVES_AT]->(arrivalAirport)\nMATCH (ticket:Ticket)-[relation8:TICKET_FOR_FLIGHT]->(flight)\nMATCH (passenger:Passenger)-[relation9:BOOKED_ON]->(node5:Reservation)-[relation10:CONTAINS_TICKET]->(ticket)\nWHERE flight.scheduledDeparture >= datetime({year: date().year, month: date().month - 1, day: 1}) AND flight.scheduledDeparture < datetime({year: date().year, month: date().month, day: 1})\nRETURN COUNT(DISTINCT passenger) AS totalPassengers",
+        "num-hop": 5,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "How many flights have both scheduled and actual departure times within 30 minutes of each other for 'Lufthansa' flights departing 'Munich Airport'?",
+        "Cypher": "MATCH (airline:Airline {name: \"Lufthansa\"})-[:OPERATES]->(flight:Flight)-[depart:DEPARTS_FROM]->(airport:Airport {name: \"Munich Airport\"})\nWHERE ABS(DURATION.between(depart.scheduledDeparture, depart.actualDeparture).minutes) <= 30\nRETURN COUNT(flight)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (airline:Airline {name: \"Lufthansa\"})-[relation3:OPERATES]->(flight:Flight)-[depart:DEPARTS_FROM]->(airport:Airport {name: \"Munich Airport\"})\nWHERE ABS(DURATION.between(depart.scheduledDeparture, depart.actualDeparture).minutes) <= 30\nRETURN COUNT(flight)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "For how many 'Lufthansa' flights departing from 'Munich Airport' are the scheduled and actual departure times within 30 minutes of each other?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Calculate the total number of seats sold on flights operated by 'Cathay Pacific' from 'Hong Kong Airport' to 'San Francisco Airport' in 2023.",
+        "Cypher": "MATCH (airline:Airline {name:\"Cathay Pacific\"})-[:OPERATES]->(flight:Flight),\n      (flight)-[dep:DEPARTS_FROM]->(departAirport:Airport {name:\"Hong Kong Airport\"}),\n      (flight)-[arr:ARRIVES_AT]->(arrivalAirport:Airport {name:\"San Francisco Airport\"}),\n      (ticket:Ticket)-[:TICKET_FOR_FLIGHT]->(flight)\nWHERE dep.scheduledDeparture.year = 2023 AND arr.scheduledArrival.year = 2023\nRETURN COUNT(ticket) AS totalSeatsSold",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (airline:Airline {name:\"Cathay Pacific\"})-[relation5:OPERATES]->(flight:Flight),\n      (flight)-[dep:DEPARTS_FROM]->(departAirport:Airport {name:\"Hong Kong Airport\"}),\n      (flight)-[arr:ARRIVES_AT]->(arrivalAirport:Airport {name:\"San Francisco Airport\"}),\n      (ticket:Ticket)-[relation8:TICKET_FOR_FLIGHT]->(flight)\nWHERE dep.scheduledDeparture.year = 2023 AND arr.scheduledArrival.year = 2023\nRETURN COUNT(ticket) AS totalSeatsSold",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the cumulative count of tickets purchased for 'Cathay Pacific' flights departing from 'Hong Kong Airport' to 'San Francisco Airport' during the year 2023."
+    }
+]

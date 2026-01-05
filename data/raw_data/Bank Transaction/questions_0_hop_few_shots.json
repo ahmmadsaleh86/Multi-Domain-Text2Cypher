@@ -1,0 +1,126 @@
+[
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the last name and email of the user 'john123' in the Login node?",
+        "Cypher": "MATCH (userLogin:Login {userid: \"john123\"}) RETURN userLogin, userLogin.lastName, userLogin.mail",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the surname and email address associated with the user 'john123' in the Login node?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Could you provide the street address and city for the DeliveryAddress associated with the Purchase ID 'P12345'?",
+        "Cypher": "MATCH (purchase:Purchase {purchaseCode:\"P12345\"})-[:DELIVERED_AT]->(deliveryAddress:DeliveryAddress)\nRETURN purchase, deliveryAddress, deliveryAddress.streetAddress, deliveryAddress.city",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (purchase:Purchase {purchaseCode:\"P12345\"})-[relation2:DELIVERED_AT]->(deliveryAddress:DeliveryAddress)\nRETURN relation2, purchase, deliveryAddress, deliveryAddress.streetAddress, deliveryAddress.city",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you supply the street address and city linked to the DeliveryAddress for Purchase ID 'P12345'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "For the BankAccount with accountNumber '987654321', what is the current balance and the date of the last received transaction?",
+        "Cypher": "MATCH (bankAccount:BankAccount {accountNumber: \"987654321\"})<-[transactionRelation:SEND]-(transaction:MoneyTransfer)\nRETURN bankAccount, transactionRelation, transaction, bankAccount.balance, transaction.transactionDate",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the current balance and the date of the last transaction received for the BankAccount with accountNumber '987654321'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "I need the name and website of the financial institute listed with my BankAccount number 'ABCD1234'. Can you fetch that for me?",
+        "Cypher": "MATCH (account:BankAccount {accountNumber: \"ABCD1234\"})-[:FROM]-(financialInstitute:FinancialInstitute)\nRETURN account, financialInstitute, financialInstitute.name, financialInstitute.website",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (account:BankAccount {accountNumber: \"ABCD1234\"})-[relation2:FROM]-(financialInstitute:FinancialInstitute)\nRETURN relation2, account, financialInstitute, financialInstitute.name, financialInstitute.website",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you please provide the name and website of the financial institution associated with my BankAccount number 'ABCD1234'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What first and last name is connected to the SSN '123-45-6789'?",
+        "Cypher": "MATCH (person:AccountHolder)-[hasSSN:HAS_SSN]->(ssn:SSN {ssn:\"123-45-6789\"}) RETURN person, hasSSN, ssn, person.firstName, person.lastName",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What full name is associated with the Social Security Number '123-45-6789'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Can you tell me the city and state for the address linked to the AccountHolder with UniqueId 'UH7890'?",
+        "Cypher": "MATCH (holder:AccountHolder {UniqueId:\"UH7890\"})-[:HAS_ADDRESS]->(address:Address) RETURN holder, address, address.city, address.state",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (holder:AccountHolder {UniqueId:\"UH7890\"})-[relation2:HAS_ADDRESS]->(address:Address) RETURN relation2, holder, address, address.city, address.state",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide the city and state associated with the address of the AccountHolder identified by UniqueId 'UH7890'?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the average balance across all the BankAccounts?",
+        "Cypher": "MATCH (bank_account:BankAccount)\nRETURN AVG(bank_account.balance) AS AverageBalance",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the mean balance held in all the BankAccounts?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Can you calculate the total number of Accounts with balances greater than $10,000?",
+        "Cypher": "MATCH (account:BankAccount)\nWHERE account.balance > 10000\nRETURN COUNT(account)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you determine how many Accounts have balances exceeding $10,000?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the maximum loan amount issued reported in the UnsecuredLoan node?",
+        "Cypher": "MATCH (unsecured_loan:UnsecuredLoan)\nRETURN MAX(unsecured_loan.loanAmount)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest loan value listed under the UnsecuredLoan node?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "I am curious about the sum of all late payments reported on CreditCards. Can you compute that?",
+        "Cypher": "MATCH (creditCard:CreditCard)\nRETURN SUM(creditCard.latePayments) AS TotalLatePayments",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you calculate the total amount of late payments listed on CreditCards for me, as I am interested in knowing that?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Could you provide the count of Purchase transactions where the amount is greater than $1000?",
+        "Cypher": "MATCH (purchase:Purchase)\nWHERE purchase.amount > 1000\nRETURN COUNT(purchase)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you supply the number of Purchase transactions exceeding $1000 in amount?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many shops are registered in the database, and what is the name of the shop with the highest number of connections to purchases?",
+        "Cypher": "MATCH (shop:Shop)\nWITH COUNT(shop) AS total_shops\nMATCH (shop:Shop)<-[:FOR_SHOP]-(login:Login)<-[:WITH_LOGIN]-(purchase:Purchase)\nRETURN total_shops, shop.name AS ShopName, COUNT(purchase) AS TotalPurchases\nORDER BY TotalPurchases DESC\nLIMIT 1",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (shop:Shop)\nWITH COUNT(shop) AS total_shops\nMATCH (shop:Shop)<-[relation4:FOR_SHOP]-(login:Login)<-[relation5:WITH_LOGIN]-(purchase:Purchase)\nRETURN total_shops, shop.name AS ShopName, COUNT(purchase) AS TotalPurchases\nORDER BY TotalPurchases DESC\nLIMIT 1",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many stores are listed in the database, and what is the name of the store with the greatest number of purchase links?"
+    }
+]

@@ -1,0 +1,189 @@
+[
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What are the names of the users who mentioned me in their tweets that also tagged the hashtag #blockchain?",
+        "Cypher": "MATCH (me:Me)<-[mentioned:MENTIONS]-(tweet:Tweet)-[tags:TAGS]->(hashtag:Hashtag), (user:User)-[posts:POSTS]->(tweet)\nWHERE hashtag.name = \"#blockchain\"\nRETURN user, posts, me, mentioned, tweet, tags, hashtag, user.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Who are the users that mentioned me in their tweets which also included the hashtag #blockchain?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "List the screen names of Me-followers who posted tweets that mentioned the user 'johndoe'.",
+        "Cypher": "MATCH (meFollower:Me)-[:FOLLOWS]->(me:Me)-[:POSTS]->(tweet:Tweet)-[:MENTIONS]->(mentionedUser:User)\nWHERE mentionedUser.screen_name=\"johndoe\"\nRETURN meFollower, me, tweet, mentionedUser, meFollower.screen_name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (meFollower:Me)-[relation4:FOLLOWS]->(me:Me)-[relation5:POSTS]->(tweet:Tweet)-[relation6:MENTIONS]->(mentionedUser:User)\nWHERE mentionedUser.screen_name=\"johndoe\"\nRETURN relation6, relation5, relation4, meFollower, me, tweet, mentionedUser, meFollower.screen_name",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the usernames of those following Me who have tweeted about the user 'johndoe'."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Retrieve the profile image URLs of users who have retweeted tweets containing the link 'http://example.com'.",
+        "Cypher": "MATCH (originalTweet:Tweet)-[:CONTAINS]->(link:Link {url: \"http://example.com\"}), (retweet:Tweet)-[:RETWEETS]->(originalTweet), (user:User)-[:POSTS]->(retweet)\nRETURN user, originalTweet, link, retweet, user.profile_image_url",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (originalTweet:Tweet)-[relation4:CONTAINS]->(link:Link {url: \"http://example.com\"}), (retweet:Tweet)-[relation5:RETWEETS]->(originalTweet), (user:User)-[relation6:POSTS]->(retweet)\nRETURN relation6, relation5, relation4, user, originalTweet, link, retweet, user.profile_image_url",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Obtain the profile picture links of users who retweeted tweets that include the URL 'http://example.com'."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Identify the locations of 'User' nodes who follow me and have posted tweets using the source 'Android'.",
+        "Cypher": "MATCH (follower:User)-[follows:FOLLOWS]->(me:Me),\n      (follower)-[posts:POSTS]->(tweet:Tweet)-[using:USING]->(source:Source)\nWHERE source.name = \"Android\"\nRETURN follower, follows, me, posts, tweet, using, source, follower.location",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the places of 'User' nodes that follow me and have tweeted from the 'Android' source."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Can you show the URLs from 'Link' nodes contained in tweets that were posted by users located in 'New York'?",
+        "Cypher": "MATCH (user:User)-[posts:POSTS]->(tweet:Tweet)-[contains:CONTAINS]->(link:Link)\nWHERE user.location = 'New York'\nRETURN user, posts, tweet, contains, link, link.url",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you display the URLs in 'Link' nodes found in tweets posted by individuals situated in 'New York'?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "List out all the hashtags used in tweets that replied to tweets originally posted by a user with more than 5000 followers.",
+        "Cypher": "MATCH (originalUser:User)-[posts:POSTS]->(originalTweet:Tweet)<-[replyTo:REPLY_TO]-(replyTweet:Tweet)-[tags:TAGS]->(hashtag:Hashtag)\nWHERE originalUser.followers > 5000\nRETURN originalUser, posts, originalTweet, replyTo, replyTweet, tags, hashtag, hashtag.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Itemize all hashtags from responses to tweets issued by a user who has over 5000 followers."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Which tweets mention me and are also tagged by the user 'alice'? Describe the connection between these tweets and the user.",
+        "Cypher": "MATCH (alice:User {screen_name: 'alice'})-[:POSTS]->(tweet:Tweet)-[:MENTIONS]->(me:Me), (tweet)-[:TAGS]->(tag:Hashtag)\nRETURN alice, tweet, me, tag, tweet.text",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (alice:User {screen_name: 'alice'})-[relation4:POSTS]->(tweet:Tweet)-[relation5:MENTIONS]->(me:Me), (tweet)-[relation6:TAGS]->(tag:Hashtag)\nRETURN relation6, relation5, relation4, alice, tweet, me, tag, tweet.text",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which tweets that include my mention are also tagged by the user 'alice'? Explain the relationship between these tweets and the user."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Identify the tweets that were retweeted and later replied to, with details on the connections.",
+        "Cypher": "MATCH (originalTweet:Tweet)<-[retweetRelationship:RETWEETS]-(retweetedTweet:Tweet)-[replyRelationship:REPLY_TO]->(replyTweet:Tweet)\nRETURN originalTweet, retweetRelationship, retweetedTweet, replyRelationship, replyTweet, originalTweet.text, retweetedTweet.text, replyTweet.text",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Identify the tweets that were first retweeted and then received replies, detailing the interactions."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Can you determine the tweets linking to 'http://news.com' that were mentioned in other tweets?",
+        "Cypher": "MATCH (linkingTweet:Tweet)-[containsLink:CONTAINS]->(link:Link), (tweet:Tweet)-[mentions:MENTIONS]->(linkingTweet)\nWHERE link.url=\"http://news.com\"\nRETURN linkingTweet, containsLink, link, tweet, mentions, linkingTweet.text",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Trace the pathway for tweets that were posted by users who follow 'samsmith' and contain hashtags like #ai.",
+        "Cypher": "MATCH (userFollowing:User)-[follows:FOLLOWS]->(userFollowed:User {screen_name: 'samsmith'}), (userFollowing)-[posts:POSTS]->(tweet:Tweet)-[tags:TAGS]->(hashtag:Hashtag)\nWHERE hashtag.name='ai'\nRETURN userFollowing, follows, userFollowed, posts, tweet, tags, hashtag, tweet.text",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Track the route of tweets posted by users following 'samsmith' that include hashtags similar to #ai."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Please find the tweets that were posted from iOS devices and later mentioned by tweets from users in 'California'.",
+        "Cypher": "MATCH (source:Source)<-[:USING]-(iosTweet:Tweet), (californiaUser:User)-[:POSTS]->(mentioningTweet:Tweet)-[:MENTIONS]->(iosTweet)\nWHERE source.name CONTAINS 'iOS' AND californiaUser.location = 'California'\nRETURN source, iosTweet, californiaUser, mentioningTweet, iosTweet.text",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (source:Source)<-[relation4:USING]-(iosTweet:Tweet), (californiaUser:User)-[relation5:POSTS]->(mentioningTweet:Tweet)-[relation6:MENTIONS]->(iosTweet)\nWHERE source.name CONTAINS 'iOS' AND californiaUser.location = 'California'\nRETURN relation6, relation5, relation4, source, iosTweet, californiaUser, mentioningTweet, iosTweet.text",
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Provide the connections between tweets that contain the link 'https://tech.blog' and were retweeted by users with over 1000 followers.",
+        "Cypher": "MATCH (tweet:Tweet)-[containsLink:CONTAINS]->(link:Link), (user:User)-[posted:POSTS]->(tweet), (retweet:Tweet)-[retweets:RETWEETS]->(tweet)\nWHERE link.url = 'https://tech.blog' AND user.followers > 1000\nRETURN tweet, containsLink, link, user, posted, retweet, retweets, tweet.text",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Identify the relationships among tweets featuring the URL 'https://tech.blog' that have been retweeted by users who possess more than 1000 followers."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "How many users have mentioned me in their tweets which include the hashtag #crypto?",
+        "Cypher": "MATCH (user:User)-[:POSTS]->(tweet:Tweet)-[:MENTIONS]->(me:Me),\n      (tweet)-[:TAGS]->(hashtag:Hashtag)\nWHERE hashtag.name=\"crypto\"\nRETURN COUNT(DISTINCT user)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)-[relation4:POSTS]->(tweet:Tweet)-[relation5:MENTIONS]->(me:Me),\n      (tweet)-[relation6:TAGS]->(hashtag:Hashtag)\nWHERE hashtag.name=\"crypto\"\nRETURN COUNT(DISTINCT user)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many users have referenced me in tweets containing the hashtag #crypto?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the average number of followers of users who retweeted tweets originally posted by 'janedoe'?",
+        "Cypher": "MATCH (originalPoster:User {name: \"janedoe\"})-[originalPost:POSTS]->(originalTweet:Tweet)<-[retweet:RETWEETS]-(retweetedTweet:Tweet)<-[posterPost:POSTS]-(retweeter:User)\nRETURN AVG(retweeter.followers)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical follower count for users who have retweeted posts initially shared by 'janedoe'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Calculate the total number of favorites received by tweets that contain a link to 'https://example.com' posted by followers of 'charlie'.",
+        "Cypher": "MATCH (follower:User)-[:FOLLOWS]->(charlie:User {screen_name: 'charlie'})\nMATCH (follower)-[:POSTS]->(tweet:Tweet)-[:CONTAINS]->(link:Link {url: 'https://example.com'})\nRETURN SUM(tweet.favorites)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (follower:User)-[relation4:FOLLOWS]->(charlie:User {screen_name: 'charlie'})\nMATCH (follower)-[relation5:POSTS]->(tweet:Tweet)-[relation6:CONTAINS]->(link:Link {url: 'https://example.com'})\nRETURN SUM(tweet.favorites)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the sum of favorites for tweets linking to 'https://example.com' from users who follow 'charlie'."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Count the number of different sources from which tweets that tagged me were posted.",
+        "Cypher": "MATCH (me:Me)-[:MENTIONS]-(tweet:Tweet)-[:USING]->(source:Source)\nRETURN COUNT(DISTINCT source)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (me:Me)-[relation3:MENTIONS]-(tweet:Tweet)-[relation4:USING]->(source:Source)\nRETURN COUNT(DISTINCT source)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate how many unique platforms were used to post tweets that tagged me."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the average number of tweets containing the #innovation hashtag mentioned by users located in 'Europe'?",
+        "Cypher": "MATCH (hashtag:Hashtag {name: \"innovation\"})<-[:TAGS]-(tweet:Tweet)<-[:POSTS]-(user:User {location: \"Europe\"})\nRETURN AVG(user.statuses)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (hashtag:Hashtag {name: \"innovation\"})<-[relation3:TAGS]-(tweet:Tweet)<-[relation4:POSTS]-(user:User {location: \"Europe\"})\nRETURN AVG(user.statuses)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical count of tweets that include the #innovation hashtag posted by users in 'Europe'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Can you determine the total number of statuses posted by users who follow both 'alice' and 'bob' and have mentioned them in tweets?",
+        "Cypher": "MATCH (user:User)-[:FOLLOWS]->(alice:Me {screen_name: 'alice'}), \n      (user)-[:FOLLOWS]->(bob:Me {screen_name: 'bob'}),\n      (tweetAlice:Tweet)-[:MENTIONS]->(alice),\n      (tweetBob:Tweet)-[:MENTIONS]->(bob),\n      (user)-[:POSTS]->(tweet:Tweet)\nWHERE tweetAlice = tweetBob\nRETURN SUM(user.statuses)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)-[relation6:FOLLOWS]->(alice:Me {screen_name: 'alice'}), \n      (user)-[relation7:FOLLOWS]->(bob:Me {screen_name: 'bob'}),\n      (tweetAlice:Tweet)-[relation8:MENTIONS]->(alice),\n      (tweetBob:Tweet)-[relation9:MENTIONS]->(bob),\n      (user)-[relation10:POSTS]->(tweet:Tweet)\nWHERE tweetAlice = tweetBob\nRETURN SUM(user.statuses)",
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you calculate the sum of statuses published by users who are followers of both 'alice' and 'bob' and have referenced them in tweets?"
+    }
+]

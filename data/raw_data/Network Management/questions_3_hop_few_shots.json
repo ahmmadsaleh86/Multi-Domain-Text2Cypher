@@ -1,0 +1,192 @@
+[
+    {
+        "Category": "3-hop Node Level",
+        "Question": "What are the names of the processes that depend on an application, which in turn depends on a software version that is running on a machine located in data center 'DC-East'?",
+        "Cypher": "MATCH (data_center:DataCenter {name: \"DC-East\"})-[:CONTAINS]->(machine:Machine)-[:RUNS]->(software:Software)-[:VERSION]->(version:Version),\n      (machine)<-[:RUNS]-(app:Application)-[:DEPENDS_ON]->(software),\n      (process:Process)-[:DEPENDS_ON]->(app)\nRETURN data_center, machine, software, version, app, process, process.name",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (data_center:DataCenter {name: \"DC-East\"})-[relation6:CONTAINS]->(machine:Machine)-[relation7:RUNS]->(software:Software)-[relation8:VERSION]->(version:Version),\n      (machine)<-[relation9:RUNS]-(app:Application)-[relation10:DEPENDS_ON]->(software),\n      (process:Process)-[relation11:DEPENDS_ON]->(app)\nRETURN relation11, relation10, relation9, relation8, relation7, relation6, data_center, machine, software, version, app, process, process.name",
+        "num-hop": 6,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "Which processes depend on applications that utilize specific software and versions within machines housed by the \"DC-East\" data center, and how are these applications linked to their respective software?",
+        "Max-Semantic-Score": 0.8925002813339233,
+        "Avg-Semantic-Score": 0.8456591606140137
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Retrieve the IP addresses of interfaces connected to routers found in data centers with a location attribute of 'Central Region' that also depend on a specific service named 'Firewall'.",
+        "Cypher": "MATCH (data_center:DataCenter {location: \"Central Region\"})-[:CONTAINS]->(router:Router),\n      (router)-[:ROUTES]->(interface:Interface),\n      (interface)-[:CONNECTS]->(router),\n      (service:Service {name: \"Firewall\"})<-[:DEPENDS_ON]-(router)\nRETURN data_center, router, interface, service, interface.ip",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (data_center:DataCenter {location: \"Central Region\"})-[relation4:CONTAINS]->(router:Router),\n      (router)-[relation5:ROUTES]->(interface:Interface),\n      (interface)-[relation6:CONNECTS]->(router),\n      (service:Service {name: \"Firewall\"})<-[relation7:DEPENDS_ON]-(router)\nRETURN relation7, relation6, relation5, relation4, data_center, router, interface, service, interface.ip",
+        "num-hop": 4,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Which data centers contain routers that run an operating system older than version 3.5 and are linked to a network with an IP '192.168.1.1'?",
+        "Cypher": "MATCH (data_center:DataCenter)-[contains_router:CONTAINS]->(router:Router)-[runs_os:RUNS]->(os:OS)-[os_version:VERSION]->(version:Version),\n      (network:Network {ip:\"192.168.1.1\"}), (router)-[connects_interface:ROUTES]->(interface:Interface)-[connects_network:CONNECTS]->(network)\nWHERE version.name < \"3.5\"\nRETURN data_center, contains_router, router, runs_os, os, os_version, version, network, connects_interface, connects_network",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (data_center:DataCenter)-[contains_router:CONTAINS]->(router:Router)-[runs_os:RUNS]->(os:OS)-[os_version:VERSION]->(version:Version),\n      (network:Network {ip:\"192.168.1.1\"}), (router)-[connects_interface:ROUTES]->(interface:Interface)-[connects_network:CONNECTS]->(network)\nWHERE version.name < \"3.5\"\nRETURN interface, data_center, contains_router, router, runs_os, os, os_version, version, network, connects_interface, connects_network",
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Identify the types of machines in racks located within data centers named 'DataHub42' that contain switches with IP '10.1.2.3'.",
+        "Cypher": "MATCH (data_center:DataCenter)-[contains_rack:CONTAINS]->(rack:Rack)-[holds_switch:HOLDS]->(switch:Switch {ip:\"10.1.2.3\"}), (rack)-[holds_machine:HOLDS]->(machine:Machine)-[machine_type:TYPE]->(type:Type)\nWHERE data_center.name=\"DataHub42\"\nRETURN data_center, contains_rack, rack, holds_switch, switch, holds_machine, machine, machine_type, type, type.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (datacenter:DataCenter {name: \"DataHub42\"})-[:CONTAINS]->(rack:Rack)-[:HOLDS]->(switch:Switch {ip: \"10.1.2.3\"}), (rack)-[:HOLDS]->(machine:Machine)-[:TYPE]->(machine_type:Type)\nRETURN relation5, datacenter, rack, switch, machine, machine_type, machine_type.name",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the variety of machinery housed in the racks of 'DataHub42' data centers that possess switches with the IP address '10.1.2.3'."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "List the names of all software that depend on other software which in turn are dependent on applications running on OS named 'Linux' within the same machine.",
+        "Cypher": "MATCH (os:OS {name:\"Linux\"})-[:RUNS]->(machine:Machine)-[:RUNS]->(app:Application)\nMATCH (dependent_software:Software)-[:DEPENDS_ON]->(app)\nMATCH (software:Software)-[:DEPENDS_ON]->(dependent_software)\nRETURN os, machine, app, dependent_software, software, software.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (os:OS {name:\"Linux\"})-[relation5:RUNS]-(machine:Machine)-[relation6:RUNS]->(app:Application)\nMATCH (dependent_software:Software)-[relation7:DEPENDS_ON]->(app)\nMATCH (software:Software)-[relation8:DEPENDS_ON]->(dependent_software)\nRETURN relation8, relation7, relation6, relation5, os, machine, app, dependent_software, software, software.name",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Enumerate all software that relies on other software, which is in turn reliant on applications operating on a Linux-based OS within the same device."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Can you provide the name and start time of all applications that run on machines where the OS is 'Windows 10' and also have a dependency on the version '1.0'?",
+        "Cypher": "MATCH (machine:Machine)-[runs_machine_os:RUNS]->(os:OS {name:\"Windows 10\"}), \n      (machine)-[runs_machine_app:RUNS]->(app:Application)-[app_version_instance:INSTANCE]->(version:Version {name:\"1.0\"})\nRETURN machine, runs_machine_os, os, runs_machine_app, app, app_version_instance, version, app.name, app.startTime",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you list all applications, along with their start times, that operate on systems using 'Windows 10' and depend on version '1.0'?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "What are the relations between processes that depend on services which are instances of applications that communicate through ports labeled '8080'?",
+        "Cypher": "MATCH (process:Process)-[process_depends_on_service:DEPENDS_ON]->(service:Service)-[service_instance_of_application:INSTANCE]->(application:Application)-[application_listens_port:LISTENS]->(port:Port {port:8080})\nRETURN process, process_depends_on_service, service, service_instance_of_application, application, application_listens_port, port",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the relationship between processes reliant on services that are derivatives of applications communicating via ports marked '8080'?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Detail the chain of dependencies involving software and its versions routed through services up to applications for the software named 'DatabaseManager'.",
+        "Cypher": "MATCH \n  (software:Software {name: \"DatabaseManager\"})-[software_version:VERSION]->(version:Version),\n  (software)-[software_service:DEPENDS_ON]->(service:Service),\n  (service)-[service_application:DEPENDS_ON]->(application:Application)\nRETURN \n  software, software_version, version, software_service, service, service_application, application",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Outline the dependency chain from software and its versions through services to applications for the software called 'DatabaseManager'."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Which interfaces connect to zones and route traffic to networks that encompass machines running services with at least 5 dependencies?",
+        "Cypher": "MATCH (interface:Interface)-[connects:CONNECTS]->(zone:Zone),\n      (interface)-[routes:ROUTES]->(network:Network),\n      (machine:Machine)-[:RUNS]->(service:Service)\nWHERE size(service.dependencies) >= 5\nRETURN interface, connects, zone, routes, network, machine, service",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (interface:Interface)-[connects:CONNECTS]->(zone:Zone),\n      (interface)-[routes:ROUTES]-(network:Network),\n      (machine:Machine)-[relation7:RUNS]->(service:Service)\nWHERE size(service.dependencies) >= 5\nRETURN relation7, interface, connects, zone, routes, network, machine, service",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What interfaces link to zones and direct traffic toward networks containing machines operating services that have a minimum of five dependencies?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Examine the relation path from data centers containing racks, to machines held within them, that are associated with types having an ID greater than 1000.",
+        "Cypher": "MATCH (dataCenter:DataCenter)-[containsRack:CONTAINS]->(rack:Rack)-[holdsMachine:HOLDS]->(machine:Machine)-[machineType:TYPE]->(type:Type)\nWHERE type.id > 1000\nRETURN dataCenter, containsRack, rack, holdsMachine, machine, machineType, type",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Investigate the connection route from data centers equipped with racks to the machines contained therein, which are linked to types with IDs exceeding 1000."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Identify the dependency connections starting from a version named '3.2', through any software relying on it, up to the processes they run.",
+        "Cypher": "MATCH (version:Version {name:\"3.2\"})<-[version_rel:VERSION]-(software:Software)-[software_dep:DEPENDS_ON]->(process:Process)\nRETURN version, version_rel, software, software_dep, process",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Trace the dependency links beginning with the version labeled '3.2', through all dependent software, to the processes they operate."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Trace the dependents of the application 'CloudSync', including intermediate software and services, up to the process level with specific roles.",
+        "Cypher": "MATCH (application:Application {name: \"CloudSync\"})\nOPTIONAL MATCH (application)-[app_depends_service:DEPENDS_ON]->(service:Service)\nOPTIONAL MATCH (service)-[service_depends_software:DEPENDS_ON]->(software:Software)\nOPTIONAL MATCH (service)-[service_depends_process:DEPENDS_ON]->(process_service:Process)\nOPTIONAL MATCH (software)-[software_depends_process:DEPENDS_ON]->(process_software:Process)\nOPTIONAL MATCH (application)-[app_depends_process:DEPENDS_ON]->(process_application:Process)\nRETURN application, app_depends_service, service, service_depends_software, software, service_depends_process, process_service, software_depends_process, process_software, app_depends_process, process_application",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "Map out the dependencies of the 'CloudSync' application, covering all related software and services down to the process level, specifying their roles."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "How many distinct software depend on at least two different versions and have applications listening on port '9999'?",
+        "Cypher": "MATCH (software:Software)-[:DEPENDS_ON]->(version:Version)\nWITH software, COUNT(DISTINCT version) AS versionsCount\nWHERE versionsCount >= 2\nMATCH (software)-[:INSTANCE]->(application:Application)-[appListen:LISTENS]->(port:Port)\nWHERE port.port = 9999\nRETURN COUNT(DISTINCT software)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (software:Software)-[relation4:DEPENDS_ON]->(version:Version)\nWITH software, COUNT(DISTINCT version) AS versionsCount\nWHERE versionsCount >= 2\nMATCH (software)-[relation5:INSTANCE]-(application:Application)-[appListen:LISTENS]->(port:Port)\nWHERE port.port = 9999\nRETURN COUNT(DISTINCT software)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many unique software rely on at least two distinct versions and possess applications that listen on port '9999'?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the average number of ports listened by services that are instances of software deployed on machines which are in racks located in the data center named 'WestCoastHub'?",
+        "Cypher": "MATCH (dataCenter:DataCenter {name: 'WestCoastHub'})-[:CONTAINS]->(rack:Rack)-[:HOLDS]->(machine:Machine)-[:RUNS]->(software:Software)-[:INSTANCE]->(service:Service)-[:LISTENS]->(port:Port)\nRETURN AVG(SIZE(COLLECT(DISTINCT port.port)))",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (dataCenter:DataCenter {name: 'WestCoastHub'})-[relation6:CONTAINS]->(rack:Rack)-[relation7:HOLDS]->(machine:Machine)-[relation8:RUNS]->(software:Software)-[relation9:INSTANCE]->(service:Service)-[relation10:LISTENS]->(port:Port)\nRETURN AVG(SIZE(COLLECT(DISTINCT port.port)))",
+        "num-hop": 5,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Count the number of machines running more than three different types of OS, which include an application depending on a service named 'LoadBalancer'.",
+        "Cypher": "MATCH (machine:Machine)-[runs_os:RUNS]->(os:OS)\nWITH machine, COUNT(DISTINCT os) AS osCount\nWHERE osCount > 3\nMATCH (machine)-[:RUNS]->(app:Application)-[:DEPENDS_ON]->(service:Service)\nWHERE service.name = 'LoadBalancer'\nRETURN COUNT(DISTINCT machine)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (machine:Machine)-[runs_os:RUNS]->(os:OS)\nWITH machine, COUNT(DISTINCT os) AS osCount\nWHERE osCount > 3\nMATCH (machine)-[relation5:RUNS]->(app:Application)-[relation6:DEPENDS_ON]->(service:Service)\nWHERE service.name = 'LoadBalancer'\nRETURN COUNT(DISTINCT machine)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Tally the machines operating over three distinct OS types that run an application reliant on a service called 'LoadBalancer'."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Calculate the minimum RAM size in Types of machines that are managed under racks within the 'Central Valley Data Center' and run applications named 'AnalyticsApp'.",
+        "Cypher": "MATCH (dataCenter:DataCenter {name: \"Central Valley Data Center\"})-[:CONTAINS]->(rack:Rack)-[:HOLDS]->(machine:Machine)-[:TYPE]->(type:Type),\n      (machine)-[:RUNS]->(application:Application {name: \"AnalyticsApp\"})\nRETURN MIN(type.ram) AS MinimumRAMSize",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (dataCenter:DataCenter {name: \"Central Valley Data Center\"})-[relation5:CONTAINS]->(rack:Rack)-[relation6:HOLDS]->(machine:Machine)-[relation7:TYPE]->(type:Type),\n      (machine)-[relation8:RUNS]->(application:Application {name: \"AnalyticsApp\"})\nRETURN MIN(type.ram) AS MinimumRAMSize",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the smallest RAM size for machines managed in racks at the 'Central Valley Data Center' that operate the 'AnalyticsApp'."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the maximum size of the network zones that are connected via interfaces to switches in data centers located in 'Northern Sector'?",
+        "Cypher": "MATCH (dataCenter:DataCenter)-[:CONTAINS]->(switch:Switch)-[:ROUTES]->(interface:Interface)-[:CONNECTS]->(zone:Zone)\nWHERE dataCenter.location = 'Northern Sector'\nRETURN MAX(zone.size)",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (dataCenter:DataCenter)-[relation4:CONTAINS]->(switch:Switch)-[relation5:ROUTES]->(interface:Interface)-[relation6:CONNECTS]->(zone:Zone)\nWHERE dataCenter.location = 'Northern Sector'\nRETURN MAX(zone.size)",
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Calculate the sum of the CPU resources for all machines that run a process depending on a service which, in turn, depends on a version named 'Beta'.",
+        "Cypher": "MATCH (machine:Machine)-[:RUNS]->(process:Process)-[:DEPENDS_ON]->(service:Service)-[:DEPENDS_ON]->(version:Version)\nWHERE version.name = 'Beta'\nMATCH (machine)-[:TYPE]->(type:Type)\nRETURN SUM(type.cpu) AS TotalCPUSum",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (machine:Machine)-[relation5:RUNS]->(process:Process)-[relation6:DEPENDS_ON]->(service:Service)-[relation7:DEPENDS_ON]->(version:Version)\nWHERE version.name = 'Beta'\nMATCH (machine)-[relation8:TYPE]->(type:Type)\nRETURN SUM(type.cpu) AS TotalCPUSum",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the total CPU resources used by all machines operating a process that relies on a service dependent on a version titled 'Beta'."
+    }
+]

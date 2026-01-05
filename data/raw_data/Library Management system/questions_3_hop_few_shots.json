@@ -1,0 +1,188 @@
+[
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Identify all authors with a nationality of 'French' who have written books available in more than 10 copies at any branch located in 'Paris'.",
+        "Cypher": "MATCH (author:Author)-[authored:AUTHOR_OF]->(book:Book)\nMATCH (book)-[availableAt:AVAILABLE_AT]->(branch:Branch)\nWHERE author.Nationality = \"French\" AND branch.Location = \"Paris\" AND book.CopiesAvailable > 10\nRETURN author, authored, book, availableAt, branch, author.Name, author.Nationality, book.Title, branch.Location",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Find every author who is French and has authored books that are stocked in over 10 copies at any branch in 'Paris'."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "What are the names and publication years of books authored by 'Agatha Christie' that are available at branches with names starting with 'Central' and having more than 5 copies available?",
+        "Cypher": "MATCH (author:Author)-[author_of:AUTHOR_OF]->(book:Book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nWHERE author.Name=\"Agatha Christie\" AND branch.Name STARTS WITH \"Central\" AND book.CopiesAvailable > 5\nRETURN author, author_of, book, available_at, branch, book.Title, book.PublicationYear",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the titles and years of publication for books written by 'Agatha Christie' that are in stock at branches whose names begin with 'Central' and possess over 5 copies."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Can you list the Email and Phone numbers of members who have borrowed books published before 1950 and are currently checked out from branches named 'Downtown'?",
+        "Cypher": "MATCH (book:Book)-[published_by:PUBLISHED_BY]->(publisher:Publisher)\nMATCH (loan:Loan)-[checked_out:CHECKED_OUT]->(book)\nMATCH (loan)-[borrowed_by:BORROWED_BY]->(member:Member)\nMATCH (book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nWHERE book.PublicationYear < 1950 AND branch.Name = \"Downtown\"\nRETURN book, published_by, publisher, loan, checked_out, borrowed_by, member, available_at, branch, member.Email, member.Phone",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (book:Book)-[published_by:PUBLISHED_BY]->(publisher:Publisher)\nMATCH (loan:Loan)-[checked_out:CHECKED_OUT]-(book)\nMATCH (loan)-[borrowed_by:BORROWED_BY]->(member:Member)\nMATCH (book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nWHERE book.PublicationYear < 1950 AND branch.Name = \"Downtown\"\nRETURN book, published_by, publisher, loan, checked_out, borrowed_by, member, available_at, branch, member.Email, member.Phone",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide the email addresses and phone numbers of members who currently have books checked out that were published prior to 1950 from 'Downtown' branches?"
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Provide a list of book titles and their respective publishers where the books are authored by someone named 'Stephen King' and the publishers are located in 'Maine'.",
+        "Cypher": "MATCH (author:Author)-[author_of:AUTHOR_OF]->(book:Book)-[published_by:PUBLISHED_BY]->(publisher:Publisher)\nWHERE author.Name=\"Stephen King\" AND publisher.Location=\"Maine\"\nRETURN author, author_of, book, published_by, publisher, book.Title, publisher.Name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the titles of books and their corresponding publishers, where 'Stephen King' is the author and the publishers are based in 'Maine'."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "What is the contact information (Email and Phone) for members who have borrowed books on 'Philosophy' subject from a branch located in 'New York'?",
+        "Cypher": "MATCH (book:Book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nMATCH (book)<-[author_of:AUTHOR_OF]-(author:Author)\nMATCH (book)-[checked_out:CHECKED_OUT]->(loan:Loan)\nMATCH (loan)-[borrowed_by:BORROWED_BY]->(member:Member)\nWHERE book.Subject=\"Philosophy\" AND branch.Location=\"New York\"\nRETURN book, author, author_of, available_at, branch, checked_out, loan, borrowed_by, member, member.Email, member.Phone",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "How can I find the email addresses and phone numbers of members who took out 'Philosophy' books from a 'New York' branch?"
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Find the names and DOB of authors who have written books in 'Spanish' that are published by companies located in 'Spain' and available in more than 20 copies at any branch.",
+        "Cypher": "MATCH (author:Author)-[author_of:AUTHOR_OF]->(book:Book)-[published_by:PUBLISHED_BY]->(publisher:Publisher)\nMATCH (book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nWHERE book.Language=\"Spanish\" AND publisher.Location=\"Spain\" AND book.CopiesAvailable > 20\nRETURN author, author_of, book, published_by, publisher, available_at, branch, author.Name, author.DOB",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Retrieve the names and birthdates of authors who have penned books in 'Spanish', published by firms based in 'Spain', and stocked in over 20 copies at any branch."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Retrieve the issue and due dates for loans of books written by 'Charles Dickens' and are checked out by members who joined the library in 2021.",
+        "Cypher": "MATCH (author:Author)-[authored:AUTHOR_OF]->(book:Book)-[checked_out:CHECKED_OUT]->(loan:Loan)\nMATCH (loan)-[borrowed_by:BORROWED_BY]->(member:Member)\nWHERE author.Name=\"Charles Dickens\" AND member.MembershipStart.year = 2021\nRETURN author, authored, book, checked_out, loan, borrowed_by, member, loan.IssueDate, loan.DueDate",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Fetch the issue and return dates for books authored by 'Charles Dickens' that are loaned and currently held by members who became part of the library in 2021."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "List the ReturnTimestamps for all books authored by 'H.G. Wells' that were returned at branches in cities starting with 'San'.",
+        "Cypher": "MATCH (author:Author)-[authored:AUTHOR_OF]->(book:Book)-[returnedAt:RETURNED_AT]->(loan:Loan)\nMATCH (loan)-[:BORROWED_BY]->(member:Member)\nMATCH (book)-[:AVAILABLE_AT]->(branch:Branch)\nWHERE author.Name=\"H.G. Wells\" AND branch.Location STARTS WITH \"San\"\nRETURN author, authored, book, returnedAt, loan, member, branch, returnedAt.ReturnTimestamp",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (author:Author)-[authored:AUTHOR_OF]->(book:Book)-[returnedAt:RETURNED_AT]->(loan:Loan)\nMATCH (loan)-[relation7:BORROWED_BY]->(member:Member)\nMATCH (book)-[relation8:AVAILABLE_AT]->(branch:Branch)\nWHERE author.Name=\"H.G. Wells\" AND branch.Location STARTS WITH \"San\"\nRETURN relation8, relation7, author, authored, book, returnedAt, loan, member, branch, returnedAt.ReturnTimestamp",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Retrieve the ReturnTimestamps for every book by 'H.G. Wells' returned at branches located in cities beginning with 'San'."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Find the checkout and return dates for all books by 'Virginia Woolf' that have been borrowed and returned more than three times at the 'Main Street' branch.",
+        "Cypher": "MATCH (author:Author)-[author_of:AUTHOR_OF]->(book:Book)-[checked_out:CHECKED_OUT]->(loan:Loan)-[borrowed_by:BORROWED_BY]->(member:Member)\nMATCH (book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nWHERE author.Name=\"Virginia Woolf\" AND branch.Name=\"Main Street\"\nWITH book, COUNT(loan) AS timesBorrowed, COLLECT(loan.IssueDate) AS checkoutDates, COLLECT(loan.ReturnDate) AS returnDates\nWHERE timesBorrowed > 3\nRETURN book, author, author_of, available_at, branch, checked_out, loan, borrowed_by, member, checkoutDates, returnDates",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Can you provide the ManagerSince dates for managers at branches that hold books authored by 'Mark Twain' and have more than 15 copies available?",
+        "Cypher": "MATCH (author:Author)-[authored:AUTHOR_OF]->(book:Book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nMATCH (branch)-[managed_by:MANAGED_BY]->(manager:Employee)\nWHERE author.Name=\"Mark Twain\" AND book.CopiesAvailable > 15\nRETURN author, authored, book, available_at, branch, managed_by, manager, managed_by.ManagerSince",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the dates since when managers have been in position at branches possessing over 15 copies of books written by 'Mark Twain'?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Identify the email addresses of members who have borrowed books authored by 'Ernest Hemingway' and those books were checked out exactly on January 1, 2022.",
+        "Cypher": "MATCH (author:Author)-[author_of:AUTHOR_OF]->(book:Book)-[checked_out:CHECKED_OUT]->(loan:Loan)\nMATCH (loan)-[borrowed_by:BORROWED_BY]->(member:Member)\nWHERE author.Name=\"Ernest Hemingway\" AND checked_out.CheckoutTimestamp = datetime('2022-01-01T00:00:00')\nRETURN author, author_of, book, checked_out, loan, borrowed_by, member, member.Email",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Find the email addresses of members who borrowed books written by 'Ernest Hemingway' and checked them out on January 1, 2022."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Display the CheckoutTimestamp and ReturnTimestamp for all loans relating to books authored by 'Jane Austen' in a branch named 'Westside'.",
+        "Cypher": "MATCH (author:Author)-[authored:AUTHOR_OF]->(book:Book)-[checked_out:CHECKED_OUT]->(loan:Loan)-[return_at:RETURNED_AT]->(book)\nMATCH (book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nWHERE author.Name = 'Jane Austen' AND branch.Name = 'Westside'\nRETURN author, authored, book, checked_out, loan, return_at, available_at, branch, checked_out.CheckoutTimestamp, return_at.ReturnTimestamp",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (author:Author)-[authored:AUTHOR_OF]->(book:Book)-[checked_out:CHECKED_OUT]->(loan:Loan)-[return_at:RETURNED_AT]-(book)\nMATCH (book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nWHERE author.Name = 'Jane Austen' AND branch.Name = 'Westside'\nRETURN author, authored, book, checked_out, loan, return_at, available_at, branch, checked_out.CheckoutTimestamp, return_at.ReturnTimestamp",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Show the CheckoutTimestamp and ReturnTimestamp for every loan associated with books written by 'Jane Austen' at the 'Westside' branch."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "How many different books authored by 'Tolkien' and available at 'Downtown Library' have been checked out more than 5 times?",
+        "Cypher": "MATCH (author:Author)-[:AUTHOR_OF]->(book:Book)-[:AVAILABLE_AT]->(branch:Branch)\nWHERE author.Name=\"Tolkien\" AND branch.Name=\"Downtown Library\"\nWITH book\nMATCH (book)-[checked_out:CHECKED_OUT]->(loan:Loan)\nWITH book, COUNT(loan) AS timesCheckedOut\nWHERE timesCheckedOut > 5\nRETURN COUNT(DISTINCT book)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (author:Author)-[relation4:AUTHOR_OF]->(book:Book)-[relation5:AVAILABLE_AT]->(branch:Branch)\nWHERE author.Name=\"Tolkien\" AND branch.Name=\"Downtown Library\"\nWITH book\nMATCH (book)-[checked_out:CHECKED_OUT]->(loan:Loan)\nWITH book, COUNT(loan) AS timesCheckedOut\nWHERE timesCheckedOut > 5\nRETURN COUNT(DISTINCT book)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many distinct books written by 'Tolkien' and held at 'Downtown Library' have been borrowed over five times?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Determine the average number of copies available for books written by authors born in the 1940s across all branches named 'City Library'.",
+        "Cypher": "MATCH (author:Author)-[authored:AUTHOR_OF]->(book:Book)-[available:AVAILABLE_AT]->(branch:Branch)\nWHERE author.DOB.year >= 1940 AND author.DOB.year < 1950 AND branch.Name = \"City Library\"\nRETURN AVG(book.CopiesAvailable)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the mean availability of books authored by writers born in the 1940s in every 'City Library' branch."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the total number of books on 'Computer Science' subject authored by any author from 'USA' and available at any branch in 'California'?",
+        "Cypher": "MATCH (author:Author)-[authored:AUTHOR_OF]->(book:Book)-[available:AVAILABLE_AT]->(branch:Branch)\nWHERE author.Nationality=\"USA\" AND book.Subject=\"Computer Science\" AND branch.Location CONTAINS \"California\"\nRETURN SUM(book.CopiesTotal)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many books on the subject of 'Computer Science' written by authors from the 'USA' are accessible in branches throughout 'California'?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Calculate the maximum number of times a single book, authored by 'Leo Tolstoy', has been loaned out across all library branches.",
+        "Cypher": "MATCH (author:Author)-[:AUTHOR_OF]->(book:Book)-[:CHECKED_OUT]->(loan:Loan)\nWHERE author.Name=\"Leo Tolstoy\"\nRETURN book.Title, COUNT(loan) AS LoanCount\nORDER BY LoanCount DESC\nLIMIT 1",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (author:Author)-[relation3:AUTHOR_OF]->(book:Book)-[relation4:CHECKED_OUT]->(loan:Loan)\nWHERE author.Name=\"Leo Tolstoy\"\nRETURN book.Title, COUNT(loan) AS LoanCount\nORDER BY LoanCount DESC\nLIMIT 1",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the highest frequency of loans for any individual book written by 'Leo Tolstoy' across all branches of the library."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the minimum number of available copies of books by authors named 'Emily Dickinson' in branches located in 'Massachusetts'?",
+        "Cypher": "MATCH (author:Author)-[:AUTHOR_OF]->(book:Book)-[:AVAILABLE_AT]->(branch:Branch)\nWHERE author.Name=\"Emily Dickinson\" AND branch.Location CONTAINS \"Massachusetts\"\nRETURN MIN(book.CopiesAvailable)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (author:Author)-[relation3:AUTHOR_OF]->(book:Book)-[relation4:AVAILABLE_AT]->(branch:Branch)\nWHERE author.Name=\"Emily Dickinson\" AND branch.Location CONTAINS \"Massachusetts\"\nRETURN MIN(book.CopiesAvailable)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the smallest number of copies of books by 'Emily Dickinson' that are in stock at branches in 'Massachusetts'?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Count the total number of employees working in branches where books authored by 'George Orwell' that are printed in English are available.",
+        "Cypher": "MATCH (author:Author)-[:AUTHOR_OF]->(book:Book)-[:AVAILABLE_AT]->(branch:Branch)<-[:EMPLOYED_AT]-(employee:Employee)\nWHERE author.Name='George Orwell' AND book.Language='English'\nRETURN COUNT(DISTINCT employee)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (author:Author)-[relation4:AUTHOR_OF]->(book:Book)-[relation5:AVAILABLE_AT]->(branch:Branch)<-[relation6:EMPLOYED_AT]-(employee:Employee)\nWHERE author.Name='George Orwell' AND book.Language='English'\nRETURN COUNT(DISTINCT employee)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the aggregate employee count in branches that stock English-printed books written by 'George Orwell'."
+    }
+]

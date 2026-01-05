@@ -1,0 +1,141 @@
+[
+    {
+        "Type": "Node",
+        "Label": "Airport",
+        "Attributes": {
+            "airportId": "String",
+            "name": "String",
+            "city": "String",
+            "country": "String",
+            "timezone": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Airline",
+        "Attributes": {
+            "airlineId": "String",
+            "name": "String",
+            "logoUrl": "String",
+            "headquarters": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Flight",
+        "Attributes": {
+            "flightId": "String",
+            "number": "String",
+            "aircraftType": "String",
+            "duration": "Float",
+            "distance": "Float"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Gate",
+        "Attributes": {
+            "gateId": "String",
+            "number": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Passenger",
+        "Attributes": {
+            "passportNumber": "String",
+            "firstName": "String",
+            "lastName": "String",
+            "nationality": "String",
+            "birthdate": "Date"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Reservation",
+        "Attributes": {
+            "reservationId": "String",
+            "status": "String",
+            "bookingTime": "DateTime"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Ticket",
+        "Attributes": {
+            "ticketId": "String",
+            "class": "String",
+            "price": "Float",
+            "seatNumber": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "OPERATES",
+        "From": "Airline",
+        "To": "Flight",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPARTS_FROM",
+        "From": "Flight",
+        "To": "Airport",
+        "Attributes": {
+            "scheduledDeparture": "DateTime",
+            "actualDeparture": "DateTime"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "ARRIVES_AT",
+        "From": "Flight",
+        "To": "Airport",
+        "Attributes": {
+            "scheduledArrival": "DateTime",
+            "actualArrival": "DateTime"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "USES_GATE",
+        "From": "Flight",
+        "To": "Gate",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "BOOKED_ON",
+        "From": "Passenger",
+        "To": "Reservation",
+        "Attributes": {
+            "bookingAgent": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "CONTAINS_TICKET",
+        "From": "Reservation",
+        "To": "Ticket",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "TICKET_FOR_FLIGHT",
+        "From": "Ticket",
+        "To": "Flight",
+        "Attributes": {
+            "baggageAllowance": "Float",
+            "mealIncluded": "Boolean"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_TERMINAL",
+        "From": "Airport",
+        "To": "Gate",
+        "Attributes": {
+            "terminalName": "String"
+        }
+    }
+]

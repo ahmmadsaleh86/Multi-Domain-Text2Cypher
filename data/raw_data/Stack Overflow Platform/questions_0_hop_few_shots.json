@@ -1,0 +1,122 @@
+[
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Can you show me the titles and links of all questions that have more than 100,000 views?",
+        "Cypher": "MATCH (question:Question)\nWHERE question.view_count > 100000\nRETURN question, question.title, question.link",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you display the titles and links for all questions that have accumulated over 100,000 views?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What are the display names of users who have a UUID greater than 5000?",
+        "Cypher": "MATCH (user:User)\nWHERE user.uuid > 5000\nRETURN user, user.display_name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the display names for users with a UUID exceeding 5000?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "List all comments that have a score less than -10.",
+        "Cypher": "MATCH (comment:Comment)\nWHERE comment.score < -10\nRETURN comment, comment.uuid, comment.link, comment.score",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Display all comments with a score below -10."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the body markdown and link of the answer with the lowest score?",
+        "Cypher": "MATCH (answer:Answer)\nRETURN answer, answer.body_markdown, answer.link\nORDER BY answer.score ASC\nLIMIT 1",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (answer:Answer)\nRETURN answer, answer\nORDER BY answer.score ASC\nLIMIT 1\nRETURN answer, answer.body_markdown, answer.link",
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the markdown text and hyperlink of the answer that has the lowest score?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Display the names and links of all tags associated with questions tagged more than 50 times.",
+        "Cypher": "MATCH (tag:Tag)<-[tagged:TAGGED]-(question:Question)\nWITH tag, COUNT(question) AS countQuestions\nWHERE countQuestions > 50\nRETURN tag, tagged, question, tag.name, tag.link",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What are the title and creation dates of questions that have no accepted answer?",
+        "Cypher": "MATCH (question:Question)\nWHERE question.accepted_answer_id IS NULL\nRETURN question, question.title, question.creation_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the names and dates of creation for questions lacking an accepted answer?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the average view count for questions on Stack Overflow?",
+        "Cypher": "MATCH (question:Question)\nRETURN AVG(question.view_count)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical number of views for questions on Stack Overflow?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many comments are there with scores exceeding 20?",
+        "Cypher": "MATCH (comment:Comment)\nWHERE comment.score > 20\nRETURN COUNT(comment)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the number of comments that have scores above 20?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the maximum score an answer has ever received on Stack Overflow?",
+        "Cypher": "MATCH (solution:Answer)\nRETURN MAX(solution.score)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest score that any response has achieved on Stack Overflow?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Can you compute the total number of tags used across all questions?",
+        "Cypher": "MATCH (question:Question)-[tagged:TAGGED]->(tag:Tag)\nRETURN COUNT(DISTINCT tag)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you calculate the overall count of tags utilized in all the questions?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the average number of answers per question for questions with more than 10,000 views?",
+        "Cypher": "MATCH (question:Question)\nWHERE question.view_count > 10000\nWITH question, SIZE((question)<-[:ANSWERED]-(:Answer)) AS answerCount\nRETURN AVG(answerCount) AS averageNumberOfAnswers",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (question:Question)\nWHERE question.view_count > 10000\nWITH question, SIZE((question)<-[:ANSWERED]-(node1:Answer)) AS answerCount\nRETURN AVG(answerCount) AS averageNumberOfAnswers",
+        "num-hop": 1,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Find out how many users have provided more than 5 answers.",
+        "Cypher": "MATCH (user:User)-[provided:PROVIDED]->(answer:Answer)\nWITH user, COUNT(answer) AS answersCount\nWHERE answersCount > 5\nRETURN COUNT(user)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the number of users who have submitted over 5 answers."
+    }
+]

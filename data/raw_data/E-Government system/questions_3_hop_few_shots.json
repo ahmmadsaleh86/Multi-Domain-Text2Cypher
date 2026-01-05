@@ -1,0 +1,187 @@
+[
+    {
+        "Category": "3-hop Node Level",
+        "Question": "What are the names and phone numbers of employees who started working before 2018 and are managing others with a title of 'Senior Analyst' in departments located in the 'Central' area?",
+        "Cypher": "MATCH (department:Department)<-[works_in:WORKS_IN]-(manager:Employee)-[manages:MANAGES]->(subordinate:Employee)-[works_in_sub:WORKS_IN]->(sub_department:Department)\nWHERE manager.start_date.year < 2018 AND subordinate.title = \"Senior Analyst\" AND department.name CONTAINS \"Central\"\nRETURN manager, works_in, department, manages, subordinate, works_in_sub, sub_department, manager.phone_number, manager.first_name, manager.last_name",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "List the email addresses and phone numbers of persons who own vehicles made after 2015 and have applied for the government service 'Renew Passport'.",
+        "Cypher": "MATCH (person:Person)-[owns:OWNS]->(vehicle:Vehicle)\nWHERE vehicle.year > 2015\nMATCH (person)-[apply:APPLIED_FOR]->(application:Application)-[relate:RELATES_TO]->(service:Service {name:\"Renew Passport\"})\nRETURN person, owns, vehicle, apply, application, relate, service, person.email, person.phone_number",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the email addresses and phone numbers of individuals owning vehicles manufactured post-2015 and those who have registered for the 'Renew Passport' government service."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Identify the first and last names of employees who manage at least two other employees and have been employed since before 2010 in any department that has contacted more than 200 calls last month.",
+        "Cypher": "MATCH (department:Department)<-[works_in:WORKS_IN]-(manager:Employee)-[manages:MANAGES]->(employee:Employee)\nWHERE manager.start_date.year < 2010 AND size((manager)-[:MANAGES]->()) >= 2 AND department.phone > 200\nRETURN department, works_in, manager, manages, employee, manager.first_name, manager.last_name",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (department:Department)<-[works_in:WORKS_IN]-(manager:Employee)-[manages:MANAGES]->(employee:Employee)\nWHERE manager.start_date.year < 2010 AND size((manager)-[:MANAGES]->()) >= 2 AND department.phone > 200\nRETURN relation5, department, works_in, manager, manages, employee, manager.first_name, manager.last_name",
+        "num-hop": 3,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Provide the details (first name, last name, phone number) of people who live in 'New York', have made payments over $1000 for 'Health Services', and drive a 'Toyota' made in 2010 or later.",
+        "Cypher": "MATCH (person:Person)-[live:LIVES_AT]->(address:Address {city:\"New York\"})\nMATCH (person)-[made:MADE]->(payment:Payment)-[associate:ASSOCIATED_WITH]->(application:Application)\nMATCH (application)-[serviceRelation:RELATES_TO]->(service:Service {name:\"Health Services\"})\nMATCH (person)-[own:OWNS]->(vehicle:Vehicle {make:\"Toyota\"})\nWHERE payment.amount > 1000 AND vehicle.year >= 2010\nRETURN person, live, address, made, payment, associate, application, serviceRelation, service, own, vehicle, person.first_name, person.last_name, person.phone_number",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "Supply the information (first name, last name, phone number) of individuals residing in 'New York' who have completed transactions exceeding $1000 for 'Health Services' and own a 'Toyota' produced in 2010 or more recent."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Can you show me the names and contact information of all the employees from the 'Technology' department who have a vehicle from the year 2020 or newer?",
+        "Cypher": "MATCH (employee:Employee)-[works_in:WORKS_IN]->(department:Department {name:\"Technology\"})\nMATCH (employee)-[:OWNS]->(vehicle:Vehicle {year:2020})\nRETURN employee, works_in, department, vehicle, employee.first_name, employee.last_name, employee.email, employee.phone_number",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (employee:Employee)-[works_in:WORKS_IN]->(department:Department {name:\"Technology\"})\nMATCH (employee)-[relation4:OWNS]->(vehicle:Vehicle {year:2020})\nRETURN relation4, employee, works_in, department, vehicle, employee.first_name, employee.last_name, employee.email, employee.phone_number",
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Fetch the personal details such as first name and last name of all persons who have submitted a 'Visa Application' and live in an address within the state 'California'.",
+        "Cypher": "MATCH (person:Person)-[submitted:SUBMITTED]->(document:Document)-[:REQUIRES]->(service:Service {name:\"Visa Application\"})\nMATCH (person)-[lives:LIVES_AT]->(address:Address {state:\"California\"})\nRETURN person, submitted, document, service, lives, address, person.first_name, person.last_name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (person:Person)-[submitted:SUBMITTED]->(document:Document)-[relation5:REQUIRES]-(service:Service {name:\"Visa Application\"})\nMATCH (person)-[lives:LIVES_AT]->(address:Address {state:\"California\"})\nRETURN relation5, person, submitted, document, service, lives, address, person.first_name, person.last_name",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Retrieve the first name and last name of every individual who has applied for a 'Visa Application' and resides at an address in the state 'California'."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "What are the durations since when employees who started working in '2012' or earlier have been managing other employees in departments with more than 50 staff?",
+        "Cypher": "MATCH (department:Department)<-[works_in:WORKS_IN]-(manager:Employee)-[manages:MANAGES]->(employee:Employee)\nWHERE manager.start_date.year <= 2012 AND size((department)<-[:WORKS_IN]-(:Employee)) > 50\nRETURN department, works_in, manager, manages, employee, duration.between(manages.manager_since, date())",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (department:Department)<-[works_in:WORKS_IN]-(manager:Employee)-[manages:MANAGES]->(employee:Employee)\nWHERE manager.start_date.year <= 2012 AND size((department)<-[:WORKS_IN]-(node3:Employee)) > 50\nRETURN relation6, node3, department, works_in, manager, manages, employee, duration.between(manages.manager_since, date())",
+        "num-hop": 3,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Find the relationship dates, such as purchase dates or since dates, for all persons residing in 'Boston' who also own a vehicle purchased no more than five years ago and have made payments exceeding $500.",
+        "Cypher": "MATCH (person:Person)-[lives_at:LIVES_AT]->(address:Address {city:\"Boston\"})\nMATCH (person)-[owns:OWNS]->(vehicle:Vehicle)\nWHERE owns.purchase_date >= date().year - 5\nMATCH (person)-[made:MADE]->(payment:Payment)\nWHERE payment.amount > 500\nRETURN person, lives_at, owns, vehicle, made, payment, lives_at.since, owns.purchase_date",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (person:Person)-[lives_at:LIVES_AT]->(address:Address {city:\"Boston\"})\nMATCH (person)-[owns:OWNS]->(vehicle:Vehicle)\nWHERE owns.purchase_date >= date().year - 5\nMATCH (person)-[made:MADE]->(payment:Payment)\nWHERE payment.amount > 500\nRETURN address, person, lives_at, owns, vehicle, made, payment, lives_at.since, owns.purchase_date",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Identify the relationship dates, including purchase dates or since dates, for all individuals living in 'Boston' who own a vehicle bought within the last five years and have completed payments over $500."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Show the relationship attributes such as manager_since dates for employees who are managing others within the same department and have been with the organization for more than a decade.",
+        "Cypher": "MATCH (manager:Employee)-[works:WORKS_IN]->(department:Department)<-[works_in:WORKS_IN]-(subordinate:Employee)-[manage:MANAGES]->(manager)\nWHERE duration.inDays(manager.start_date, date()).years > 10\nRETURN manager, works, department, works_in, subordinate, manage, manage.manager_since",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Display the managerial attributes like manager_since dates for employees managing peers in the same department who have been part of the organization for over ten years."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "For all persons who have requested the 'Business Licensing' service, what is the start date of their relationship with their current address?",
+        "Cypher": "MATCH (person:Person)-[requested:REQUESTED]->(service:Service {name:\"Business Licensing\"})\nMATCH (person)-[lives_at:LIVES_AT]->(address:Address)\nRETURN person, requested, service, lives_at, address, lives_at.since",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "For all individuals who applied for the 'Business Licensing' service, when did their association with their present address begin?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Detail the 'role' characteristics from APPLIED_FOR and MANAGES relations for employees working in 'Health Services' who have applied for leadership positions.",
+        "Cypher": "MATCH (employee:Employee)-[works_in:WORKS_IN]->(department:Department {name:\"Health Services\"})\nMATCH (employee)-[applied_for:APPLIED_FOR]->(application:Application)\nWHERE applied_for.role CONTAINS \"leadership\"\nMATCH (manager:Employee)-[manages:MANAGES]->(employee)\nRETURN employee, works_in, department, applied_for, application, manager, manages, applied_for.role, manages.manager_since",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Can you provide the date details like submission and role applied for all people who applied for an 'Emergency Services' application and made a payment using 'Credit Card'?",
+        "Cypher": "MATCH (person:Person)-[applied_for:APPLIED_FOR]->(application:Application)-[relates_to:RELATES_TO]->(service:Service {name:\"Emergency Services\"}), \n      (person)-[made:MADE]->(payment:Payment {method:\"Credit Card\"})\nRETURN person, applied_for, application, relates_to, service, made, payment, application.submission_date, applied_for.role",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the dates of submission and the roles applied for by every applicant who used a 'Credit Card' to make a payment for an 'Emergency Services' application?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "How many employees have been managed by a single manager across the entire 'Finance Department' since 2015, and who holds the title of 'Department Head'?",
+        "Cypher": "MATCH (manager:Employee)-[manages:MANAGES]->(employee:Employee)-[works:WORKS_IN]->(department:Department {name: \"Finance\"})\nWHERE department.name = \"Finance\" AND manager.title = \"Department Head\" AND manages.manager_since.year >= 2015\nRETURN COUNT(DISTINCT employee)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Since 2015, what is the number of employees a single manager has supervised in the 'Finance Department', and who is the 'Department Head'?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the average amount paid by people living in 'Chicago' who have owned their vehicles since 2016 or later for services provided by the governmental 'Housing Agency'?",
+        "Cypher": "MATCH (person:Person)-[:LIVES_AT]->(address:Address {city: \"Chicago\"})\nMATCH (person)-[:OWNS {purchase_date: date}]->(vehicle:Vehicle)\nWHERE date.year >= 2016\nMATCH (person)-[:MADE]->(payment:Payment)-[:ASSOCIATED_WITH]->(application:Application)-[:RELATES_TO]->(service:Service)\nMATCH (department:Department {name: \"Housing Agency\"})-[:PROVIDES]->(service)\nRETURN AVG(payment.amount)",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (person:Person)-[relation7:LIVES_AT]->(address:Address {city: \"Chicago\"})\nMATCH (person)-[relation8:OWNS {purchase_date: date}]->(vehicle:Vehicle)\nWHERE date.year >= 2016\nMATCH (person)-[relation9:MADE]->(payment:Payment)-[relation10:ASSOCIATED_WITH]->(application:Application)-[relation11:RELATES_TO]->(service:Service)\nMATCH (department:Department {name: \"Housing Agency\"})-[relation12:PROVIDES]->(service)\nRETURN AVG(payment.amount)",
+        "num-hop": 6,
+        "Grammatical-Validation": false,
+        "Semantic-EQL-Question": "What is the average payment amount for services associated with the Housing Agency among vehicle owners in Chicago who purchased their vehicles after 2015?",
+        "Max-Semantic-Score": 0.8913437128067017,
+        "Avg-Semantic-Score": 0.8298191428184509
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Could you calculate the total number of 'Renewal License' applications submitted by persons owning vehicles of the model year 2018 or newer?",
+        "Cypher": "MATCH (person:Person)-[:OWNS]->(vehicle:Vehicle)\nWHERE vehicle.year >= 2018\nMATCH (person)-[:APPLIED_FOR]->(application:Application)-[:RELATES_TO]->(service:Service {name: \"Renewal License\"})\nRETURN COUNT(DISTINCT application)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (person:Person)-[relation4:OWNS]->(vehicle:Vehicle)\nWHERE vehicle.year >= 2018\nMATCH (person)-[relation5:APPLIED_FOR]->(application:Application)-[relation6:RELATES_TO]->(service:Service {name: \"Renewal License\"})\nRETURN COUNT(DISTINCT application)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you determine how many 'Renewal License' applications were filed by individuals who own vehicles from the model year 2018 or later?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the count and average amount of payments made by employees of the 'Technology Sector' with bought vehicles within the last 3 years?",
+        "Cypher": "MATCH (employee:Employee)-[:WORKS_IN]->(department:Department {name:\"Technology Sector\"})\nMATCH (employee)-[:OWNS]->(vehicle:Vehicle)\nWHERE date().year - vehicle.year <= 3\nMATCH (employee)-[:MADE]->(payment:Payment)\nRETURN COUNT(payment) AS NumberOfPayments, AVG(payment.amount) AS AveragePaymentAmount",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (employee:Employee)-[relation4:WORKS_IN]->(department:Department {name:\"Technology Sector\"})\nMATCH (employee)-[relation5:OWNS]->(vehicle:Vehicle)\nWHERE date().year - vehicle.year <= 3\nMATCH (employee)-[relation6:MADE]->(payment:Payment)\nRETURN COUNT(payment) AS NumberOfPayments, AVG(payment.amount) AS AveragePaymentAmount",
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Count the total number of documents submitted relative to 'Construction Permits' by individuals who have lived at their current address for at least two years.",
+        "Cypher": "MATCH (person:Person)-[livesAt:LIVES_AT]->(address:Address)\nWHERE duration.between(livesAt.since, date()).years >= 2\nMATCH (person)-[:SUBMITTED]->(document:Document)-[:REQUIRES]->(service:Service {name: \"Construction Permits\"})\nRETURN COUNT(document) AS TotalDocumentsSubmitted",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (person:Person)-[livesAt:LIVES_AT]->(address:Address)\nWHERE duration.between(livesAt.since, date()).years >= 2\nMATCH (person)-[relation5:SUBMITTED]->(document:Document)-[relation6:REQUIRES]-(service:Service {name: \"Construction Permits\"})\nRETURN COUNT(document) AS TotalDocumentsSubmitted",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the aggregate amount of documents submitted concerning 'Construction Permits' by people residing at their present address for no less than two years."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Compute the maximum number of employees managed directly by a single manager in the 'Administrative Division' who have started their managing roles post-2018.",
+        "Cypher": "MATCH (manager:Employee)-[manages:MANAGES]->(employee:Employee)-[worksIn:WORKS_IN]->(department:Department {name:\"Administrative Division\"})\nWHERE manages.manager_since.year > 2018\nRETURN manager.employee_id AS ManagerID, COUNT(employee) AS NumberOfEmployeesManaged\nORDER BY NumberOfEmployeesManaged DESC\nLIMIT 1",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Find the highest count of employees directly supervised by an individual manager in the 'Administrative Division', where the manager began their role after the year 2018."
+    }
+]

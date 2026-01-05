@@ -1,0 +1,95 @@
+[
+    {
+        "Type": "Node",
+        "Label": "Answer",
+        "Attributes": {
+            "uuid": "Long",
+            "title": "String",
+            "link": "String",
+            "is_accepted": "Boolean",
+            "body_markdown": "String",
+            "score": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Comment",
+        "Attributes": {
+            "uuid": "Long",
+            "link": "String",
+            "score": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "User",
+        "Attributes": {
+            "uuid": "Long",
+            "display_name": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Question",
+        "Attributes": {
+            "uuid": "Long",
+            "title": "String",
+            "creation_date": "Date",
+            "accepted_answer_id": "Long",
+            "link": "String",
+            "view_count": "Long",
+            "answer_count": "Long",
+            "body_markdown": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Tag",
+        "Attributes": {
+            "name": "String",
+            "link": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "TAGGED",
+        "Attributes": {},
+        "From": "Question",
+        "To": "Tag"
+    },
+    {
+        "Type": "Relation",
+        "Label": "ASKED",
+        "Attributes": {},
+        "From": "User",
+        "To": "Question"
+    },
+    {
+        "Type": "Relation",
+        "Label": "ANSWERED",
+        "Attributes": {},
+        "From": "Answer",
+        "To": "Question"
+    },
+    {
+        "Type": "Relation",
+        "Label": "COMMENTED",
+        "Attributes": {},
+        "From": "User",
+        "To": "Comment"
+    },
+    {
+        "Type": "Relation",
+        "Label": "COMMENTED_ON",
+        "Attributes": {},
+        "From": "Comment",
+        "To": "Question"
+    },
+    {
+        "Type": "Relation",
+        "Label": "PROVIDED",
+        "Attributes": {},
+        "From": "User",
+        "To": "Answer"
+    }
+]

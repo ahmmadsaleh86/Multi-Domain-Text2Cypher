@@ -1,0 +1,183 @@
+[
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the locations of the users who posted tweets containing the link 'http://example.com'?",
+        "Cypher": "MATCH (tweet:Tweet)-[contains:CONTAINS]->(link:Link {url:\"http://example.com\"})\nMATCH (user:User)-[posts:POSTS]->(tweet)\nRETURN tweet, contains, link, user, posts, user.location",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Where are the users located who shared tweets with the link 'http://example.com'?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Display the profile image URLs of all users who are followed by the user with the screen_name 'john_doe'.",
+        "Cypher": "MATCH (follower:User {screen_name:\"john_doe\"})-[follows:FOLLOWS]->(followedUser:User)\nRETURN follower, follows, followedUser, followedUser.profile_image_url",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Show the profile picture links for every user who is followed by the user with the screen_name 'john_doe'."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Can you list the names of all hashtags used in tweets by the user identified by screen_name 'alice123'?",
+        "Cypher": "MATCH (user:User {screen_name:\"alice123\"})-[userPosts:POSTS]->(tweet:Tweet)-[tweetTags:TAGS]->(hashtag:Hashtag)\nRETURN user, userPosts, tweet, tweetTags, hashtag, hashtag.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide a list of all the hashtags that 'alice123' has included in her tweets?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Show the text of tweets that replied to the tweet with id 987654321.",
+        "Cypher": "MATCH (replyTweet:Tweet)-[replyTo:REPLY_TO]->(originalTweet:Tweet {id:987654321})\nRETURN replyTweet, replyTo, originalTweet, replyTweet.text",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Display the content of tweets responding to the tweet with id 987654321."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Retrieve the urls of sources used in tweets that have received more than 1000 favorites.",
+        "Cypher": "MATCH (tweet:Tweet)-[usingRel:USING]->(source:Source)\nWHERE tweet.favorites > 1000\nRETURN tweet, usingRel, source, source.url",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Provide the screen names of Me nodes followed by the user with screen_name 'tech_guru'.",
+        "Cypher": "MATCH (followingUser:User {screen_name: 'tech_guru'})-[follows:FOLLOWS]->(targetMe:Me)\nRETURN followingUser, follows, targetMe, targetMe.screen_name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the screen names of Me nodes and then display the user whose screen_name is 'tech_guru'."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Who are the users directly followed by user 'sam_sparks' and whom do they follow in turn?",
+        "Cypher": "MATCH (userSam:User {screen_name:\"sam_sparks\"})-[relationSamFollower:FOLLOWS]->(followedUser:User)-[relationUserFollower:FOLLOWS]->(nextLevelUser:User)\nRETURN userSam, relationSamFollower, followedUser, relationUserFollower, nextLevelUser, followedUser.screen_name, nextLevelUser.screen_name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Who do the users that 'sam_sparks' directly follows go on to follow themselves?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Identify pairs of tweets where one tweet retweets another. Does the original tweet have more than 500 favorites?",
+        "Cypher": "MATCH (originalTweet:Tweet)-[retweetRelation:RETWEETS]->(retweetedTweet:Tweet)\nWHERE originalTweet.favorites > 500\nRETURN originalTweet, retweetRelation, retweetedTweet, originalTweet.favorites",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Find pairs of tweets in which one is a retweet of the other. Does the initial tweet receive over 500 favorites?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "List all tweet pairs where a tweet replies to another, and check if the replied tweet has less than 50 favorites.",
+        "Cypher": "MATCH (replyingTweet:Tweet)-[reply:REPLY_TO]->(repliedTweet:Tweet)\nWHERE repliedTweet.favorites < 50\nRETURN replyingTweet, reply, repliedTweet, replyingTweet.text, repliedTweet.text",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Identify pairs of tweets in which one tweet is a reply to another, and verify whether the original tweet has fewer than 50 favorites."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Which tweets mention the 'Me' node that has the location 'New York'?",
+        "Cypher": "MATCH (me:Me {location:\"New York\"})<-[:MENTIONS]-(tweet:Tweet)\nRETURN me, tweet, tweet.text",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (me:Me {location:\"New York\"})<-[relation2:MENTIONS]-(tweet:Tweet)\nRETURN relation2, me, tweet, tweet.text",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which tweets refer to the 'Me' node located in 'New York'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Provide details of tweets and the hashtags they tag, particularly look for the hashtag named 'worldnews'.",
+        "Cypher": "MATCH (tweet:Tweet)-[tag:TAGS]->(hashtag:Hashtag {name:\"worldnews\"})\nRETURN tweet, tag, hashtag, tweet.text",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Supply information about tweets and the hashtags they use, especially focusing on the hashtag labeled 'worldnews'."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Can you show the relationship of the posts between users and tweets where the tweet contains the word 'breaking'?",
+        "Cypher": "MATCH (user:User)-[posts:POSTS]->(tweet:Tweet)\nWHERE tweet.text CONTAINS 'breaking'\nRETURN user, posts, tweet, tweet.text",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you illustrate the connection in the posts between users and tweets when the tweet includes the term 'breaking'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the average number of followers for users who have mentioned the 'me' node in their tweets?",
+        "Cypher": "MATCH (user:User)-[:POSTS]->(tweet:Tweet)-[:MENTIONS]->(me:Me)\nRETURN AVG(user.followers)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)-[relation3:POSTS]->(tweet:Tweet)-[relation4:MENTIONS]->(me:Me)\nRETURN AVG(user.followers)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the average count of followers for users who have referenced the 'me' node in their tweets?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many users follow the 'me' node and what is the minimum number of followers among them?",
+        "Cypher": "MATCH (user:User)-[follows:FOLLOWS]->(me:Me)\nRETURN count(user) AS NumberOfFollowers, min(user.followers) AS MinimumFollowers",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many individuals are followers of the 'me' node, and what is the lowest follower count for those users?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Calculate the total number of tweets posted by users who follow more than 1000 other users.",
+        "Cypher": "MATCH (user:User)-[posts:POSTS]->(tweet:Tweet)\nWHERE user.following > 1000\nRETURN COUNT(tweet)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the aggregate sum of tweets made by users who are following over 1000 different users."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the maximum number of statuses posted by any user who follows the 'me' node with more than 5000 followers?",
+        "Cypher": "MATCH (user:User)-[follows:FOLLOWS]->(me:Me)\nWHERE me.followers > 5000\nRETURN MAX(user.statuses)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest count of status updates made by any follower of the 'me' node who has over 5000 followers?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Count the tweets containing hashtags that have been retweeted more than 100 times.",
+        "Cypher": "MATCH (tweet:Tweet)-[tags:TAGS]->(hashtag:Hashtag)\nWHERE tweet.favorites > 100\nRETURN COUNT(tweet)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Tally the tweets that include hashtags and have been retweeted over 100 times."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the sum of favorites received by tweets that were replied to by tweets from users located in 'California'?",
+        "Cypher": "MATCH (user:User)-[posts:POSTS]->(replyTweet:Tweet)-[replyTo:REPLY_TO]->(originalTweet:Tweet)\nWHERE user.location = \"California\"\nRETURN SUM(originalTweet.favorites)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the total number of favorites on tweets that have replies from users in 'California'?"
+    }
+]

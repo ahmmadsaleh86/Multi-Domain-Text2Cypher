@@ -1,0 +1,115 @@
+[
+    {
+        "Type": "Node",
+        "Label": "Station",
+        "Attributes": {
+            "station_id": "String",
+            "name": "String",
+            "location": "Point",
+            "capacity": "Integer"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Train",
+        "Attributes": {
+            "train_id": "String",
+            "model": "String",
+            "capacity": "Integer",
+            "operator": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Route",
+        "Attributes": {
+            "route_id": "String",
+            "name": "String",
+            "length": "Float"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "City",
+        "Attributes": {
+            "city_id": "String",
+            "name": "String",
+            "population": "Integer"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Employee",
+        "Attributes": {
+            "employee_id": "String",
+            "name": "String",
+            "role": "String",
+            "salary": "Float"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "SERVES",
+        "From": "Station",
+        "To": "City",
+        "Attributes": {
+            "distance_to_city_center": "Float"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "LOCATED_IN",
+        "From": "Station",
+        "To": "City",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "OPERATES",
+        "From": "Train",
+        "To": "Route",
+        "Attributes": {
+            "operating_days": "String",
+            "departure_time": "DateTime",
+            "arrival_time": "DateTime"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "STOPS_AT",
+        "From": "Route",
+        "To": "Station",
+        "Attributes": {
+            "stop_number": "Integer",
+            "arrival_delay": "Float",
+            "departure_delay": "Float"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "EMPLOYS",
+        "From": "Station",
+        "To": "Employee",
+        "Attributes": {
+            "employment_date": "Date",
+            "shift": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_OFFICE_IN",
+        "From": "Employee",
+        "To": "Station",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "MANAGES",
+        "From": "Employee",
+        "To": "Route",
+        "Attributes": {
+            "assignment_start_date": "Date",
+            "assignment_end_date": "Date"
+        }
+    }
+]

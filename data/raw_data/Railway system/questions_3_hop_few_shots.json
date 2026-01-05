@@ -1,0 +1,190 @@
+[
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Can you provide the list of train operators and the models they operate that are connected through a route starting from a station located in a city with a population exceeding 500,000?",
+        "Cypher": "MATCH (city:City)<-[locatedIn:LOCATED_IN]-(station:Station)<-[stopsAt:STOPS_AT]-(route:Route)<-[operates:OPERATES]-(train:Train)\nWHERE city.population > 500000\nRETURN city, locatedIn, station, stopsAt, route, operates, train, train.operator, train.model",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply a list of train operators along with the models they use, for routes originating from a station in a city with a population over 500,000?"
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "What are the names of the employees working in stations with a capacity of over 800 passengers, where these stations are served by trains with models launched post-2010?",
+        "Cypher": "MATCH (station:Station)-[employ:EMPLOYS]->(employee:Employee), (train:Train)-[operates:OPERATES]->(route:Route)-[stops_at:STOPS_AT]->(station)\nWHERE station.capacity > 800 AND train.model > \"2010\"\nRETURN station, employ, employee, train, operates, route, stops_at, employee.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you list the employees stationed at facilities accommodating more than 800 passengers, specifically where the serving trains were introduced after 2010?"
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Could you identify all the different train models that stop at stations which are the last stop on their route and have a station capacity exceeding 1,000?",
+        "Cypher": "MATCH (train:Train)-[operates:OPERATES]->(route:Route)-[stops_at:STOPS_AT]->(station:Station)\nWHERE station.capacity > 1000 AND stops_at.stop_number = route.length\nRETURN train, operates, route, stops_at, station, train.model",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (train:Train)-[operates:OPERATES]->(route:Route)<-[stop_at:STOPS_AT]-(station:Station)\nWHERE station.capacity > 1000 AND stop_at.stop_number = size((node3:Route)-[:STOPS_AT]->(station))\nRETURN relation6, node3, train, operates, route, stop_at, station, train.model",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you list all the train models that halt at terminals that are the final destination on their route and possess a station capacity of more than 1,000?"
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "What are the names of all cities that have a railway station where a train capable of carrying more than 1200 passengers stops?",
+        "Cypher": "MATCH (city:City)<-[serves:SERVES]-(station:Station)<-[stops_at:STOPS_AT]-(route:Route)<-[operates:OPERATES]-(train:Train)\nWHERE train.capacity > 1200\nRETURN city, serves, station, stops_at, route, operates, train, city.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you list all the cities with a railway station where trains that can accommodate over 1200 passengers make a stop?"
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Please list the cities whose stations are served by routes exceeding 300 km in length and have more than two trains operating on them.",
+        "Cypher": "MATCH (city:City)<-[serves:SERVES]-(station:Station)<-[stops_at:STOPS_AT]-(route:Route)\nWHERE route.length > 300\nMATCH (train:Train)-[operates:OPERATES]->(route)\nWITH city, serves, station, stops_at, route, COUNT(train) AS trainCount\nWHERE trainCount > 2\nRETURN city, serves, station, stops_at, route, city.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (city:City)<-[serves:SERVES]-(station:Station)<-[stops_at:STOPS_AT]-(route:Route)\nWHERE route.length > 300\nMATCH (train:Train)-[operates:OPERATES]->(route)\nWITH city, serves, station, stops_at, route, COUNT(train) AS trainCount\nWHERE trainCount > 2\nRETURN operates, train, city, serves, station, stops_at, route, city.name",
+        "num-hop": 3,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Identify all stations that serve trains operated by a specific operator named 'TrainLineX', and list those stations along with the city names where these stations are not located but exclusively serve.",
+        "Cypher": "MATCH (train:Train {operator: \"TrainLineX\"})-[:OPERATES]->(route:Route)-[:STOPS_AT]->(station:Station)-[:LOCATED_IN]->(located_city:City)\nMATCH (station)-[serve:SERVES]->(served_city:City)\nWHERE NOT served_city=located_city\nRETURN train, route, station, located_city, serve, served_city, station.name, served_city.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (train:Train {operator: \"TrainLineX\"})-[relation5:OPERATES]->(route:Route)-[relation6:STOPS_AT]->(station:Station)-[relation7:LOCATED_IN]->(located_city:City)\nMATCH (station)-[serve:SERVES]->(served_city:City)\nWHERE NOT served_city=located_city\nRETURN relation7, relation6, relation5, train, route, station, located_city, serve, served_city, station.name, served_city.name",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "List all stations serving trains from 'TrainLineX', along with cities where the stations are not situated but exclusively serve."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "What is the average delay in departure and arrival times for trains that operate on routes connecting cities with populations above 1 million?",
+        "Cypher": "MATCH (city:City)-[*]-(station:Station)-[stop:STOPS_AT]-(route:Route)<-[operates:OPERATES]-(train:Train)\nWHERE city.population > 1000000\nRETURN city, station, stop, route, operates, train, avg(stop.arrival_delay) as arrival_delay, avg(stop.departure_delay) as departure_delay",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (city:City)-[*]-(station:Station)-[stop:STOPS_AT]-(route:Route)<-[operates:OPERATES]-(train:Train)\nWHERE city.population > 1000000\nRETURN *, city, station, stop, route, operates, train, avg(stop.arrival_delay) as arrival_delay, avg(stop.departure_delay) as departure_delay",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical delay in departure and arrival times for trains running on routes that link cities with populations over 1 million?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "In which shift do employees with a salary above $5000 work, provided they are employed in stations having a capacity less than 500 and are served by more than one train?",
+        "Cypher": "MATCH (station:Station)-[employ:EMPLOYS]->(employee:Employee)\nWHERE station.capacity < 500 AND employee.salary > 5000\nWITH station, employ, employee\nMATCH (station)<-[:OPERATES]-(train:Train)\nWITH station, COUNT(train) AS trainCount, employ, employee\nWHERE trainCount > 1\nRETURN station, employ, employee, employ.shift",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (station:Station)-[employ:EMPLOYS]->(employee:Employee)\nWHERE station.capacity < 500 AND employee.salary > 5000\nWITH station, employ, employee\nMATCH (station)<-[relation4:OPERATES]-(train:Train)\nWITH station, COUNT(train) AS trainCount, employ, employee\nWHERE trainCount > 1\nRETURN relation4, train, station, employ, employee, employ.shift",
+        "num-hop": 2,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "How many different shifts are employees working who have offices in stations with a capacity over 1000 and are served by at least three different train models?",
+        "Cypher": "MATCH (employee:Employee)-[has_office:HAS_OFFICE_IN]->(office_station:Station)\nWHERE office_station.capacity > 1000\nWITH office_station, employee, has_office\nMATCH (office_station)<-[operates:OPERATES]-(train:Train)\nWITH office_station, employee, has_office, COUNT(DISTINCT train.model) AS different_models\nWHERE different_models >= 3\nRETURN office_station, employee, has_office, COLLECT(DISTINCT employee.shift) AS shifts",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (employee:Employee)-[has_office:HAS_OFFICE_IN]->(office_station:Station)\nWHERE office_station.capacity > 1000\nWITH office_station, employee, has_office\nMATCH (office_station)<-[operates:OPERATES]-(train:Train)\nWITH office_station, employee, has_office, COUNT(DISTINCT train.model) AS different_models\nWHERE different_models >= 3\nRETURN operates, train, office_station, employee, has_office, COLLECT(DISTINCT employee.shift) AS shifts",
+        "num-hop": 2,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Can you tell me the total number of stops that trains make prior to arriving at stations located in cities with a population over 800,000?",
+        "Cypher": "MATCH (city:City)<-[located:LOCATED_IN]-(station:Station)<-[stop:STOPS_AT]-(route:Route)\nWHERE city.population > 800000\nRETURN city, located, station, stop, route, count(stop) AS stop_count",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you inform me how many stops trains have before they reach stations in cities that have populations exceeding 800,000?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "What is the distance to the city center for the farthest station that a train operating on weekdays stops at?",
+        "Cypher": "MATCH (train:Train)-[operates:OPERATES]->(route:Route)-[stops_at:STOPS_AT]->(station:Station)-[serves:SERVES]->(city:City)\nWHERE operates.operating_days CONTAINS \"weekdays\"\nRETURN train, operates, route, stops_at, station, serves, city, MAX(serves.distance_to_city_center)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "How far is the city center from the most distant station where a weekday train stops?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "List the operating days and average delays for routes terminating in cities where the total station capacities exceed 2000.",
+        "Cypher": "MATCH (city:City)<-[:LOCATED_IN]-(station:Station)\nWITH city, SUM(station.capacity) AS total_capacity\nWHERE total_capacity > 2000\nMATCH (city)<-[:LOCATED_IN]-(terminal_station:Station)<-[:STOPS_AT {stop_number: 1}]-(route:Route)-[operates:OPERATES]->(train:Train)\nWITH route, AVG(operates.departure_time) AS avg_departure_delay, AVG(operates.arrival_time) AS avg_arrival_delay, operates.operating_days\nRETURN route, operates, avg_departure_delay, avg_arrival_delay, operates.operating_days",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (city:City)<-[relation5:LOCATED_IN]-(station:Station)\nWITH city, SUM(station.capacity) AS total_capacity\nWHERE total_capacity > 2000\nMATCH (city)<-[relation6:LOCATED_IN]-(terminal_station:Station)<-[relation7:STOPS_AT {stop_number: 1}]-(route:Route)-[operates:OPERATES]-(train:Train)\nWITH route, AVG(operates.departure_time) AS avg_departure_delay, AVG(operates.arrival_time) AS avg_arrival_delay, operates.operating_days\nRETURN relation7, relation6, relation5, train, terminal_station, station, city, route, operates, avg_departure_delay, avg_arrival_delay, operates.operating_days",
+        "num-hop": 4,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Compute the average and maximum salary of employees who work in stations that at least two routes, serving cities with populations over 300,000, pass through.",
+        "Cypher": "MATCH (station:Station)-[:STOPS_AT]-(route:Route)-[:SERVES]->(city:City)\nWHERE city.population > 300000\nWITH station, COUNT(DISTINCT route) AS routes_count\nWHERE routes_count >= 2\nMATCH (station)-[:EMPLOYS]->(employee:Employee)\nRETURN AVG(employee.salary) AS average_salary, MAX(employee.salary) AS maximum_salary",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (station:Station)-[relation4:STOPS_AT]-(route:Route)-[relation5:SERVES]->(city:City)\nWHERE city.population > 300000\nWITH station, COUNT(DISTINCT route) AS routes_count\nWHERE routes_count >= 2\nMATCH (station)-[relation6:EMPLOYS]->(employee:Employee)\nRETURN AVG(employee.salary) AS average_salary, MAX(employee.salary) AS maximum_salary",
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the sum of capacities for all trains that operate on routes connecting stations which are the only stations in cities they serve?",
+        "Cypher": "MATCH (city:City)<-[serves:SERVES]-(station:Station)-[:LOCATED_IN]->(sameCity:City)\nWITH city, COUNT(DISTINCT station) AS uniqueStationCount\nWHERE uniqueStationCount = 1\nMATCH (station:Station)-[:LOCATED_IN]->(city)\nMATCH (station)-[:STOPS_AT]-(route:Route)-[:OPERATES]-(train:Train)\nWITH SUM(train.capacity) AS totalCapacity\nRETURN totalCapacity",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (city:City)<-[serves:SERVES]-(station:Station)-[relation7:LOCATED_IN]->(sameCity:City)\nWITH city, COUNT(DISTINCT station) AS uniqueStationCount\nWHERE uniqueStationCount = 1\nMATCH (station:Station)-[relation8:LOCATED_IN]->(city)\nMATCH (station)-[relation9:STOPS_AT]-(route:Route)-[relation10:OPERATES]-(train:Train)\nWITH SUM(train.capacity) AS totalCapacity\nRETURN totalCapacity",
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the total capacity of all trains running on routes that link stations, which are the sole stations in their respective cities?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "How many distinct stations serve at least three different routes in cities with at least one station serving trains of over 1000 capacity?",
+        "Cypher": "MATCH (train:Train)-[:OPERATES]->(route:Route)-[:STOPS_AT]->(station:Station)\nWHERE train.capacity > 1000\nWITH DISTINCT station\nMATCH (station)-[:SERVES]->(city:City)\nWITH DISTINCT city\nMATCH (city)<-[:LOCATED_IN]-(stationInCity:Station)-[:STOPS_AT]->(routeInCity:Route)\nWITH stationInCity, COUNT(DISTINCT routeInCity) AS numRoutes\nWHERE numRoutes >= 3\nRETURN COUNT(DISTINCT stationInCity)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (train:Train)-[relation6:OPERATES]->(route:Route)-[relation10:STOPS_AT]-(station:Station)\nWHERE train.capacity > 1000\nWITH DISTINCT station\nMATCH (station)-[relation8:SERVES]->(city:City)\nWITH DISTINCT city\nMATCH (city)<-[relation7:LOCATED_IN]-(stationInCity:Station)-[:STOPS_AT]->(routeInCity:Route)\nWITH stationInCity, COUNT(DISTINCT routeInCity) AS numRoutes\nWHERE numRoutes >= 3\nRETURN COUNT(DISTINCT stationInCity)",
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many unique stations serve a minimum of three distinct routes in cities where there is at least one station that accommodates trains with a capacity of over 1000?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Can you calculate the total number of stations that are directly connected to routes longer than 250 km and serve cities with a population of less than 400,000?",
+        "Cypher": "MATCH (station:Station)-[:STOPS_AT]-(route:Route)\nWHERE route.length > 250\nMATCH (station)-[:SERVES]->(city:City)\nWHERE city.population < 400000\nRETURN COUNT(DISTINCT station)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (station:Station)-[relation3:STOPS_AT]-(route:Route)\nWHERE route.length > 250\nMATCH (station)-[relation4:SERVES]->(city:City)\nWHERE city.population < 400000\nRETURN COUNT(DISTINCT station)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you determine how many stations are linked directly to routes exceeding 250 km and cater to cities with populations under 400,000?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the average, minimum, and maximum population of cities where stations are stops for routes operated only on weekends?",
+        "Cypher": "MATCH (train:Train)-[operates:OPERATES]->(route:Route)-[stopsAt:STOPS_AT]->(station:Station)-[locatedIn:LOCATED_IN]->(city:City)\nWHERE operates.operating_days = \"Weekends\"\nRETURN AVG(city.population) AS averagePopulation, MIN(city.population) AS minPopulation, MAX(city.population) AS maxPopulation",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (station:Station)-[relation4:STOPS_AT]->(route:Route)<-[relation5:OPERATES]-(train:Train),\n      (station)-[relation6:LOCATED_IN]->(city:City)\nWHERE train.operating_days = \"Weekends\"\nRETURN AVG(city.population) AS average_population, MIN(city.population) AS min_population, MAX(city.population) AS max_population",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the average, minimum, and maximum populations of cities that have stations serving as stops on routes that only operate during weekends?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Determine the total length of all routes connecting stations with a capacity of 1500 that are located in cities boasting a population greater than 100,000.",
+        "Cypher": "MATCH (station:Station)-[:LOCATED_IN]->(city:City)\nWHERE station.capacity = 1500 AND city.population > 100000\nMATCH (station)<-[:STOPS_AT]-(route:Route)\nRETURN SUM(route.length) AS TotalRouteLength",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (station:Station)-[relation3:LOCATED_IN]->(city:City)\nWHERE station.capacity = 1500 AND city.population > 100000\nMATCH (station)<-[relation4:STOPS_AT]-(route:Route)\nRETURN SUM(route.length) AS TotalRouteLength",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the combined distance of all paths linking stations that have a capacity of 1500 and are situated in cities with populations exceeding 100,000."
+    }
+]

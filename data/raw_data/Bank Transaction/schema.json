@@ -1,0 +1,402 @@
+[
+    {
+        "Type": "Node",
+        "Label": "_Bloom_Perspective_",
+        "Attributes": {
+            "name": "String",
+            "version": "String",
+            "roles": "StringArray",
+            "data": "String",
+            "id": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Purchase",
+        "Attributes": {
+            "date": "Date",
+            "purchaseCode": "String",
+            "amount": "Double",
+            "time": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Address",
+        "Attributes": {
+            "streetAddress": "String",
+            "zip": "String",
+            "city": "String",
+            "state": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "IP",
+        "Attributes": {
+            "ip": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "DeliveryAddress",
+        "Attributes": {
+            "streetAddress": "String",
+            "zip": "String",
+            "city": "String",
+            "state": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "BankAccount",
+        "Attributes": {
+            "accountNumber": "String",
+            "balance": "Double",
+            "lastSend": "Long",
+            "lastReceived": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Login",
+        "Attributes": {
+            "userid": "String",
+            "firstName": "String",
+            "lastName": "String",
+            "mail": "String",
+            "startDate": "Date"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "BankCard",
+        "Attributes": {
+            "accountNumber": "String",
+            "balance": "Double",
+            "latePayments": "Double",
+            "limit": "Double",
+            "securityCode": "String",
+            "expirationDate": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "CreditCard",
+        "Attributes": {
+            "accountNumber": "String",
+            "balance": "Double",
+            "latePayments": "Double",
+            "limit": "Double",
+            "securityCode": "String",
+            "expirationDate": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "_Bloom_Scene_",
+        "Attributes": {
+            "name": "String",
+            "ranges": "String",
+            "version": "String",
+            "gds": "String",
+            "id": "String",
+            "createdBy": "String",
+            "style": "String",
+            "numOfRels": "Long",
+            "lastModified": "Long",
+            "numOfNodes": "Long",
+            "createdAt": "Long",
+            "filters": "String",
+            "nodes": "String",
+            "visualisation": "String",
+            "roles": "StringArray",
+            "relationships": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "SSN",
+        "Attributes": {
+            "ssn": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Shop",
+        "Attributes": {
+            "name": "String",
+            "business": "String",
+            "shopID": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "MoneyTransfer",
+        "Attributes": {
+            "amount": "Double",
+            "transactionDate": "Date"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "UnsecuredLoan",
+        "Attributes": {
+            "accountNumber": "String",
+            "balance": "Double",
+            "APR": "Double",
+            "loanAmount": "Double"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "FinancialInstitute",
+        "Attributes": {
+            "name": "String",
+            "website": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "State",
+        "Attributes": {
+            "name": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "PhoneNumber",
+        "Attributes": {
+            "phone": "String",
+            "provider": "String",
+            "touched": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Flagged",
+        "Attributes": {
+            "fullName": "String",
+            "UniqueId": "String",
+            "firstName": "String",
+            "lastName": "String",
+            "birthDate": "Date"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "AccountHolder",
+        "Attributes": {
+            "fullName": "String",
+            "UniqueId": "String",
+            "firstName": "String",
+            "lastName": "String",
+            "birthDate": "Date"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_SSN",
+        "Attributes": {},
+        "From": "AccountHolder",
+        "To": "SSN"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_SSN",
+        "Attributes": {},
+        "From": "Flagged",
+        "To": "SSN"
+    },
+    {
+        "Type": "Relation",
+        "Label": "LOCATED_IN",
+        "Attributes": {},
+        "From": "IP",
+        "To": "State"
+    },
+    {
+        "Type": "Relation",
+        "Label": "FOR_SHOP",
+        "Attributes": {},
+        "From": "Login",
+        "To": "Shop"
+    },
+    {
+        "Type": "Relation",
+        "Label": "FROM_IP",
+        "Attributes": {},
+        "From": "Purchase",
+        "To": "IP"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_CREDITCARD",
+        "Attributes": {},
+        "From": "AccountHolder",
+        "To": "CreditCard"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_CREDITCARD",
+        "Attributes": {},
+        "From": "Flagged",
+        "To": "CreditCard"
+    },
+    {
+        "Type": "Relation",
+        "Label": "FROM",
+        "Attributes": {},
+        "From": "BankAccount",
+        "To": "FinancialInstitute"
+    },
+    {
+        "Type": "Relation",
+        "Label": "SEND",
+        "Attributes": {},
+        "From": "MoneyTransfer",
+        "To": "BankAccount"
+    },
+    {
+        "Type": "Relation",
+        "Label": "SEND",
+        "Attributes": {},
+        "From": "MoneyTransfer",
+        "To": "MoneyTransfer"
+    },
+    {
+        "Type": "Relation",
+        "Label": "SEND",
+        "Attributes": {},
+        "From": "BankAccount",
+        "To": "BankAccount"
+    },
+    {
+        "Type": "Relation",
+        "Label": "SEND",
+        "Attributes": {},
+        "From": "BankAccount",
+        "To": "MoneyTransfer"
+    },
+    {
+        "Type": "Relation",
+        "Label": "WITH",
+        "Attributes": {
+            "lastUsed": "Date"
+        },
+        "From": "MoneyTransfer",
+        "To": "PhoneNumber"
+    },
+    {
+        "Type": "Relation",
+        "Label": "_Bloom_HAS_SCENE_",
+        "Attributes": {},
+        "From": "_Bloom_Perspective_",
+        "To": "_Bloom_Scene_"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_PHONENUMBER",
+        "Attributes": {},
+        "From": "AccountHolder",
+        "To": "UnsecuredLoan"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_PHONENUMBER",
+        "Attributes": {},
+        "From": "AccountHolder",
+        "To": "PhoneNumber"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_PHONENUMBER",
+        "Attributes": {},
+        "From": "PhoneNumber",
+        "To": "PhoneNumber"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_PHONENUMBER",
+        "Attributes": {},
+        "From": "Flagged",
+        "To": "UnsecuredLoan"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_PHONENUMBER",
+        "Attributes": {},
+        "From": "Flagged",
+        "To": "PhoneNumber"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_PHONENUMBER",
+        "Attributes": {},
+        "From": "PhoneNumber",
+        "To": "UnsecuredLoan"
+    },
+    {
+        "Type": "Relation",
+        "Label": "WITH_CARD",
+        "Attributes": {},
+        "From": "Purchase",
+        "To": "BankCard"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_ADDRESS",
+        "Attributes": {},
+        "From": "Flagged",
+        "To": "Address"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_ADDRESS",
+        "Attributes": {},
+        "From": "AccountHolder",
+        "To": "Address"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_BANKACCOUNT",
+        "Attributes": {},
+        "From": "AccountHolder",
+        "To": "BankAccount"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_BANKACCOUNT",
+        "Attributes": {},
+        "From": "Flagged",
+        "To": "BankAccount"
+    },
+    {
+        "Type": "Relation",
+        "Label": "WITH_LOGIN",
+        "Attributes": {},
+        "From": "Purchase",
+        "To": "Login"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DELIVERED_AT",
+        "Attributes": {},
+        "From": "Purchase",
+        "To": "DeliveryAddress"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_UNSECUREDLOAN",
+        "Attributes": {},
+        "From": "AccountHolder",
+        "To": "UnsecuredLoan"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_UNSECUREDLOAN",
+        "Attributes": {},
+        "From": "Flagged",
+        "To": "UnsecuredLoan"
+    }
+]

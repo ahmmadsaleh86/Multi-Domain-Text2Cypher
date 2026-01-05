@@ -1,0 +1,197 @@
+[
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What are the names and dates of birth of the players who represent the team 'Germany' and played in the '2022' tournament?",
+        "Cypher": "MATCH (player:Person)-[represents:REPRESENTS]->(team:Team {name:\"Germany\"})\nMATCH (player)-[:PLAYED_IN]->(match:Match)-[:IN_TOURNAMENT]->(tournament:Tournament {year:2022})\nRETURN player, represents, team, match, tournament, player.name, player.dob",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (player:Person)-[represents:REPRESENTS]->(team:Team {name:\"Germany\"})\nMATCH (player)-[relation5:PLAYED_IN]->(match:Match)-[relation6:IN_TOURNAMENT]->(tournament:Tournament {year:2022})\nRETURN relation6, relation5, player, represents, team, match, tournament, player.name, player.dob",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the names and birthdates of players who represented the team 'Germany' in the '2022' tournament?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Can you identify the stages and dates of the matches where the squad named 'Italy 2024' played during the '2024' tournament?",
+        "Cypher": "MATCH (team:Team)-[named:NAMED]->(squad:Squad {id:\"Italy 2024\"})-[:FOR]->(tournament:Tournament {year:2024})\nMATCH (team)-[played_in:PLAYED_IN]->(match:Match)-[in_tournament:IN_TOURNAMENT]->(tournament)\nRETURN team, named, squad, played_in, match, in_tournament, tournament, match.stage, match.date",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Corrected-Cypher": "MATCH (team:Team)-[named:NAMED]->(squad:Squad {id:\"Italy 2024\"})-[relation5:FOR]->(tournament:Tournament {year:2024})\nMATCH (team)-[played_in:PLAYED_IN]->(match:Match)-[in_tournament:IN_TOURNAMENT]->(tournament)\nRETURN relation5, team, named, squad, played_in, match, in_tournament, tournament, match.stage, match.date",
+        "Rewrite": "Could you specify the phases and timings of the games in which the team called 'Italy 2024' participated in the '2024' tournament?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "I need the names of all players who played for the Argentine team in the '2018' World Cup and were also represented by the same squad in another tournament.",
+        "Cypher": "MATCH (team:Team {name:\"Argentina\"})-[:PARTICIPATED_IN]->(tournament:Tournament {year:2018}),\n      (player:Person)-[:REPRESENTS]->(team),\n      (player)-[played_in_wc:PLAYED_IN]->(match:Match)-[:IN_TOURNAMENT]->(tournament),\n      (player)-[in_squad_wc:IN_SQUAD]->(squad:Squad)-[:FOR]->(tournament),\n      (player)-[in_squad_other:IN_SQUAD]->(squad)-[:FOR]->(other_tournament:Tournament)\nWHERE other_tournament.id <> tournament.id\nRETURN player, played_in_wc, match, in_squad_wc, squad, in_squad_other, other_tournament, team, tournament, player.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (team:Team {name:\"Argentina\"})-[relation6:PARTICIPATED_IN]->(tournament:Tournament {year:2018}),\n      (player:Person)-[relation7:REPRESENTS]->(team),\n      (player)-[played_in_wc:PLAYED_IN]->(match:Match)-[relation9:IN_TOURNAMENT]->(tournament),\n      (player)-[in_squad_wc:IN_SQUAD]->(squad:Squad)-[relation13:FOR]->(tournament),\n      (player)-[in_squad_other:IN_SQUAD]->(squad)-[:FOR]->(other_tournament:Tournament)\nWHERE other_tournament.id <> tournament.id\nRETURN relation13, relation9, relation7, relation6, player, played_in_wc, match, in_squad_wc, squad, in_squad_other, other_tournament, team, tournament, player.name",
+        "num-hop": 7,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "Can you list all players from Argentina\u2019s 2018 World Cup team, including the matches they played and any other tournament squads they were part of in the same year?",
+        "Max-Semantic-Score": 0.9116451740264893,
+        "Avg-Semantic-Score": 0.802336823940277,
+        "Rewrite": "I require a list of all athletes who competed for the Argentine squad in the 2018 World Cup and participated with the same team in a different competition."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Please provide the year and name of each tournament in which the 'Spain National Team' has participated along with its corresponding squad's details.",
+        "Cypher": "MATCH (team:Team {name:\"Spain National Team\"})-[participated:PARTICIPATED_IN]->(tournament:Tournament), (team)-[named:NAMED]->(squad:Squad)-[in_for:FOR]->(tournament)\nRETURN team, participated, tournament, named, squad, in_for, tournament.year, tournament.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Kindly list every tournament involving the 'Spain National Team' by year and name, including the specifics of each participating squad."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "List all the team names and match dates for the matches that occurred in the 'Brazil 2014' part of the tournament.",
+        "Cypher": "MATCH (team:Team)-[played_in:PLAYED_IN]->(match:Match)-[in_tournament:IN_TOURNAMENT]->(tournament:Tournament {name:\"Brazil 2014\"})\nRETURN team, played_in, match, in_tournament, tournament, team.name, match.date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide all the team names and the dates of the matches that took place during the 'Brazil 2014' segment of the tournament."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Could you list the names of the coaches who have coached a squad participating in any World Cup tournament held between 1990 and 2022?",
+        "Cypher": "MATCH (coach:Person)-[coach_for:COACH_FOR]->(squad:Squad)-[for_tournament:FOR]->(tournament:Tournament)\nWHERE tournament.year >= 1990 AND tournament.year <= 2022\nRETURN coach, coach_for, squad, for_tournament, tournament, coach.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide the names of the coaches who have led a team in any World Cup tournament from 1990 to 2022?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Which minutes did players from the squad 'England 2022' score goals during matches in the 'semi-final' stage of the '2022 World Cup'?",
+        "Cypher": "MATCH (player:Person)-[scored_goal:SCORED_GOAL]->(match:Match)-[:IN_TOURNAMENT]->(tournament:Tournament)\nMATCH (player)-[:IN_SQUAD]->(squad:Squad)-[:FOR]->(tournament)\nWHERE squad.id=\"England 2022\" AND tournament.shortName=\"2022 World Cup\" AND match.stage=\"semi-final\"\nRETURN player, scored_goal, match, tournament, squad, scored_goal.minute",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (player:Person)-[scored_goal:SCORED_GOAL]->(match:Match)-[relation5:IN_TOURNAMENT]->(tournament:Tournament)\nMATCH (player)-[relation6:IN_SQUAD]->(squad:Squad)-[relation7:FOR]->(tournament)\nWHERE squad.id=\"England 2022\" AND tournament.shortName=\"2022 World Cup\" AND match.stage=\"semi-final\"\nRETURN relation7, relation6, relation5, player, scored_goal, match, tournament, squad, scored_goal.minute",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "At what times did members of the 'England 2022' team score goals in the 'semi-final' round of the '2022 World Cup'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Can you tell me how many goals were scored and at what minutes by the 'France' team in the group stages of the '1998 World Cup'?",
+        "Cypher": "MATCH (team:Team {name:\"France\"})-[participated:PARTICIPATED_IN]->(tournament:Tournament {shortName:\"1998 World Cup\"}),\n      (person:Person)-[scored:SCORED_GOAL]->(match:Match)-[in_tournament:IN_TOURNAMENT]->(tournament),\n      (person)-[represents:REPRESENTS]->(team)\nWHERE match.stage=\"group\"\nRETURN team, participated, tournament, person, scored, match, in_tournament, represents, scored.minute",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you inform me about the number of goals and the specific times they were scored by the 'France' team during the group stages of the '1998 World Cup'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the scores and types of play (goal, penalty) for matches involving the 'Brazil' team during the '2002' tournament's knockout phase?",
+        "Cypher": "MATCH (brazilTeam:Team {name:\"Brazil\"})-[:PARTICIPATED_IN]->(tournament:Tournament {year:2002}),\n      (brazilTeam)-[played_in:PLAYED_IN]->(match:Match)-[:IN_TOURNAMENT]->(tournament),\n      (match)-[in_tournament:IN_TOURNAMENT]->(tournament)\nWHERE match.stage CONTAINS \"knockout\"\nRETURN brazilTeam, played_in, match, in_tournament, tournament, played_in.score, played_in.type",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (brazilTeam:Team {name:\"Brazil\"})-[relation3:PARTICIPATED_IN]->(tournament:Tournament {year:2002}),\n      (brazilTeam)-[played_in:PLAYED_IN]->(match:Match)-[relation5:IN_TOURNAMENT]->(tournament),\n      (match)-[in_tournament:IN_TOURNAMENT]->(tournament)\nWHERE match.stage CONTAINS \"knockout\"\nRETURN relation5, relation3, brazilTeam, played_in, match, in_tournament, tournament, played_in.score, played_in.type",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "What were the results and methods of scoring (goal, penalty) in the games featuring the 'Brazil' team in the knockout stage of the '2002' tournament?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "I need details on when (minutes) and how ('type' of play) players of 'Portugal 2010' scored against their opponents in the quarter-finals?",
+        "Cypher": "MATCH (team:Team {name:\"Portugal\"})-[:PARTICIPATED_IN]->(tournament:Tournament {shortName:\"WC\", year:2010})\nMATCH (team)-[:NAMED]->(squad:Squad)-[:FOR]->(tournament)\nMATCH (player:Person)-[:REPRESENTS]->(team)\nMATCH (player)-[scored:SCORED_GOAL]->(match:Match)-[:IN_TOURNAMENT]->(tournament)\nWHERE match.stage=\"quarter final\"\nRETURN player, team, tournament, squad, scored, match, scored.minute, scored.type",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (team:Team {name:\"Portugal\"})-[relation5:PARTICIPATED_IN]->(tournament:Tournament {shortName:\"WC\", year:2010})\nMATCH (team)-[relation6:NAMED]->(squad:Squad)-[relation7:FOR]->(tournament)\nMATCH (player:Person)-[relation8:REPRESENTS]->(team)\nMATCH (player)-[scored:SCORED_GOAL]->(match:Match)-[relation10:IN_TOURNAMENT]->(tournament)\nWHERE match.stage=\"quarter final\"\nRETURN relation10, relation8, relation7, relation6, relation5, player, team, tournament, squad, scored, match, scored.minute, scored.type",
+        "num-hop": 6,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "Can you identify the types and timing of goals made by Portuguese players in the quarter-final round of the 2010 World Cup tournament?",
+        "Max-Semantic-Score": 0.8030331134796143,
+        "Avg-Semantic-Score": 0.7608578681945801
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Please provide the minutes of goals scored and the type of tournament matches played by any squad that the 'Netherlands' team named at 'Euro 2024'.",
+        "Cypher": "MATCH (team:Team {name:\"Netherlands\"})-[:NAMED]->(squad:Squad)-[:IN_SQUAD]-(player:Person)\nMATCH (player)-[scored_goal:SCORED_GOAL]->(match:Match)-[:IN_TOURNAMENT]->(tournament:Tournament {name:\"Euro 2024\"})\nRETURN team, squad, player, scored_goal, match, tournament, scored_goal.minute, match.stage",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (team:Team {name:\"Netherlands\"})-[relation5:NAMED]->(squad:Squad)-[relation6:IN_SQUAD]-(player:Person)\nMATCH (player)-[scored_goal:SCORED_GOAL]->(match:Match)-[relation8:IN_TOURNAMENT]->(tournament:Tournament {name:\"Euro 2024\"})\nRETURN relation8, relation6, relation5, team, squad, player, scored_goal, match, tournament, scored_goal.minute, match.stage",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the timing of goals and the category of tournament matches participated in by squads named by the 'Netherlands' at 'Euro 2024'."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Identify the minute values and match stages for the goals scored by the 'Argentina' squad during the 'Group' and 'Final' stages of the '2018' tournament.",
+        "Cypher": "MATCH (team:Team {name:\"Argentina\"})-[:NAMED]->(squad:Squad)\nMATCH (player:Person)-[:REPRESENTS]->(team)\nMATCH (player)-[scored_goal:SCORED_GOAL]->(match:Match)-[:IN_TOURNAMENT]->(tournament:Tournament {year:2018})\nWHERE match.stage IN [\"Group\", \"Final\"]\nRETURN team, squad, player, scored_goal, match, tournament, scored_goal.minute, match.stage",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (team:Team {name:\"Argentina\"})-[relation5:NAMED]->(squad:Squad)\nMATCH (player:Person)-[relation6:REPRESENTS]->(team)\nMATCH (player)-[scored_goal:SCORED_GOAL]->(match:Match)-[relation8:IN_TOURNAMENT]->(tournament:Tournament {year:2018})\nWHERE match.stage IN [\"Group\", \"Final\"]\nRETURN relation8, relation6, relation5, team, squad, player, scored_goal, match, tournament, scored_goal.minute, match.stage",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the times and corresponding match phases when the 'Argentina' team scored goals during the 'Group' and 'Final' rounds of the '2018' tournament."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the average, minimum, and maximum score by teams in all matches of the '2018 Russia' World Cup?",
+        "Cypher": "MATCH (team:Team)-[played:PLAYED_IN]->(match:Match)-[inTournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.name=\"2018 Russia\"\nRETURN AVG(played.score) AS AverageScore, MIN(played.score) AS MinimumScore, MAX(played.score) AS MaximumScore",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the mean, lowest, and highest scores achieved by teams throughout all games of the '2018 Russia' World Cup?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Could you calculate the total number of goals scored, the highest individual score, and the average score per match for the 'USA' team in 'Stanford 1994' matches?",
+        "Cypher": "MATCH (team:Team)-[participated:PARTICIPATED_IN]->(tournament:Tournament), \n      (team)-[playedInTeam:PLAYED_IN]->(match:Match)-[inTournament:IN_TOURNAMENT]->(tournament)\nWHERE team.name=\"USA\" AND tournament.name=\"Stanford 1994\"\nWITH match, playedInTeam.score AS teamScore\n\n// Calculate total goals\nWITH SUM(teamScore) AS totalGoals, AVG(teamScore) AS avgScorePerMatch, MAX(teamScore) AS highestIndividualScore\nRETURN totalGoals, highestIndividualScore, avgScorePerMatch",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you compute the total goals, the top score by an individual, and the average score per game for the 'USA' team during the 'Stanford 1994' matches?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Can you determine the average number of players per squad and the total number of coaches in all squads participating in 'FIFA 2010'?",
+        "Cypher": "MATCH (tournament:Tournament {name: \"FIFA 2010\"})<-[:FOR]-(squad:Squad)\nWITH squad\nMATCH (squad)<-[:IN_SQUAD]-(player:Person)\nWITH squad, COUNT(player) AS playersPerSquad\nWITH AVG(playersPerSquad) AS averagePlayersPerSquad\nMATCH (tournament:Tournament {name: \"FIFA 2010\"})<-[:FOR]-(squad:Squad)<-[:COACH_FOR]-(coach:Person)\nRETURN averagePlayersPerSquad, COUNT(DISTINCT coach) AS totalCoaches",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (tournament:Tournament {name: \"FIFA 2010\"})<-[relation6:FOR]-(squad:Squad)\nWITH squad\nMATCH (squad)<-[relation7:IN_SQUAD]-(player:Person)\nWITH squad, COUNT(player) AS playersPerSquad\nWITH AVG(playersPerSquad) AS averagePlayersPerSquad\nMATCH (tournament:Tournament {name: \"FIFA 2010\"})<-[relation8:FOR]-(squad:Squad)<-[relation9:COACH_FOR]-(coach:Person)\nRETURN averagePlayersPerSquad, COUNT(DISTINCT coach) AS totalCoaches",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you calculate the average squad size in terms of players and the overall count of coaches across all teams in 'FIFA 2010'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What has been the total, average, and highest number of penalty scores recorded by teams in the 'quarter-finals' matches of the 'Euro 2000'?",
+        "Cypher": "MATCH (team:Team)-[playedIn:PLAYED_IN]->(match:Match)-[inTournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.name=\"Euro 2000\" AND match.stage=\"quarter-finals\"\nRETURN SUM(playedIn.penaltyScore) AS totalPenaltyScores, AVG(playedIn.penaltyScore) AS averagePenaltyScores, MAX(playedIn.penaltyScore) AS highestPenaltyScore",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many penalty scores did teams record on average, in total, and at most during the 'quarter-finals' of 'Euro 2000'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "I would like to know the lowest, highest, and average number of players from squads who have played in the 'Final' stage of the 'World Cup 2006'.",
+        "Cypher": "MATCH (tournament:Tournament {name: \"World Cup 2006\"})\nMATCH (match:Match)-[inTournament:IN_TOURNAMENT]->(tournament)\nWHERE match.stage = \"Final\"\nMATCH (squad:Squad)-[forSquad:FOR]->(tournament)\nMATCH (player:Person)-[playedIn:PLAYED_IN]->(match)-[inTournament]->(tournament)\nWITH squad, COUNT(DISTINCT player) AS playerCount\nRETURN MIN(playerCount) AS LowestPlayerCount, MAX(playerCount) AS HighestPlayerCount, AVG(playerCount) AS AveragePlayerCount",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (tournament:Tournament {name: \"World Cup\", year: 2006})<-[relation4:IN_TOURNAMENT]-(match:Match {stage: \"Final\"})\nMATCH (squad:Squad)-[relation5:FOR]->(tournament)\nMATCH (person:Person)-[relation6:IN_SQUAD]->(squad)\nRETURN MIN(size(collect(DISTINCT person))) AS MinPlayers, MAX(size(collect(DISTINCT person))) AS MaxPlayers, AVG(size(collect(DISTINCT person))) AS AvgPlayers",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "I'm interested in finding out the minimum, maximum, and mean count of players in teams that participated in the 'Final' phase of the 'World Cup 2006'."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Could you provide the sum, average, and highest penalty scores by the 'Italy' team across matches of the '1994 USA' tournament?",
+        "Cypher": "MATCH (team:Team)-[playedIn:PLAYED_IN]->(match:Match)-[inTournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE team.name=\"Italy\" AND tournament.name=\"1994 USA\"\nRETURN SUM(playedIn.penaltyScore) AS TotalPenaltyScore, AVG(playedIn.penaltyScore) AS AveragePenaltyScore, MAX(playedIn.penaltyScore) AS HighestPenaltyScore",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you supply the total, mean, and maximum penalty points scored by the 'Italy' team during the '1994 USA' tournament matches?"
+    }
+]

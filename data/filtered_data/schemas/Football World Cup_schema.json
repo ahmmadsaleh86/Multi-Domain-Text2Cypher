@@ -1,0 +1,127 @@
+[
+    {
+        "Type": "Node",
+        "Label": "Team",
+        "Attributes": {
+            "id": "String",
+            "name": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Squad",
+        "Attributes": {
+            "id": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Tournament",
+        "Attributes": {
+            "id": "String",
+            "shortName": "String",
+            "name": "String",
+            "year": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Person",
+        "Attributes": {
+            "id": "String",
+            "name": "String",
+            "dob": "Date"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Match",
+        "Attributes": {
+            "id": "String",
+            "stage": "String",
+            "date": "Date"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "NAMED",
+        "Attributes": {},
+        "From": "Team",
+        "To": "Squad"
+    },
+    {
+        "Type": "Relation",
+        "Label": "SCORED_GOAL",
+        "Attributes": {
+            "minute": "String"
+        },
+        "From": "Person",
+        "To": "Match"
+    },
+    {
+        "Type": "Relation",
+        "Label": "PARTICIPATED_IN",
+        "Attributes": {},
+        "From": "Team",
+        "To": "Tournament"
+    },
+    {
+        "Type": "Relation",
+        "Label": "IN_TOURNAMENT",
+        "Attributes": {},
+        "From": "Match",
+        "To": "Tournament"
+    },
+    {
+        "Type": "Relation",
+        "Label": "COACH_FOR",
+        "Attributes": {},
+        "From": "Person",
+        "To": "Squad"
+    },
+    {
+        "Type": "Relation",
+        "Label": "FOR",
+        "Attributes": {},
+        "From": "Squad",
+        "To": "Tournament"
+    },
+    {
+        "Type": "Relation",
+        "Label": "PLAYED_IN",
+        "Attributes": {
+            "score": "Long",
+            "penaltyScore": "Long",
+            "type": "String",
+            "minuteOn": "String"
+        },
+        "From": "Team",
+        "To": "Match"
+    },
+    {
+        "Type": "Relation",
+        "Label": "PLAYED_IN",
+        "Attributes": {
+            "score": "Long",
+            "penaltyScore": "Long",
+            "type": "String",
+            "minuteOn": "String"
+        },
+        "From": "Person",
+        "To": "Match"
+    },
+    {
+        "Type": "Relation",
+        "Label": "REPRESENTS",
+        "Attributes": {},
+        "From": "Person",
+        "To": "Team"
+    },
+    {
+        "Type": "Relation",
+        "Label": "IN_SQUAD",
+        "Attributes": {},
+        "From": "Person",
+        "To": "Squad"
+    }
+]

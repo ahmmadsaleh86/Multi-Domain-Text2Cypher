@@ -1,0 +1,187 @@
+[
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What is the name of the publisher and the publication year for books written by an author born after 1970 and available at the 'Central Branch'?",
+        "Cypher": "MATCH (publisher:Publisher)<-[published_by:PUBLISHED_BY]-(book:Book)<-[authored_by:AUTHOR_OF]-(author:Author)\nMATCH (book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nWHERE author.DOB > date(\"1970-01-01\") AND branch.Name = \"Central Branch\"\nRETURN publisher, published_by, book, authored_by, author, branch, available_at, publisher.Name, book.PublicationYear",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "For books authored by someone born post-1970 and found in the 'Central Branch,' what are the publisher's name and the year of publication?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Can you find the titles of books written in German by authors with German nationality that are available in more than 5 copies at any branch?",
+        "Cypher": "MATCH (author:Author)-[authored_by:AUTHOR_OF]->(book:Book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nWHERE author.Nationality=\"German\" AND book.Language=\"German\" AND book.CopiesAvailable > 5\nRETURN author, authored_by, book, available_at, branch, book.Title",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you search for book titles authored by German nationals in the German language that are stocked in excess of five copies at any branch?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Which member names have borrowed books published by 'Penguin Books' during the year 2021?",
+        "Cypher": "MATCH (member:Member)-[borrowed_by:BORROWED_BY]->(loan:Loan)\nMATCH (book:Book)-[published_by:PUBLISHED_BY]->(publisher:Publisher)\nWHERE publisher.Name=\"Penguin Books\" AND loan.IssueDate.year=2021\nRETURN member, borrowed_by, loan, published_by, book, publisher, member.Name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (member:Member)-[borrowed_by:BORROWED_BY]-(loan:Loan)\nMATCH (book:Book)-[published_by:PUBLISHED_BY]->(publisher:Publisher)\nWHERE publisher.Name=\"Penguin Books\" AND loan.IssueDate.year=2021\nRETURN member, borrowed_by, loan, published_by, book, publisher, member.Name",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which individuals have taken out books released by 'Penguin Books' in 2021?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What are the names of authors who have written books on 'Computer Science' subject, and which branches currently have those books?",
+        "Cypher": "MATCH (author:Author)-[authored:AUTHOR_OF]->(book:Book)-[available:AVAILABLE_AT]->(branch:Branch)\nWHERE book.Subject=\"Computer Science\"\nRETURN author, authored, book, available, branch, author.Name, branch.Name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Who are the authors that have penned books about the 'Computer Science' topic, and at which branches are these books available?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "List all books, along with their authors, that are available at the 'Downtown Branch' and have been published after the year 2000.",
+        "Cypher": "MATCH (book:Book)-[authored_by:AUTHOR_OF]->(author:Author)\nMATCH (book)-[published_by:PUBLISHED_BY]->(publisher:Publisher)\nMATCH (book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nWHERE branch.Name = \"Downtown Branch\" AND book.PublicationYear > 2000\nRETURN book, authored_by, author, published_by, publisher, available_at, branch, book.Title, author.Name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (book:Book)-[authored_by:AUTHOR_OF]-(author:Author)\nMATCH (book)-[published_by:PUBLISHED_BY]->(publisher:Publisher)\nMATCH (book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nWHERE branch.Name = \"Downtown Branch\" AND book.PublicationYear > 2000\nRETURN book, authored_by, author, published_by, publisher, available_at, branch, book.Title, author.Name",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide a list of books and their authors that are in stock at the 'Downtown Branch' and were published post-2000."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Identify the books along with their corresponding authors and publication years that are managed by the branch manager 'John Doe'.",
+        "Cypher": "MATCH (branchManager:Employee)-[managed_by_relation:MANAGED_BY]->(branch:Branch)<-[:AVAILABLE_AT]-(book:Book)-[authored_by_relation:AUTHOR_OF]->(author:Author)\nWHERE branchManager.Name=\"John Doe\"\nRETURN branchManager, managed_by_relation, branch, book, authored_by_relation, author, book.Title, author.Name, book.PublicationYear",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (branchManager:Employee)-[managed_by_relation:MANAGED_BY]-(branch:Branch)<-[relation5:AVAILABLE_AT]-(book:Book)-[authored_by_relation:AUTHOR_OF]-(author:Author)\nWHERE branchManager.Name=\"John Doe\"\nRETURN relation5, branchManager, managed_by_relation, branch, book, authored_by_relation, author, book.Title, author.Name, book.PublicationYear",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the books, including their authors and years of publication, that are overseen by the branch manager 'John Doe'."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "For all books authored by 'Alice Thompson', what are the return dates and due dates for each loan recorded in 2022?",
+        "Cypher": "MATCH (author:Author)-[authored:AUTHOR_OF]->(book:Book)-[checked_out:CHECKED_OUT]->(loan:Loan)\nWHERE author.Name = \"Alice Thompson\" AND loan.IssueDate >= datetime(\"2022-01-01T00:00:00\") AND loan.IssueDate < datetime(\"2023-01-01T00:00:00\")\nRETURN author, authored, book, checked_out, loan, loan.ReturnDate, loan.DueDate",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the due dates and return dates for each book loan in 2022 authored by 'Alice Thompson'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the return timestamps for all books rented by members with a Membership Type of 'Premium'?",
+        "Cypher": "MATCH (member:Member)-[has_loan:HAS_LOAN]->(loan:Loan)\nMATCH (book:Book)-[returned_at:RETURNED_AT]->(loan)\nWHERE member.MembershipType=\"Premium\"\nRETURN member, has_loan, loan, returned_at, book, returned_at.ReturnTimestamp",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the return dates for all books borrowed by members who have a 'Premium' Membership Type?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Can you retrieve the checkout and return timestamps for books in the 'Fiction' section that were published by 'HarperCollins'?",
+        "Cypher": "MATCH (publisher:Publisher)<-[published_by:PUBLISHED_BY]-(book:Book)-[checked_out:CHECKED_OUT]->(loan:Loan)-[returned_at:RETURNED_AT]-(book)\nWHERE publisher.Name=\"HarperCollins\" AND book.Subject=\"Fiction\"\nRETURN publisher, published_by, book, checked_out, loan, returned_at, checked_out.CheckoutTimestamp, returned_at.ReturnTimestamp",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you fetch the checkout and return dates for books located in the 'Fiction' section and published by 'HarperCollins'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Which employees are employed at branches where books authored by 'Stephen King' are available, and what are their positions?",
+        "Cypher": "MATCH (employee:Employee)-[employed_at:EMPLOYED_AT]->(branch:Branch)<-[available_at:AVAILABLE_AT]-(book:Book)<-[authored_by:AUTHOR_OF]-(author:Author)\nWHERE author.Name=\"Stephen King\"\nRETURN employee, employed_at, branch, available_at, book, authored_by, author, employee.Name, employee.Position",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which staff members work at locations that stock books written by 'Stephen King', and what roles do they hold?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "List the checkout timestamps for loans where the borrowed book's ISBN is '978-3-16-148410-0'.",
+        "Cypher": "MATCH (book:Book)-[checked_out:CHECKED_OUT]->(loan:Loan)\nWHERE book.ISBN=\"978-3-16-148410-0\"\nRETURN book, checked_out, loan, checked_out.CheckoutTimestamp",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the timestamps of checkouts for loans involving the book with the ISBN '978-3-16-148410-0'."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "For all the books checked out at branches located in 'New York', what are the corresponding issue dates?",
+        "Cypher": "MATCH (branch:Branch)-[available_at:AVAILABLE_AT]-(book:Book)-[checked_out:CHECKED_OUT]->(loan:Loan)\nWHERE branch.Location=\"New York\"\nRETURN branch, available_at, book, checked_out, loan, loan.IssueDate",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the issue dates for the books checked out at 'New York' branch locations?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the average publication year of books available at the 'Main Library' that were published by 'Random House'?",
+        "Cypher": "MATCH (book:Book)-[published_by:PUBLISHED_BY]->(publisher:Publisher),\n      (book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nWHERE publisher.Name=\"Random House\" AND branch.Name=\"Main Library\"\nRETURN AVG(book.PublicationYear)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the mean publication year of 'Random House' books held in the 'Main Library'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Can you compute the total number of available copies for books written by authors who are Canadian across all branches?",
+        "Cypher": "MATCH (author:Author)-[author_of:AUTHOR_OF]->(book:Book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nWHERE author.Nationality = \"Canadian\"\nRETURN SUM(book.CopiesAvailable)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you calculate the sum of all available copies of books authored by Canadian writers in every branch?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "How many employees are managing branches where books on 'Philosophy' are available?",
+        "Cypher": "MATCH (book:Book)-[:AVAILABLE_AT]->(branch:Branch)<-[:MANAGED_BY]-(employee:Employee)\nWHERE book.Subject=\"Philosophy\"\nRETURN COUNT(DISTINCT employee)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (book:Book)-[relation3:AVAILABLE_AT]->(branch:Branch)-[relation4:MANAGED_BY]-(employee:Employee)\nWHERE book.Subject=\"Philosophy\"\nRETURN COUNT(DISTINCT employee)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many staff members oversee branches that have 'Philosophy' books available?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the minimum number of available copies of books authored by 'Mark Twain' across all branches?",
+        "Cypher": "MATCH (author:Author)-[authored:AUTHOR_OF]->(book:Book)-[availableAt:AVAILABLE_AT]->(branch:Branch)\nWHERE author.Name=\"Mark Twain\"\nRETURN MIN(book.CopiesAvailable)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the lowest number of copies of books written by 'Mark Twain' available in any branch?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "How many loans have been made to members who joined after 2015 and have borrowed books with a publication year before 1980?",
+        "Cypher": "MATCH (member:Member)-[has_loan:HAS_LOAN]->(loan:Loan)-[checked_out:CHECKED_OUT]->(book:Book)\nWHERE member.MembershipStart.year > 2015 AND book.PublicationYear < 1980\nRETURN COUNT(DISTINCT loan)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (member:Member)-[has_loan:HAS_LOAN]->(loan:Loan)-[checked_out:CHECKED_OUT]-(book:Book)\nWHERE member.MembershipStart.year > 2015 AND book.PublicationYear < 1980\nRETURN COUNT(DISTINCT loan)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the number of loans issued to members who enrolled post-2015 and took out books published prior to 1980?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the sum of all copies of books in the 'Science' subject available in branches in the 'Downtown' area?",
+        "Cypher": "MATCH (book:Book)-[available_at:AVAILABLE_AT]->(branch:Branch)\nWHERE book.Subject=\"Science\" AND branch.Location CONTAINS \"Downtown\"\nRETURN SUM(book.CopiesAvailable)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many 'Science' subject books are there in total across all branches located in the 'Downtown' area?"
+    }
+]

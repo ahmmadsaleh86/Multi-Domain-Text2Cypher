@@ -1,0 +1,185 @@
+[
+    {
+        "Category": "3-hop Node Level",
+        "Question": "What are the email addresses and office locations for professors who manage departments that offer courses enrolled by students living in 'Newman' residence hall?",
+        "Cypher": "MATCH (professor:Professor)-[manages:MANAGES]->(department:Department)\nMATCH (department)-[offers:OFFERS]->(course:Course)<-[enrolled:ENROLLED_IN]-(student:Student)-[resides:RESIDES_IN]->(residence:Residence)\nWHERE residence.name = 'Newman'\nRETURN professor, manages, department, offers, course, enrolled, student, resides, residence, professor.email, professor.office",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "List the names and capacities of classrooms where events attended by students majoring in 'Art History' scheduled after January 1, 2023, were held.",
+        "Cypher": "MATCH (student:Student)-[attend:ATTENDS]->(event:Event)-[held_in:HELD_IN]->(classroom:Classroom)\nMATCH (student)-[belong:BELONGS_TO]->(department:Department)\nWHERE department.name=\"Art History\" AND event.date >= date(\"2023-01-01\")\nRETURN student, attend, event, held_in, classroom, belong, department, classroom.building, classroom.room_number, classroom.capacity",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the names and sizes of classrooms that hosted events for 'Art History' majors scheduled after January 1, 2023."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Retrieve the first and last names of students who are advised by professors specializing in 'Quantum Mechanics' and are enrolled in courses at level '300'.",
+        "Cypher": "MATCH (professor:Professor)-[advises:ADVISES]->(student:Student)-[enrolled:ENROLLED_IN]->(course:Course)\nWHERE professor.specialization=\"Quantum Mechanics\" AND course.level=\"300\"\nRETURN professor, advises, student, enrolled, course, student.first_name, student.last_name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Fetch the first and last names of students who are mentored by professors with expertise in 'Quantum Mechanics' and who are registered in level '300' courses."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Provide details of all courses, including description and level, that are taught by professors whose specialization is 'Machine Learning' and are housed within the 'Engineering' department.",
+        "Cypher": "MATCH (professor:Professor)-[teaches:TEACHES]->(course:Course)\nMATCH (department:Department)-[offers:OFFERS]->(course)\nWHERE professor.specialization=\"Machine Learning\" AND department.name=\"Engineering\"\nRETURN professor, teaches, course, department, offers, course.description, course.level",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "List all courses with their descriptions and levels, offered by professors specializing in 'Machine Learning' and belonging to the 'Engineering' department."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Can you show the first and last names of professors who teach 'Algorithms' courses attended by students who also participate in 'Tech Fest 2022'?",
+        "Cypher": "MATCH (event:Event)<-[attend:ATTENDS]-(student:Student)-[enroll:ENROLLED_IN]->(course:Course)<-[:TEACHES]-(prof:Professor)\nWHERE event.title=\"Tech Fest 2022\" AND course.name=\"Algorithms\"\nRETURN prof, event, attend, student, enroll, course, prof.first_name, prof.last_name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (event:Event)<-[attend:ATTENDS]-(student:Student)-[enroll:ENROLLED_IN]->(course:Course)<-[relation6:TEACHES]-(prof:Professor)\nWHERE event.title=\"Tech Fest 2022\" AND course.name=\"Algorithms\"\nRETURN relation6, prof, event, attend, student, enroll, course, prof.first_name, prof.last_name",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you display the first and last names of professors instructing in 'Algorithms' courses that are taken by students involved in 'Tech Fest 2022'?"
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Identify the email addresses and birthdates of students enrolled in courses within the 'Biology' department and who also attended events in 'Green Hall'.",
+        "Cypher": "MATCH (student:Student)-[enroll:ENROLLED_IN]->(course:Course)<-[offer:OFFERS]-(department:Department)\nMATCH (student)-[attend:ATTENDS]->(event:Event)-[held:HELD_IN]->(classroom:Classroom)\nWHERE department.name=\"Biology\" AND classroom.building=\"Green Hall\"\nRETURN student, enroll, course, offer, department, attend, event, held, classroom, student.email, student.date_of_birth",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Find the birthdates and email addresses of students who are registered in the 'Biology' department's courses and have participated in events at 'Green Hall'."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Can you find the time schedule for professors who lecture in classrooms located in 'Hilltop Building' and advise students enrolled in the 'Physics' department?",
+        "Cypher": "MATCH (classroom:Classroom)<-[:HELD_IN]-(event:Event)\nMATCH (professor:Professor)-[lecture:LECTURES_IN]->(classroom)\nMATCH (professor)-[advise:ADVISES]->(student:Student)-[enroll:ENROLLED_IN]->(course:Course)\nMATCH (department:Department)<-[belongs:BELONGS_TO]-(student)\nWHERE classroom.building = 'Hilltop Building' AND department.name = 'Physics'\nRETURN professor, lecture, classroom, event, student, advise, enroll, course, department, belongs, lecture.scheduled_time",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (classroom:Classroom)<-[relation6:HELD_IN]-(event:Event)\nMATCH (professor:Professor)-[lecture:LECTURES_IN]->(classroom)\nMATCH (professor)-[advise:ADVISES]->(student:Student)-[enroll:ENROLLED_IN]->(course:Course)\nMATCH (department:Department)<-[belongs:BELONGS_TO]-(student)\nWHERE classroom.building = 'Hilltop Building' AND department.name = 'Physics'\nRETURN relation6, professor, lecture, classroom, event, student, advise, enroll, course, department, belongs, lecture.scheduled_time",
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you locate the lecture timetable for professors teaching in the 'Hilltop Building' and mentoring students from the 'Physics' department?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "I am interested in the semester and year of courses taught by professors managing departments with budgets greater than '200k', primarily in the 'Humanities' faculty.",
+        "Cypher": "MATCH (professor:Professor)-[manages:MANAGES]->(department:Department)-[offers:OFFERS]->(course:Course),\n      (professor)-[teaches:TEACHES]->(course)\nWHERE department.budget > 200000 AND department.name = 'Humanities'\nRETURN professor, manages, department, offers, course, teaches, teaches.semester, teaches.year",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "I would like to know the semester and year of the courses instructed by professors who oversee departments with budgets over '200k', especially within the 'Humanities' faculty."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "What are the attendance dates for students attending seminars in 'Lecture Hall A' who are also enrolled in 'Introduction to Philosophy'? ",
+        "Cypher": "MATCH (student:Student)-[attend:ATTENDS]->(event:Event)-[held:HELD_IN]->(classroom:Classroom)\nMATCH (student)-[enroll:ENROLLED_IN]->(course:Course)\nWHERE classroom.building = 'Lecture Hall A' AND course.name = 'Introduction to Philosophy'\nRETURN student, attend, event, held, classroom, enroll, course, attend.attendance_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the dates on which students enrolled in 'Introduction to Philosophy' and attending seminars in 'Lecture Hall A' must attend?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Could you track the enrollment and grade history from 2019 to 2022 for students who are advised by professors teaching 'Advanced Calculus'?",
+        "Cypher": "MATCH (professor:Professor)-[teaches:TEACHES]->(course:Course)\nMATCH (professor)-[advises:ADVISES]->(student:Student)-[enrolled:ENROLLED_IN]->(enrollmentCourse:Course)\nWHERE course.name=\"Advanced Calculus\" AND enrolled.enrollment_date.year >= 2019 AND enrolled.enrollment_date.year <= 2022\nRETURN professor, teaches, course, advises, student, enrolled, enrollmentCourse, enrolled.grade",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you monitor the registration and grading records from 2019 to 2022 for students guided by professors who teach 'Advanced Calculus'?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Please provide the scheduled lecture times and associated course levels for professors from the 'Computer Science' department.",
+        "Cypher": "MATCH (department:Department)-[offer:OFFERS]->(course:Course)<-[teach:TEACHES]-(professor:Professor)-[lecture:LECTURES_IN]->(classroom:Classroom)\nWHERE department.name=\"Computer Science\"\nRETURN professor, teach, course, lecture, classroom, lecture.scheduled_time, course.level",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (department:Department)-[offer:OFFERS]->(course:Course)<-[teach:TEACHES]-(professor:Professor)-[lecture:LECTURES_IN]->(classroom:Classroom)\nWHERE department.name=\"Computer Science\"\nRETURN offer, department, professor, teach, course, lecture, classroom, lecture.scheduled_time, course.level",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the timetable and course levels for the 'Computer Science' department professors?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Determine the enrollment date ranges for students in courses managed by professors who hold offices in the 'Central' building.",
+        "Cypher": "MATCH (prof:Professor)-[manages:MANAGES]->(dept:Department)-[offers:OFFERS]->(course:Course)<-[enrolledIn:ENROLLED_IN]-(student:Student)\nWHERE prof.office CONTAINS 'Central'\nRETURN prof, manages, dept, offers, course, enrolledIn, student, enrolledIn.enrollment_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Identify the date ranges of enrollment for students in courses overseen by professors with offices in the 'Central' building."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the average number of students per course for courses offered by departments managed by professors who taught a class during the Fall 2023 semester?",
+        "Cypher": "MATCH (professor:Professor)-[teaches:TEACHES]->(course:Course)\nWHERE teaches.semester = \"Fall\" AND teaches.year = 2023\nMATCH (professor)-[:MANAGES]->(department:Department)-[:OFFERS]->(course)\nMATCH (course)<-[enrolled:ENROLLED_IN]-(student:Student)\nRETURN course.name, AVG(SIZE(COLLECT(student.student_id))) AS avg_students_per_course",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (professor:Professor)-[teaches:TEACHES]->(course:Course)\nWHERE teaches.semester = \"Fall\" AND teaches.year = 2023\nMATCH (professor)-[relation5:MANAGES]->(department:Department)-[relation6:OFFERS]->(course)\nMATCH (course)<-[enrolled:ENROLLED_IN]-(student:Student)\nRETURN course.name, AVG(SIZE(COLLECT(student.student_id))) AS avg_students_per_course",
+        "num-hop": 4,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Can you calculate the minimum and maximum credits of courses taught by professors in the 'Mathematics' department that have more than five students enrolled?",
+        "Cypher": "MATCH (department:Department)-[:OFFERS]->(course:Course)<-[:TEACHES]-(professor:Professor)\nWHERE department.name = \"Mathematics\"\nWITH course, COUNT(DISTINCT professor) AS professorsCount, COUNT(DISTINCT course) AS courseCount\nMATCH (student:Student)-[enroll:ENROLLED_IN]->(course)\nWITH course, professorsCount, courseCount, COUNT(DISTINCT student) AS studentsEnrolled\nWHERE studentsEnrolled > 5\nRETURN MIN(course.credits) AS MinCredits, MAX(course.credits) AS MaxCredits",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (department:Department)-[relation4:OFFERS]->(course:Course)<-[relation5:TEACHES]-(professor:Professor)\nWHERE department.name = \"Mathematics\"\nWITH course, COUNT(DISTINCT professor) AS professorsCount, COUNT(DISTINCT course) AS courseCount\nMATCH (student:Student)-[enroll:ENROLLED_IN]->(course)\nWITH course, professorsCount, courseCount, COUNT(DISTINCT student) AS studentsEnrolled\nWHERE studentsEnrolled > 5\nRETURN MIN(course.credits) AS MinCredits, MAX(course.credits) AS MaxCredits",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you determine the lowest and highest number of credits for courses offered by the 'Mathematics' department professors with over five students enrolled?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Please find the average budget in departments offering at least ten different courses lectured by professors who are advisors for postgraduate PhD students.",
+        "Cypher": "MATCH (department:Department)-[offer:OFFERS]->(course:Course)<-[teach:TEACHES]-(prof:Professor)-[advise:ADVISES]->(student:Student)\nWHERE student.level = \"PhD\"\nWITH department, COUNT(DISTINCT course) AS coursesCount\nWHERE coursesCount >= 10\nRETURN AVG(department.budget)",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Could you determine the total number of events held in each building which exceed the hosting classroom capacity by at least 20 attendees during the 2021-2022 academic year?",
+        "Cypher": "MATCH (classroom:Classroom)<-[held_in:HELD_IN]-(event:Event)-[attend:ATTENDS]-(student:Student)\nWITH classroom, event, COUNT(student) AS attendees\nWHERE event.date.year >= 2021 AND event.date.year <= 2022 AND attendees >= (classroom.capacity + 20)\nRETURN classroom.building, COUNT(DISTINCT event) AS events_count",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you calculate how many events in each building during the 2021-2022 academic year had attendance numbers surpassing the classroom capacity by at least 20 people?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Compute the average grade of students enrolled in 'Computer Programming 101' who attended 'Coding Day' event in 2022.",
+        "Cypher": "MATCH (course:Course)-[enrollment:ENROLLED_IN]-(student:Student)-[attendance:ATTENDS]->(event:Event)\nWHERE course.name = 'Computer Programming 101' AND event.title = 'Coding Day' AND event.date.year = 2022\nRETURN AVG(enrollment.grade)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the mean grade of students registered for 'Computer Programming 101' who participated in the 'Coding Day' event in 2022."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Identify the highest department budget among departments whose students participated in at least three different university events in academic year 2023.",
+        "Cypher": "MATCH (department:Department)<-[:BELONGS_TO]-(student:Student)-[:ATTENDS]->(event:Event)\nWHERE event.date.year = 2023\nWITH department, COUNT(DISTINCT event) AS events_count\nWHERE events_count >= 3\nRETURN MAX(department.budget) AS highest_budget",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (department:Department)<-[relation3:BELONGS_TO]-(student:Student)-[relation4:ATTENDS]->(event:Event)\nWHERE event.date.year = 2023\nWITH department, COUNT(DISTINCT event) AS events_count\nWHERE events_count >= 3\nRETURN MAX(department.budget) AS highest_budget",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine which department has the largest budget, given that their students attended a minimum of three distinct university events in the 2023 academic year."
+    }
+]

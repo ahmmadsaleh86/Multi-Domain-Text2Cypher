@@ -1,0 +1,122 @@
+[
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What are the attributes of the business located at '123 Main St, CityVille'?",
+        "Cypher": "MATCH (business:Business)\nWHERE business.address=\"123 Main St, CityVille\"\nRETURN business, business.id, business.name, business.address, business.city, business.state, business.location",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What characteristics does the business at '123 Main St, CityVille' have?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Retrieve the name and description of the label with id 'L001'.",
+        "Cypher": "MATCH (labelNode:Label)\nWHERE labelNode.id=\"L001\"\nRETURN labelNode, labelNode.description",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Fetch the name and description for the label identified by id 'L001'."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Can you show me the name of the city where the state is 'California'?",
+        "Cypher": "MATCH (business:Business)\nWHERE business.state=\"California\"\nRETURN business, business.city",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you tell me the name of the city located in the state of 'California'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the id and text of a review that was submitted on '2023-09-15'?",
+        "Cypher": "MATCH (review:Review)\nWHERE review.date = date('2023-09-15')\nRETURN review, review.id, review.text",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide the id and text of the review submitted on '2023-09-15'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Find the name and partition number of the photo with the caption 'Beautiful sunset at the beach'.",
+        "Cypher": "MATCH (photo:Photo)\nWHERE photo.caption=\"Beautiful sunset at the beach\"\nRETURN photo, photo.partition",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Locate the name and partition number for the photo labeled 'Beautiful sunset at the beach'."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Provide the user name and user id for the user who has the user id 'U100'.",
+        "Cypher": "MATCH (searchedUser:User)\nWHERE searchedUser.id=\"U100\"\nRETURN searchedUser, searchedUser.name, searchedUser.id",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Please supply the username and user id for the individual associated with user id 'U100'."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the total number of unique business entries listed in the city of 'New York'?",
+        "Cypher": "MATCH (business:Business)-[locatedIn:IN_CITY]->(city:City)\nWHERE city.name=\"New York\"\nRETURN COUNT(DISTINCT business)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many distinct business listings are there in the city of 'New York'?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many reviews have been written by users in the year 2022?",
+        "Cypher": "MATCH (user:User)-[wrote:WROTE]->(review:Review)\nWHERE review.date.year = 2022\nRETURN COUNT(DISTINCT review)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the number of reviews authored by users in the year 2022?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Can you calculate the average number of stars given across all reviews?",
+        "Cypher": "MATCH (review:Review)\nRETURN AVG(review.stars) AS AverageStars",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you determine the mean star rating across all the reviews?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the count of photos which have the label 'food' in their description, assuming all photos related to food contain this label?",
+        "Cypher": "MATCH (photo:Photo)-[hasLabel:HAS_LABEL]->(label:Label)\nWHERE label.description CONTAINS \"food\"\nRETURN COUNT(DISTINCT photo)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many photos are labeled 'food' in their description, given that all food-related photos are tagged with this label?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Could you tell me how many users currently have more than 500 friends in the system?",
+        "Cypher": "MATCH (user:User)-[friendship:FRIENDS]->(friend:User)\nWITH user, COUNT(friendship) AS friendCount\nWHERE friendCount > 500\nRETURN COUNT(user)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you inform me about the number of users who currently possess over 500 friends in the system?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the maximum score attributed to labels assigned to the photos taken in the year 2023?",
+        "Cypher": "MATCH (photo:Photo)-[hasLabel:HAS_LABEL]->(label:Label)\nWHERE photo.partition = 2023\nRETURN MAX(hasLabel.score)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest score given to labels on photos taken in 2023?"
+    }
+]

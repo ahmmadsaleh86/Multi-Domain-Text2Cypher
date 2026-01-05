@@ -1,0 +1,191 @@
+[
+    {
+        "Category": "3-hop Node Level",
+        "Question": "What are the addresses of the hospitals where the doctors specializing in 'Cardiology' and named 'John Doe' work and have prescribed 'Aspirin' to patients over 65 years old?",
+        "Cypher": "MATCH (doctor:Doctor)-[works_at:WORKS_AT]->(hospital:Hospital)\nMATCH (doctor)-[prescribes:PRESCRIBES]->(medication:Medication)<-[takes:TAKES]-(patient:Patient)\nWHERE doctor.specialization=\"Cardiology\" AND doctor.first_name=\"John\" AND doctor.last_name=\"Doe\" AND medication.name=\"Aspirin\" AND duration.between(date(patient.date_of_birth), date()).years > 65\nRETURN doctor, works_at, hospital, prescribes, medication, takes, patient, hospital.address",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Where can I find the locations of hospitals employing 'Cardiology' specialists named 'John Doe' who have prescribed 'Aspirin' to patients aged over 65?"
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "List the email addresses of patients who have medical records indicating a diagnosis of 'Diabetes Type 2' and were treated by doctors affiliated with the 'Harmony Health' hospital's dermatology department.",
+        "Cypher": "MATCH (patient:Patient)-[own:OWNS]->(record:MedicalRecord)<-[records:RECORDS]-(doctor:Doctor)-[worksAt:WORKS_AT]->(hospital:Hospital), (doctor)-[isIn:IS_IN]->(department:Department)\nWHERE record.diagnosis=\"Diabetes Type 2\" AND hospital.name=\"Harmony Health\" AND department.name=\"dermatology\"\nRETURN patient, own, record, records, doctor, worksAt, hospital, isIn, department, patient.email",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the email addresses of patients diagnosed with 'Diabetes Type 2' in their medical records and who received treatment from doctors linked to the dermatology department of 'Harmony Health' hospital."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Provide the phone numbers of insurance companies that offer plans covering treatments which include medications prescribed to patients born before 1980 and admitted to the emergency department.",
+        "Cypher": "MATCH (patient:Patient)-[takes:TAKES]->(medication:Medication)<-[:PRESCRIBES]-(doctor:Doctor)-[:CONSULTS]->(appointment:Appointment)-[:HAS_APPOINTMENT]-(patient)\nMATCH (patient)-[:VISITS]->(hospital:Hospital)\nMATCH (patient)-[:COVERED_BY]->(insurancePlan:InsurancePlan)<-[:OFFERS]-(insuranceCompany:InsuranceCompany)\nWHERE patient.date_of_birth < date(\"1980-01-01\") AND hospital.name CONTAINS \"emergency\" AND appointment.type = \"Emergency\"\nRETURN patient, takes, medication, doctor, appointment, hospital, insurancePlan, insuranceCompany, insuranceCompany.phone_number",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (patient:Patient)-[takes:TAKES]->(medication:Medication)<-[relation8:PRESCRIBES]-(doctor:Doctor)-[relation9:CONSULTS]->(appointment:Appointment)-[relation10:HAS_APPOINTMENT]-(patient)\nMATCH (patient)-[relation11:VISITS]->(hospital:Hospital)\nMATCH (patient)-[relation12:COVERED_BY]->(insurancePlan:InsurancePlan)<-[relation13:OFFERS]-(insuranceCompany:InsuranceCompany)\nWHERE patient.date_of_birth < date(\"1980-01-01\") AND hospital.name CONTAINS \"emergency\" AND appointment.type = \"Emergency\"\nRETURN relation13, relation12, relation11, relation10, relation9, relation8, patient, takes, medication, doctor, appointment, hospital, insurancePlan, insuranceCompany, insuranceCompany.phone_number",
+        "num-hop": 7,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "What insurance plans cover patients born before 1980, who received emergency medical attention, including both the prescribing doctor and the insurance provider's details?",
+        "Max-Semantic-Score": 0.817300021648407,
+        "Avg-Semantic-Score": 0.7388571858406067,
+        "Rewrite": "Supply the contact numbers for insurance providers offering plans that cover treatments involving medicines prescribed to patients born prior to 1980 who have been admitted to the emergency department."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Retrieve the names and descriptions of medications prescribed by doctors employed at 'Mercy Hospital' who hold an appointment on July 4th, 2025, to patients diagnosed with 'Chronic Kidney Disease'.",
+        "Cypher": "MATCH (medicine:Medication)<-[prescribes:PRESCRIBES]-(doctor:Doctor)-[worksAt:WORKS_AT]->(hospital:Hospital)\nMATCH (doctor)-[consults:CONSULTS]->(appointment:Appointment)\nMATCH (patient:Patient)-[hasAppointment:HAS_APPOINTMENT]->(appointment)\nMATCH (patient)-[owns:OWNS]->(medicalRecord:MedicalRecord)\nWHERE hospital.name=\"Mercy Hospital\" AND appointment.date=datetime('2025-07-04T00:00:00') AND medicalRecord.diagnosis=\"Chronic Kidney Disease\"\nRETURN medicine, prescribes, doctor, worksAt, hospital, consults, appointment, patient, hasAppointment, owns, medicalRecord, medicine.name, medicine.description",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "Fetch the names and details of drugs prescribed by physicians working at 'Mercy Hospital' with a scheduled appointment on July 4th, 2025, to patients suffering from 'Chronic Kidney Disease'."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Identify the last names of patients who have appointments scheduled after January 1st, 2024, with doctors who work in the oncology department of hospitals located on 'Main Street'.",
+        "Cypher": "MATCH (patient:Patient)-[hasAppointment:HAS_APPOINTMENT]->(appointment:Appointment)<-[consults:CONSULTS]-(doctor:Doctor)-[worksAt:WORKS_AT]->(hospital:Hospital)\nMATCH (doctor)-[isIn:IS_IN]->(department:Department)\nWHERE appointment.date >= datetime(\"2024-01-01T00:00:00\") AND department.name = \"oncology\" AND hospital.address CONTAINS \"Main Street\"\nRETURN patient, hasAppointment, appointment, consults, doctor, worksAt, hospital, isIn, department, patient.last_name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the surnames of patients scheduled for appointments post-January 1st, 2024, with physicians from the oncology unit of hospitals on 'Main Street'."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Show the first names of doctors who have recorded a medical history of 'Acute Bronchitis' for patients taking medications with severe side effects, employed by hospitals situated in 'Downtown District'.",
+        "Cypher": "MATCH (doctor:Doctor)-[records:RECORDS]->(medicalRecord:MedicalRecord)<-[:OWNS]-(patient:Patient)-[takes:TAKES]->(medication:Medication)\nMATCH (doctor)-[:WORKS_AT]->(hospital:Hospital)\nWHERE medicalRecord.diagnosis = 'Acute Bronchitis' AND medication.side_effects CONTAINS 'severe' AND hospital.address CONTAINS 'Downtown District'\nRETURN doctor, records, medicalRecord, patient, takes, medication, hospital, doctor.first_name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (doctor:Doctor)-[records:RECORDS]->(medicalRecord:MedicalRecord)<-[relation6:OWNS]-(patient:Patient)-[takes:TAKES]->(medication:Medication)\nMATCH (doctor)-[relation8:WORKS_AT]->(hospital:Hospital)\nWHERE medicalRecord.diagnosis = 'Acute Bronchitis' AND medication.side_effects CONTAINS 'severe' AND hospital.address CONTAINS 'Downtown District'\nRETURN relation8, relation6, doctor, records, medicalRecord, patient, takes, medication, hospital, doctor.first_name",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Display the first names of doctors who have documented a medical history of 'Acute Bronchitis' for patients on medications that cause severe side effects, working at hospitals located in the 'Downtown District'."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "What are the start dates and positions of doctors who work at hospitals where they prescribed 'Ibuprofen' to patients that visited the hospital for a 'Routine Checkup'?",
+        "Cypher": "MATCH (doctor:Doctor)-[worksAt:WORKS_AT]->(hospital:Hospital)\nMATCH (doctor)-[prescribes:PRESCRIBES]->(medication:Medication)\nMATCH (patient:Patient)-[visits:VISITS]->(hospital)\nWHERE medication.name=\"Ibuprofen\" AND visits.purpose=\"Routine Checkup\"\nRETURN doctor, worksAt, hospital, prescribes, medication, patient, visits, worksAt.start_date, worksAt.position",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the commencement dates and roles of physicians employed at hospitals that issued 'Ibuprofen' to individuals who came for a 'Routine Checkup'?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Which prescription dates and doses of medicines were taken by patients who were enrolled in insurance plans starting from 2020, and have made payments exceeding $1000?",
+        "Cypher": "MATCH (patient:Patient)-[coveredBy:COVERED_BY]->(insurancePlan:InsurancePlan)\nMATCH (patient)-[makesPayment:MAKES_PAYMENT]->(payment:Payment)\nMATCH (patient)-[takes:TAKES]->(medication:Medication)\nWHERE insurancePlan.enrollment_date >= date('2020-01-01') AND payment.amount > 1000\nRETURN patient, coveredBy, insurancePlan, makesPayment, payment, takes, medication, takes.prescription_date, takes.dose",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Detail the payment methods used and the amount paid by patients who are taking 'Metformin' prescribed by endocrinologists working at hospitals that have received at least 1000 visits last year.",
+        "Cypher": "MATCH (medication:Medication)<-[prescribes:PRESCRIBES]-(doctor:Doctor)-[worksAt:WORKS_AT]->(hospital:Hospital)\nMATCH (patient:Patient)-[takes:TAKES]->(medication)-[makes:MEDICATION]->(payment:Payment)\nWHERE medication.name=\"Metformin\" AND doctor.specialization=\"endocrinologist\" AND hospital.name IN \n    (SELECT hospitalSub.name \n     FROM (MATCH (p:Patient)-[visits:VISITS]->(h:Hospital)\n           WHERE visits.visit_date.year = DATE().year - 1\n           RETURN h.name AS hospitalName, COUNT(visits) AS totalVisits\n           WHERE totalVisits >= 1000)\n    )\nRETURN medication, prescribes, doctor, worksAt, hospital, patient, takes, payment, makes, payment.payment_method, payment.amount",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (medication:Medication)<-[prescribes:PRESCRIBES]-(doctor:Doctor)-[worksAt:WORKS_AT]->(hospital:Hospital)\nMATCH (patient:Patient)-[takes:TAKES]->(medication)-[makes:MEDICATION]->(payment:Payment)\nWHERE medication.name=\"Metformin\" AND doctor.specialization=\"endocrinologist\" AND hospital.name IN \n    (SELECT hospitalSub.name \n     FROM (MATCH (p:Patient)-[visits:VISITS]->(h:Hospital)\n           WHERE visits.visit_date.year = DATE().year - 1\n           RETURN visits, h, p, medication, h.name AS hospitalName, COUNT(visits) AS totalVisits\n           WHERE totalVisits >= 1000)\n    )\nRETURN medication, prescribes, doctor, worksAt, hospital, patient, takes, payment, makes, payment.payment_method, payment.amount",
+        "num-hop": 5,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "List the join dates of doctors to the pediatric departments of hospitals where they have consulted in appointments for children under 10 years of age with 'Flu'.",
+        "Cypher": "MATCH (doctor:Doctor)-[works_at:WORKS_AT]->(hospital:Hospital), (doctor)-[is_in:IS_IN]->(department:Department)\nMATCH (patient:Patient)-[has_appointment:HAS_APPOINTMENT]->(appointment:Appointment)<-[consults:CONSULTS]-(doctor)\nWHERE department.name=\"pediatric\" AND appointment.type=\"children\" AND patient.date_of_birth >= date()-duration({years: 10}) AND appointment.status CONTAINS \"Flu\"\nRETURN doctor, works_at, hospital, is_in, department, patient, has_appointment, appointment, consults, is_in.join_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the dates when doctors joined pediatric departments at hospitals where they have given consultations for children under 10 years old diagnosed with 'Flu'."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "What are the enrollment dates in insurance plans for patients who have a recorded diagnosis of 'Hypertension' made by doctors who work in hospitals with more than 200 beds?",
+        "Cypher": "MATCH (patient:Patient)-[own:OWNS]->(record:MedicalRecord)<-[write:RECORDS]-(doctor:Doctor)-[work:WORKS_AT]->(hospital:Hospital)\nMATCH (patient)-[covered:COVERED_BY]->(insurancePlan:InsurancePlan)\nWHERE record.diagnosis=\"Hypertension\" AND hospital.beds > 200\nRETURN patient, own, record, write, doctor, work, hospital, covered, insurancePlan, insurancePlan.enrollment_date",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Identify the visit purposes and visit dates for patients seen by orthopedic doctors who work in hospitals where those doctors also consult for arthritis-related appointments.",
+        "Cypher": "MATCH (doctor:Doctor)-[worksAt:WORKS_AT]->(hospital:Hospital)<-[visit:VISITS]-(patient:Patient)\nMATCH (doctor)-[consults:CONSULTS]->(appointment:Appointment)\nWHERE doctor.specialization=\"orthopedic\" AND appointment.type CONTAINS \"arthritis\"\nRETURN doctor, worksAt, hospital, patient, visit, consults, appointment, visit.purpose, visit.visit_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the purposes and dates of visits for patients treated by orthopedic physicians employed at hospitals where these doctors also provide consultations for arthritis."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Calculate the average amount of payments for procedures performed by gastroenterologists working at hospitals which host more than 5 departments.",
+        "Cypher": "MATCH (doctor:Doctor)-[:WORKS_AT]->(hospital:Hospital)\nWHERE doctor.specialization = \"gastroenterologist\"\nWITH hospital, COUNT(DISTINCT doctor) AS gastroCount\nMATCH (hospital)-[:IS_IN]->(department:Department)\nWITH hospital, gastroCount, COUNT(DISTINCT department) AS departmentCount\nWHERE departmentCount > 5\nMATCH (doctor:Doctor)-[:WORKS_AT]->(hospital)\nMATCH (doctor)-[:CONSULTS]->(appointment:Appointment)<-[:HAS_APPOINTMENT]-(patient:Patient)\nMATCH (patient)-[makesPayment:MAKES_PAYMENT]->(payment:Payment)\nWHERE doctor.specialization = \"gastroenterologist\"\nRETURN AVG(payment.amount)",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (doctor:Doctor)-[relation7:WORKS_AT]->(hospital:Hospital)\nWHERE doctor.specialization = \"gastroenterologist\"\nWITH hospital, COUNT(DISTINCT doctor) AS gastroCount\nMATCH (hospital)-[relation8:IS_IN]->(department:Department)\nWITH hospital, gastroCount, COUNT(DISTINCT department) AS departmentCount\nWHERE departmentCount > 5\nMATCH (doctor:Doctor)-[relation9:WORKS_AT]->(hospital)\nMATCH (doctor)-[relation10:CONSULTS]->(appointment:Appointment)<-[relation11:HAS_APPOINTMENT]-(patient:Patient)\nMATCH (patient)-[makesPayment:MAKES_PAYMENT]->(payment:Payment)\nWHERE doctor.specialization = \"gastroenterologist\"\nRETURN AVG(payment.amount)",
+        "num-hop": 6,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "Determine the average payment amount for patients seeing gastroenterologists, where the gastroenterologists work in hospitals with more than five departments.",
+        "Max-Semantic-Score": 0.9136124849319458,
+        "Avg-Semantic-Score": 0.8130168557167053
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Find the maximum dosage of medications prescribed by rheumatologists who work in departments that have logged over 500 patient appointments in the last year.",
+        "Cypher": "MATCH (doctor:Doctor)-[:WORKS_AT]->(department:Department)<-[:IS_IN]-(otherDoctor:Doctor)\nWHERE doctor.specialization = \"Rheumatologist\"\nWITH department, COUNT(DISTINCT otherDoctor) AS NumberOfPatientAppointments\nWHERE NumberOfPatientAppointments > 500\nMATCH (doctor)-[:PRESCRIBES]->(medication:Medication)\nRETURN MAX(medication.dosage) AS MaximumDosage",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (doctor:Doctor)-[relation4:WORKS_AT]->(department:Department)<-[relation5:IS_IN]-(otherDoctor:Doctor)\nWHERE doctor.specialization = \"Rheumatologist\"\nWITH department, COUNT(DISTINCT otherDoctor) AS NumberOfPatientAppointments\nWHERE NumberOfPatientAppointments > 500\nMATCH (doctor)-[relation6:PRESCRIBES]->(medication:Medication)\nRETURN MAX(medication.dosage) AS MaximumDosage",
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Determine the total number of patient treatments recorded by doctors in the neurology department who prescribed medication for 'Epilepsy' across all hospitals.",
+        "Cypher": "MATCH (doctor:Doctor)-[:IS_IN]->(department:Department {name: \"Neurology\"})\nMATCH (doctor)-[:PRESCRIBES]->(medication:Medication {name: \"Epilepsy\"})\nMATCH (doctor)-[:RECORDS]->(record:MedicalRecord)\nRETURN COUNT(DISTINCT record) AS TotalTreatmentsRecorded",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (doctor:Doctor)-[relation4:IS_IN]->(department:Department {name: \"Neurology\"})\nMATCH (doctor)-[relation5:PRESCRIBES]->(medication:Medication {name: \"Epilepsy\"})\nMATCH (doctor)-[relation6:RECORDS]->(record:MedicalRecord)\nRETURN COUNT(DISTINCT record) AS TotalTreatmentsRecorded",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate how many treatments for patients have been documented by neurology department doctors prescribing 'Epilepsy' medication in all hospitals."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Evaluate the minimum premium amounts of insurance plans offered by companies that have covered patients with at least three chronic diseases.",
+        "Cypher": "MATCH (patient:Patient)-[covered:COVERED_BY]->(plan:InsurancePlan)<-[offer:OFFERS]-(company:InsuranceCompany)\nWITH patient, COUNT(DISTINCT plan) AS chronicDiseases, MIN(plan.premium) AS minPremium\nWHERE chronicDiseases >= 3\nRETURN minPremium",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Assess the lowest premium rates of insurance policies provided by firms that insure patients with three or more chronic conditions."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Count the number of prescriptions written by cardiologists at a hospital named 'Heart Health Institute' for patients aged 70 or older.",
+        "Cypher": "MATCH (hospital:Hospital)-[:WORKS_AT]-(doctor:Doctor)-[:PRESCRIBES]->(prescription:Medication)\nWHERE hospital.name = \"Heart Health Institute\" AND doctor.specialization = \"Cardiologist\"\nMATCH (patient:Patient)-[:TAKES]->(prescription)\nWHERE datetime().year - patient.date_of_birth.year >= 70\nRETURN COUNT(DISTINCT prescription)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (hospital:Hospital)-[relation4:WORKS_AT]-(doctor:Doctor)-[relation5:PRESCRIBES]->(prescription:Medication)\nWHERE hospital.name = \"Heart Health Institute\" AND doctor.specialization = \"Cardiologist\"\nMATCH (patient:Patient)-[relation6:TAKES]->(prescription)\nWHERE datetime().year - patient.date_of_birth.year >= 70\nRETURN COUNT(DISTINCT prescription)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Tally the total prescriptions issued by cardiologists at 'Heart Health Institute' for patients who are 70 years of age or older."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the sum of payments made by patients diagnosed with 'Osteoporosis' for treatments presided by orthopedists at specialized bone health centers?",
+        "Cypher": "MATCH (patient:Patient)-[:OWNS]->(record:MedicalRecord)\nWHERE record.diagnosis=\"Osteoporosis\"\nMATCH (patient)-[:MAKES_PAYMENT]->(payment:Payment)\nMATCH (doctor:Doctor)-[:RECORDS]->(record)\nWHERE doctor.specialization=\"Orthopedist\"\nMATCH (doctor)-[:WORKS_AT]->(hospital:Hospital)\nWHERE hospital.name CONTAINS \"Bone Health\"\nRETURN SUM(payment.amount)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (patient:Patient)-[relation5:OWNS]->(record:MedicalRecord)\nWHERE record.diagnosis=\"Osteoporosis\"\nMATCH (patient)-[relation6:MAKES_PAYMENT]->(payment:Payment)\nMATCH (doctor:Doctor)-[relation7:RECORDS]->(record)\nWHERE doctor.specialization=\"Orthopedist\"\nMATCH (doctor)-[relation8:WORKS_AT]->(hospital:Hospital)\nWHERE hospital.name CONTAINS \"Bone Health\"\nRETURN SUM(payment.amount)",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the total amount paid by patients suffering from 'Osteoporosis' for care overseen by orthopedists in dedicated bone health facilities?"
+    }
+]

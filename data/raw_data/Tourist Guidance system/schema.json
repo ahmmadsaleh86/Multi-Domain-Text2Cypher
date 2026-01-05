@@ -1,0 +1,133 @@
+[
+    {
+        "Type": "Node",
+        "Label": "City",
+        "Attributes": {
+            "name": "String",
+            "population": "Integer",
+            "country": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Attraction",
+        "Attributes": {
+            "name": "String",
+            "type": "String",
+            "rating": "Float"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Restaurant",
+        "Attributes": {
+            "name": "String",
+            "cuisine": "String",
+            "rating": "Float"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Hotel",
+        "Attributes": {
+            "name": "String",
+            "stars": "Integer",
+            "rating": "Float"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Tourist",
+        "Attributes": {
+            "name": "String",
+            "nationality": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "LOCATED_IN",
+        "From": "Attraction",
+        "To": "City",
+        "Attributes": {
+            "distance_km": "Float"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "LOCATED_IN",
+        "From": "Restaurant",
+        "To": "City",
+        "Attributes": {
+            "distance_km": "Float"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "LOCATED_IN",
+        "From": "Hotel",
+        "To": "City",
+        "Attributes": {
+            "distance_km": "Float"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "VISITED",
+        "From": "Tourist",
+        "To": "Attraction",
+        "Attributes": {
+            "date": "Date",
+            "duration_minutes": "Integer"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "DINED_AT",
+        "From": "Tourist",
+        "To": "Restaurant",
+        "Attributes": {
+            "date": "Date",
+            "meal": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "STAYED_AT",
+        "From": "Tourist",
+        "To": "Hotel",
+        "Attributes": {
+            "check_in": "Date",
+            "check_out": "Date"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "RECOMMENDS",
+        "From": "Tourist",
+        "To": "Attraction",
+        "Attributes": {
+            "rating": "Float",
+            "comment": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "RECOMMENDS",
+        "From": "Tourist",
+        "To": "Restaurant",
+        "Attributes": {
+            "rating": "Float",
+            "comment": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "RECOMMENDS",
+        "From": "Tourist",
+        "To": "Hotel",
+        "Attributes": {
+            "rating": "Float",
+            "comment": "String"
+        }
+    }
+]

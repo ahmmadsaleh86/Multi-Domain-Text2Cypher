@@ -1,0 +1,197 @@
+[
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Identify the titles and scores of answers provided by users who commented on questions tagged with 'Java' with a view count exceeding 1000.",
+        "Cypher": "MATCH (javaTag:Tag)-[tagged:TAGGED]->(question:Question)<-[commentedOn:COMMENTED_ON]-(comment:Comment)<-[commented:COMMENTED]-(user:User)\nMATCH (user)-[provided:PROVIDED]->(answer:Answer)\nWHERE javaTag.name=\"Java\" AND question.view_count>1000\nRETURN tagged, javaTag, question, commentedOn, comment, commented, user, provided, answer, answer.title, answer.score",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (javaTag:Tag)-[tagged:TAGGED]-(question:Question)<-[commentedOn:COMMENTED_ON]-(comment:Comment)<-[commented:COMMENTED]-(user:User)\nMATCH (user)-[provided:PROVIDED]->(answer:Answer)\nWHERE javaTag.name=\"Java\" AND question.view_count>1000\nRETURN tagged, javaTag, question, commentedOn, comment, commented, user, provided, answer, answer.title, answer.score",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Find the titles and scores of responses from users who have commented on questions labeled 'Java' that have more than 1000 views."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Can you find the display names of users who have both answered and commented on questions tagged with 'javascript' and 'react' with answer scores greater than 20?",
+        "Cypher": "MATCH (commentUser:User)-[commented:COMMENTED]->(comment:Comment)-[commentedOn:COMMENTED_ON]->(question:Question)-[taggedJS:TAGGED]->(tagJS:Tag),\n      (answerUser:User)-[provided:PROVIDED]->(answer:Answer)-[answered:ANSWERED]->(question),\n      (question)-[taggedReact:TAGGED]->(tagReact:Tag)\nWHERE tagJS.name=\"javascript\" AND tagReact.name=\"react\" AND answer.score > 20 AND commentUser.uuid = answerUser.uuid\nRETURN commented, commentUser, comment, commentedOn, question, taggedJS, tagJS, provided, answerUser, answer, answered, taggedReact, tagReact, commentUser.display_name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 6,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "Who are the users who commented on and provided answers to questions tagged with both \"javascript\" and \"react\", where the answers have scores above 20?",
+        "Max-Semantic-Score": 0.8215205669403076,
+        "Avg-Semantic-Score": 0.7175523042678833,
+        "Rewrite": "Could you retrieve the display names of users who have commented on and answered questions tagged 'javascript' and 'react', where their answers have scores over 20?"
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "What are the links and body_markdown of questions asked by users who have provided accepted answers to questions tagged 'database' and answered other questions with a score higher than 50?",
+        "Cypher": "MATCH (user:User)-[provided:PROVIDED]->(acceptedAnswer:Answer)-[answeredAccepted:ANSWERED]->(questionWithTag:Question)-[tagged:TAGGED]->(tag:Tag)\nWHERE acceptedAnswer.is_accepted = true AND tag.name = \"database\"\nMATCH (user)-[providedHighScore:PROVIDED]->(highScoreAnswer:Answer)-[answeredHighScore:ANSWERED]->(otherQuestion:Question)\nWHERE highScoreAnswer.score > 50\nMATCH (user)-[asked:ASKED]->(userQuestion:Question)\nRETURN provided, user, acceptedAnswer, answeredAccepted, questionWithTag, tagged, tag, providedHighScore, highScoreAnswer, answeredHighScore, otherQuestion, asked, userQuestion, userQuestion.link, userQuestion.body_markdown",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 6,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "Who are the users that have provided accepted answers to questions tagged \"database\", also contributing answers with scores over 50, and what are the questions they've asked along with these questions' links and markdown bodies?",
+        "Max-Semantic-Score": 0.8351370692253113,
+        "Avg-Semantic-Score": 0.6675596833229065,
+        "Rewrite": "What are the URLs and body_markdown of questions posted by users who have supplied accepted answers to questions with a 'database' tag and have also responded to other questions with scores exceeding 50?"
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Extract and list all user display names and the titles of questions they have commented on, given that these questions are related to the 'python' tag and have at least 5 comments with individual scores over 10.",
+        "Cypher": "MATCH (user:User)-[commented:COMMENTED]->(comment:Comment)-[commentedOn:COMMENTED_ON]->(question:Question)-[tagged:TAGGED]->(tag:Tag)\nWHERE tag.name = \"python\" AND comment.score > 10\nWITH question, count(comment) as HighScoringComments, user\nWHERE HighScoringComments >= 5\nRETURN commented, user, comment, commentedOn, question, tagged, tag, user.display_name, question.title",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Can you gather names of users, titles, and links of questions which they have tagged as 'SQL' or 'NoSQL' where these questions also have an accepted answer and more than 1500 views?",
+        "Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question)-[tagged:TAGGED]->(tag:Tag)\nWHERE (tag.name=\"SQL\" OR tag.name=\"NoSQL\") AND question.accepted_answer_id IS NOT NULL AND question.view_count>1500\nRETURN asked, user, question, tagged, tag, user.display_name, question.title, question.link",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you collect the names of users, titles, and URLs of questions tagged with 'SQL' or 'NoSQL' that have an accepted answer and over 1500 views?"
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Display the uuids of users who have comments on answers to their own questions that contain the tags 'algorithm' and 'data structure', ensuring these question have accrued over 300 views.",
+        "Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question)-[tagged1:TAGGED]->(tag1:Tag), (question)-[tagged2:TAGGED]->(tag2:Tag)\nMATCH (question)<-[:ANSWERED]-(answer:Answer)<-[:COMMENTED_ON]-(comment:Comment)<-[:COMMENTED]-(user)\nWHERE tag1.name=\"algorithm\" AND tag2.name=\"data structure\" AND question.view_count>300\nRETURN asked, user, question, tagged1, tag1, tagged2, tag2, answer, comment, user.uuid",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question)-[tagged1:TAGGED]->(tag1:Tag), (question)-[tagged2:TAGGED]->(tag2:Tag)\nMATCH (question)<-[relation9:ANSWERED]-(answer:Answer)<-[relation10:COMMENTED_ON]-(comment:Comment)<-[relation11:COMMENTED]-(user)\nWHERE tag1.name=\"algorithm\" AND tag2.name=\"data structure\" AND question.view_count>300\nRETURN relation11, relation10, relation9, asked, user, question, tagged1, tag1, tagged2, tag2, answer, comment, user.uuid",
+        "num-hop": 6,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "Can you identify users who posted and commented on answers to their own questions tagged as both \"algorithm\" and \"data structure\", provided these questions have attracted over 300 views?",
+        "Max-Semantic-Score": 0.7705535888671875,
+        "Avg-Semantic-Score": 0.631730592250824
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Can you detail the relationships between answers and questions where the answers have scores over 15 and are attached to questions tagged with 'PHP' and 'security'?",
+        "Cypher": "MATCH (answer:Answer)-[providedToQuestion:ANSWERED]->(question:Question)-[taggedAsPHP:TAGGED]->(tagPHP:Tag),\n(question)-[taggedAsSecurity:TAGGED]->(tagSecurity:Tag)\nWHERE answer.score > 15 AND tagPHP.name=\"PHP\" AND tagSecurity.name=\"security\"\nRETURN providedToQuestion, answer, question, taggedAsPHP, tagPHP, taggedAsSecurity, tagSecurity, answer.uuid, question.uuid",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you describe the connections between questions and their answers, specifically for answers scoring above 15, linked to questions labeled with the tags 'PHP' and 'security'?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "What are the relationships involving comments with a score above 20 on questions concerning the 'machine learning' tag asked by users with more than 10 comments?",
+        "Cypher": "MATCH (commenter:User)-[commentRelation:COMMENTED]->(comment:Comment)-[commentedOn:COMMENTED_ON]->(question:Question)\nMATCH (question)-[tagged:TAGGED]->(tag:Tag)\nWHERE tag.name=\"machine learning\" AND comment.score > 20 AND size((commenter)-[:COMMENTED]->(:Comment)) > 10\nRETURN commentRelation, commenter, comment, commentedOn, question, tagged, tag, commenter.display_name",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (commenter:User)-[commentRelation:COMMENTED]->(comment:Comment)-[commentedOn:COMMENTED_ON]->(question:Question)\nMATCH (question)-[tagged:TAGGED]->(tag:Tag)\nWHERE tag.name=\"machine learning\" AND comment.score > 20 AND size((commenter)-[:COMMENTED]->(node4:Comment)) > 10\nRETURN relation8, node4, commentRelation, commenter, comment, commentedOn, question, tagged, tag, commenter.display_name",
+        "num-hop": 4,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Identify and describe the connections between users and questions where the users have both asked and provided answers, with each answer having a score exceeding 30 in topics related to 'networking'.",
+        "Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question)-[tagged:TAGGED]->(tag:Tag),\n      (user)-[provided:PROVIDED]->(answer:Answer)-[answered:ANSWERED]->(question)\nWHERE tag.name=\"networking\" AND answer.score > 30\nRETURN asked, provided, answered, tagged, user, question, answer, tag, user.display_name, question.title, answer.title",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine and elucidate the relationships between users and questions in which the users have both posed questions and given answers, with each answer receiving a score above 30 in areas concerning 'networking'."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "List the flow of interactions in terms of comments and answers between questions tagged 'C++' and users who have both commented on and answered these questions, where the comments have scores higher than 5.",
+        "Cypher": "MATCH (user:User)-[provided:PROVIDED]->(answer:Answer)-[answered:ANSWERED]->(question:Question)-[tagged:TAGGED]->(tag:Tag),\n      (user)-[commented:COMMENTED]->(comment:Comment)-[commentedOn:COMMENTED_ON]->(question)\nWHERE tag.name=\"C++\" AND comment.score > 5\nRETURN provided, answered, tagged, commented, commentedOn, user, answer, comment, question, tag, user.display_name, answer.link, comment.link, question.link, tag.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "Detail the sequence of responses and discussions relating to questions labeled 'C++', involving users who have both commented on and responded to these questions, specifically where the comments hold a score exceeding 5."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Explain the relationship paths from users to their commented questions and answers on those questions for users who have more than 200 comments overall in the graph.",
+        "Cypher": "MATCH (user:User)-[commented:COMMENTED]->(comment:Comment)-[commentedOn:COMMENTED_ON]->(question:Question)\nWITH user, COUNT(comment) AS totalComments\nWHERE totalComments > 200\nMATCH (user)-[commented]->(comment)-[commentedOn]->(question)<-[answered:ANSWERED]-(answer:Answer)\nRETURN commented, user, comment, commentedOn, question, answered, answer, user.uuid, user.display_name, question.uuid, question.title, answer.uuid, answer.title",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (commentingUser:User)-[commentRelation:COMMENTED]->(comment:Comment)-[commentedOnQuestion:COMMENTED_ON]->(question:Question)\nWITH commentingUser, COUNT(comment) AS totalComments\nWHERE totalComments > 200\nMATCH (commentingUser)-[anotherCommentRelation:COMMENTED]->(anotherComment:Comment)-[commentedOnAnotherQuestion:COMMENTED_ON]->(sameQuestion:Question)\nMATCH (sameQuestion)-[answerRelation:ANSWERED]-(answer:Answer)\nRETURN commentRelation, commentingUser, comment, commentedOnQuestion, question, anotherCommentRelation, anotherComment, commentedOnAnotherQuestion, sameQuestion, answerRelation, answer",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Describe the connection routes from users to the questions they have commented on, including the answers to those questions, for users who have accumulated over 200 comments in total within the graph."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Outline the linkage between the questions tagged 'web development' that have at least 200 views and the users who have commented while providing answers to these questions where answer scores were over 25.",
+        "Cypher": "MATCH (question:Question)-[tagged:TAGGED]->(tag:Tag) \nWHERE tag.name=\"web development\" AND question.view_count>=200\nMATCH (answer:Answer)-[answered:ANSWERED]->(question)\nWHERE answer.score > 25\nMATCH (user:User)-[provided:PROVIDED]->(answer)\nMATCH (user)-[commented:COMMENTED]->(comment:Comment)-[commented_on:COMMENTED_ON]->(question)\nRETURN tagged, question, tag, answered, answer, provided, user, commented, comment, commented_on, user.display_name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "Map the connection between questions labeled 'web development' with a minimum of 200 views and users who commented while offering answers to these questions, specifically where the answers scored above 25."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Calculate the average score of comments made by users who have also answered questions tagged 'Python' where their answers were accepted and scored more than 50.",
+        "Cypher": "MATCH (user:User)-[provided:PROVIDED]->(answer:Answer)-[answered:ANSWERED]->(question:Question)-[tagged:TAGGED]->(tag:Tag)\nWHERE tag.name = \"Python\" AND answer.is_accepted = TRUE AND answer.score > 50\nWITH DISTINCT user\nMATCH (user)-[commented:COMMENTED]->(comment:Comment)\nRETURN AVG(comment.score) AS average_comment_score",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the mean score of remarks from users who have provided accepted answers scoring over 50 to questions tagged 'Python'."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the maximum view count of questions that have been both asked by a user and commented on by the same user where questions carry the tag 'iOS'?",
+        "Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question)-[tagged:TAGGED]->(tag:Tag)\nWHERE tag.name=\"iOS\"\nWITH user, question\nMATCH (user)-[:COMMENTED]->(comment:Comment)-[:COMMENTED_ON]->(question)\nRETURN MAX(question.view_count)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question)-[tagged:TAGGED]->(tag:Tag)\nWHERE tag.name=\"iOS\"\nWITH user, question\nMATCH (user)-[relation6:COMMENTED]->(comment:Comment)-[relation7:COMMENTED_ON]->(question)\nRETURN MAX(question.view_count)",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest number of views for questions tagged 'iOS' that a user has both posted and commented on?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Can you compute the total number of comments on questions asked by users who have provided answers with a score of at least 40 to 'Javascript' tagged questions?",
+        "Cypher": "MATCH (user:User)-[:PROVIDED]->(answer:Answer)-[:ANSWERED]->(question:Question)-[:TAGGED]->(tag:Tag)\nWHERE tag.name = \"Javascript\" AND answer.score >= 40\nWITH DISTINCT user\nMATCH (user)-[:ASKED]->(askedQuestion:Question)<-[:COMMENTED_ON]-(comment:Comment)\nRETURN COUNT(comment) AS totalComments",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)-[relation6:PROVIDED]->(answer:Answer)-[relation7:ANSWERED]->(question:Question)-[relation8:TAGGED]->(tag:Tag)\nWHERE tag.name = \"Javascript\" AND answer.score >= 40\nWITH DISTINCT user\nMATCH (user)-[relation9:ASKED]->(askedQuestion:Question)<-[relation10:COMMENTED_ON]-(comment:Comment)\nRETURN COUNT(comment) AS totalComments",
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you calculate the total amount of comments on questions posted by users who have contributed answers scoring 40 or more to questions tagged 'Javascript'?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Determine the minimum and maximum scores of answers to questions tagged with 'artificial intelligence', asked by top 10 users in terms of total questions asked on the platform.",
+        "Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question)-[tagged:TAGGED]->(tag:Tag)\nWHERE tag.name = \"artificial intelligence\"\nWITH user, COUNT(question) AS total_questions\nORDER BY total_questions DESC\nLIMIT 10\nMATCH (user)-[:ASKED]->(question)-[:ANSWERED]->(answer:Answer)\nRETURN MIN(answer.score) AS MinScore, MAX(answer.score) AS MaxScore",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question)-[tagged:TAGGED]->(tag:Tag)\nWHERE tag.name = \"artificial intelligence\"\nWITH user, COUNT(question) AS total_questions\nORDER BY total_questions DESC\nLIMIT 10\nMATCH (user)-[relation6:ASKED]->(question)-[relation7:ANSWERED]-(answer:Answer)\nRETURN MIN(answer.score) AS MinScore, MAX(answer.score) AS MaxScore",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Identify the lowest and highest scores of responses to questions labeled 'artificial intelligence', posed by the top 10 users ranked by the number of questions they have asked on the platform."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Find the sum of scores of all answers linked to 'Android' tagged questions, provided by users who have comments with scores exceeding 15.",
+        "Cypher": "MATCH (user:User)-[:COMMENTED]->(comment:Comment)\nWHERE comment.score > 15\nWITH user\nMATCH (user)-[:PROVIDED]->(answer:Answer)-[:ANSWERED]->(question:Question)-[:TAGGED]->(tag:Tag)\nWHERE tag.name='Android'\nRETURN SUM(answer.score)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)-[relation5:COMMENTED]->(comment:Comment)\nWHERE comment.score > 15\nWITH user\nMATCH (user)-[relation6:PROVIDED]->(answer:Answer)-[relation7:ANSWERED]->(question:Question)-[relation8:TAGGED]->(tag:Tag)\nWHERE tag.name='Android'\nRETURN SUM(answer.score)",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the total score of answers connected to questions tagged 'Android', from users whose comments have scores greater than 15."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Identify the total number of tags associated with questions which have more than 3 answers, each with a score greater than 10, asked by users with uuids more than 50000.",
+        "Cypher": "MATCH (user:User)-[:ASKED]->(question:Question)-[:TAGGED]->(tag:Tag)\nWHERE user.uuid > 50000 AND question.answer_count > 3\nWITH question, tag\nMATCH (answer:Answer)-[:ANSWERED]->(question)\nWHERE answer.score > 10\nWITH question, tag, COUNT(answer) AS answersWithHighScore\nWHERE answersWithHighScore > 3\nRETURN COUNT(DISTINCT tag)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Corrected-Cypher": "MATCH (user:User)-[relation4:ASKED]->(question:Question)-[relation5:TAGGED]->(tag:Tag)\nWHERE user.uuid > 50000 AND question.answer_count > 3\nWITH question, tag\nMATCH (answer:Answer)-[relation6:ANSWERED]->(question)\nWHERE answer.score > 10\nWITH question, tag, COUNT(answer) AS answersWithHighScore\nWHERE answersWithHighScore > 3\nRETURN COUNT(DISTINCT tag)",
+        "Rewrite": "Determine how many tags are linked to questions that receive over three answers, each with scores above 10, posed by users whose uuids exceed 50000."
+    }
+]

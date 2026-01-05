@@ -1,0 +1,184 @@
+[
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What is the name of the hotel with 5 stars that has the highest rating in 'Paris'?",
+        "Cypher": "MATCH (hotel:Hotel)-[:LOCATED_IN]->(city:City {name: \"Paris\"})\nWHERE hotel.stars = 5\nRETURN hotel, city, hotel.name\nORDER BY hotel.rating DESC\nLIMIT 1",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (hotel:Hotel)-[relation2:LOCATED_IN]->(city:City {name: \"Paris\"})\nWHERE hotel.stars = 5\nRETURN relation2, hotel, city, hotel.name\nORDER BY hotel.rating DESC\nLIMIT 1",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest-rated five-star hotel in 'Paris'?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Can you list the types of cuisine available in restaurants located within 5 km of 'Rome City Center'?",
+        "Cypher": "MATCH (city:City {name: \"Rome City Center\"})<-[located:LOCATED_IN]-(restaurant:Restaurant)\nWHERE located.distance_km <= 5\nRETURN city, located, restaurant, restaurant.cuisine",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide a list of the different kinds of food served in eateries around 'Rome City Center' within a 5 km radius?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the names of attractions in 'New York' with a rating above 4.5?",
+        "Cypher": "MATCH (attraction:Attraction)-[located:LOCATED_IN]->(city:City {name:\"New York\"})\nWHERE attraction.rating > 4.5\nRETURN attraction, located, city, attraction.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which attractions in 'New York' have a rating higher than 4.5?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "In which city is the 'Golden Gate Bridge' located, and what is the population of that city?",
+        "Cypher": "MATCH (attraction:Attraction {name:\"Golden Gate Bridge\"})-[located_in:LOCATED_IN]->(city:City)\nRETURN attraction, located_in, city, city.name, city.population",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which city houses the 'Golden Gate Bridge', and how many people live in that city?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Provide the names of the Japanese restaurants that are located in 'Tokyo' with ratings higher than 4.0.",
+        "Cypher": "MATCH (restaurant:Restaurant)-[location:LOCATED_IN]->(city:City)\nWHERE city.name=\"Tokyo\" AND restaurant.cuisine=\"Japanese\" AND restaurant.rating > 4.0\nRETURN restaurant, location, city, restaurant.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the Japanese restaurants situated in 'Tokyo' with a rating above 4.0."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the nationalities of tourists who have stayed at the 'Ritz Carlton' in 'London' during December 2021?",
+        "Cypher": "MATCH (tourist:Tourist)-[stay:STAYED_AT]->(hotel:Hotel)-[:LOCATED_IN]->(city:City)\nWHERE hotel.name=\"Ritz Carlton\" AND city.name=\"London\" AND stay.check_in.year = 2021 AND stay.check_in.month = 12\nRETURN tourist, stay, hotel, city, tourist.nationality",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (tourist:Tourist)-[stay:STAYED_AT]->(hotel:Hotel)-[relation4:LOCATED_IN]->(city:City)\nWHERE hotel.name=\"Ritz Carlton\" AND city.name=\"London\" AND stay.check_in.year = 2021 AND stay.check_in.month = 12\nRETURN relation4, tourist, stay, hotel, city, tourist.nationality",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the origins of the tourists that stayed at the 'Ritz Carlton' in 'London' in December 2021?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What is the average distance of hotels from the city center in 'Miami'?",
+        "Cypher": "MATCH (hotel:Hotel)-[located:LOCATED_IN]->(city:City {name:\"Miami\"})\nRETURN hotel, located, city, avg(located.distance_km)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical distance between hotels and the city center in 'Miami'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "How far is the 'Louvre Museum' located from the center of 'Paris'?",
+        "Cypher": "MATCH (attraction:Attraction {name:\"Louvre Museum\"})-[located:LOCATED_IN]->(city:City {name:\"Paris\"})\nRETURN attraction, located, city, located.distance_km",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the distance from the center of 'Paris' to the 'Louvre Museum'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What is the shortest distance from a restaurant to the city center in 'Barcelona' where the cuisine is Spanish?",
+        "Cypher": "MATCH (restaurant:Restaurant)-[located:LOCATED_IN]->(city:City {name:\"Barcelona\"})\nWHERE restaurant.cuisine=\"Spanish\"\nRETURN restaurant, located, city, located.distance_km",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the minimum distance between a Spanish cuisine restaurant and the city center in 'Barcelona'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Can you find the comment made by 'John Doe' on the 'Statue of Liberty' which he rated after visiting in June 2022?",
+        "Cypher": "MATCH (tourist:Tourist {name:\"John Doe\"})-[visited:VISITED]->(attraction:Attraction {name:\"Statue of Liberty\"})<-[recommendation:RECOMMENDS]-(tourist)\nWHERE visited.date.year = 2022 AND visited.date.month = 6\nRETURN tourist, visited, attraction, recommendation, recommendation.comment",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you locate the review 'John Doe' posted about the 'Statue of Liberty' after his visit in June 2022?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What is the duration and date of the visit by 'Maria' to the 'British Museum'?",
+        "Cypher": "MATCH (tourist:Tourist {name:\"Maria\"})-[visit:VISITED]->(attraction:Attraction {name:\"British Museum\"})\nRETURN tourist, visit, attraction, visit.duration_minutes, visit.date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How long will 'Maria' be visiting the 'British Museum' and on what dates?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What meals were consumed by tourists from 'Germany' who dined at 'Cafe Paris' in March 2023?",
+        "Cypher": "MATCH (tourist:Tourist)-[dined:DINED_AT]->(restaurant:Restaurant)\nWHERE tourist.nationality=\"Germany\" AND restaurant.name=\"Cafe Paris\" AND dined.date.year=2023 AND dined.date.month=3\nRETURN tourist, dined, restaurant, dined.meal",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which dishes did visitors from 'Germany' eat at 'Cafe Paris' during March 2023?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many different types of attractions are there in 'Berlin' that have a rating of at least 4.0?",
+        "Cypher": "MATCH (attraction:Attraction)-[locatedIn:LOCATED_IN]->(city:City)\nWHERE city.name = \"Berlin\" AND attraction.rating >= 4.0\nRETURN COUNT(DISTINCT attraction.type)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the number of distinct attractions in 'Berlin' with a rating of 4.0 or higher?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the average rating of all hotels located within 10 km of 'Los Angeles' city center?",
+        "Cypher": "MATCH (hotel:Hotel)-[locatedIn:LOCATED_IN]->(city:City)\nWHERE city.name=\"Los Angeles\" AND locatedIn.distance_km <= 10\nRETURN AVG(hotel.rating)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the mean rating for hotels situated within 10 kilometers of the city center of 'Los Angeles'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Can you provide the total number of cities that have at least one Japanese restaurant with a rating above 4.5?",
+        "Cypher": "MATCH (restaurant:Restaurant)-[locatedIn:LOCATED_IN]->(city:City)\nWHERE restaurant.cuisine = \"Japanese\" AND restaurant.rating > 4.5\nRETURN COUNT(DISTINCT city)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the count of cities possessing at least one Japanese restaurant rated higher than 4.5?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "I am interested in the maximum rating given by tourists to any restaurant in 'Sydney'.",
+        "Cypher": "MATCH (restaurant:Restaurant)-[locatedIn:LOCATED_IN]->(city:City)\nWHERE city.name=\"Sydney\"\nMATCH (tourist:Tourist)-[recommends:RECOMMENDS]->(restaurant)\nRETURN MAX(recommends.rating)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "I want to know the highest rating that tourists have given to any restaurant in 'Sydney'."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the sum of the population of all cities that have more than 5 tourist attractions?",
+        "Cypher": "MATCH (attraction:Attraction)-[locatedInAttraction:LOCATED_IN]->(city:City)\nWITH city, COUNT(attraction) AS numAttractions\nWHERE numAttractions > 5\nRETURN SUM(city.population) AS totalPopulation",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the total population of cities with over five tourist attractions?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Could you calculate the average distance between restaurants and their respective city centers for all restaurants rated higher than 3.5 in 'Madrid'?",
+        "Cypher": "MATCH (restaurant:Restaurant)-[location:LOCATED_IN]->(city:City)\nWHERE city.name=\"Madrid\" AND restaurant.rating > 3.5\nRETURN AVG(location.distance_km)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you compute the mean distance from restaurants with a rating above 3.5 to the city center in 'Madrid'?"
+    }
+]

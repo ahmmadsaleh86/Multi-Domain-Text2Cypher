@@ -1,0 +1,181 @@
+[
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What is the email and phone number of the Person who lives at the address with postal code '10001'?",
+        "Cypher": "MATCH (person:Person)-[livesAt:LIVES_AT]->(address:Address {postal_code:\"10001\"})\nRETURN person, livesAt, address, person.email, person.phone_number",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the email and phone number for the Person residing at the address with the postal code '10001'?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "List all attributes of the Vehicle owned by the person with first name 'John' and last name 'Doe'.",
+        "Cypher": "MATCH (person:Person)-[ownership:OWNS]->(vehicle:Vehicle)\nWHERE person.first_name=\"John\" AND person.last_name=\"Doe\"\nRETURN person, ownership, vehicle, vehicle.vehicle_id, vehicle.make, vehicle.model, vehicle.year",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Display all the properties of the Vehicle that belongs to the individual named 'John' 'Doe'."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What is the model and year of the vehicle owned by someone who made their most recent payment on '2023-01-15'?",
+        "Cypher": "MATCH (person:Person)-[madePayment:MADE]->(payment:Payment {payment_date: date(\"2023-01-15\")}),\n      (person)-[vehicleOwnership:OWNS]->(vehicle:Vehicle)\nRETURN person, madePayment, payment, vehicleOwnership, vehicle, vehicle.model, vehicle.year",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the model and year of the vehicle for the owner whose latest payment was made on '2023-01-15'?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the first name and last name of the Employee who works in the Department named 'Finance'?",
+        "Cypher": "MATCH (employee:Employee)-[works:WORKS_IN]->(department:Department {name:\"Finance\"})\nRETURN employee, works, department, employee.first_name, employee.last_name",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Retrieve the service name and description for the service requested by the person with email 'example@example.com'.",
+        "Cypher": "MATCH (service:Service)<-[requested:REQUESTED]-(person:Person {email:\"example@example.com\"})\nRETURN service, requested, person, service.name, service.description",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Fetch the name and description of the service requested by the individual with the email 'example@example.com'."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the start and end dates for the employee who holds the title of 'Senior Analyst'?",
+        "Cypher": "MATCH (emp:Employee {title:\"Senior Analyst\"})\nRETURN emp, emp.start_date, emp.end_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the beginning and termination dates for the employee with the 'Senior Analyst' title?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Since when has person 'John Smith' lived at the address located on '123 Baker Street'?",
+        "Cypher": "MATCH (person:Person)-[livesAt:LIVES_AT]->(address:Address)\nWHERE person.first_name=\"John\" AND person.last_name=\"Smith\" AND address.street=\"123 Baker Street\"\nRETURN person, livesAt, address, livesAt.since",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How long has 'John Smith' been residing at '123 Baker Street'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What is the role of the person named 'Alice Johnson' in the application she applied for?",
+        "Cypher": "MATCH (person:Person)-[applied:APPLIED_FOR]->(application:Application)\nWHERE person.first_name=\"Alice\" AND person.last_name=\"Johnson\"\nRETURN person, applied, application, applied.role",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the position that 'Alice Johnson' applied for in the application?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "When did 'Michael Brown' start owning his vehicle according to the OWNS relation?",
+        "Cypher": "MATCH (person:Person)-[owns:OWNS]->(vehicle:Vehicle)\nWHERE person.first_name=\"Michael\" AND person.last_name=\"Brown\"\nRETURN person, owns, vehicle, owns.purchase_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "According to the OWNS relation, when did 'Michael Brown' first become the owner of his vehicle?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What is the purchase date for the vehicle owned by the person with last name 'Thompson'?",
+        "Cypher": "MATCH (person:Person)-[owns:OWNS]->(vehicle:Vehicle)\nWHERE person.last_name = \"Thompson\"\nRETURN person, owns, vehicle, owns.purchase_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "When did the person named 'Thompson' buy their vehicle?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Since when has 'David Wilson' been managing 'Emily Davis' in the MANAGES relationship?",
+        "Cypher": "MATCH (manager:Employee {first_name:\"David\", last_name:\"Wilson\"})-[manages:MANAGES]->(subordinate:Employee {first_name:\"Emily\", last_name:\"Davis\"})\nRETURN manager, manages, subordinate, manages.manager_since",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Identify how long the employee named 'Sara Clarke' has been working in her current department.",
+        "Cypher": "MATCH (employee:Employee)-[worksIn:WORKS_IN]->(department:Department)\nWHERE employee.first_name=\"Sara\" AND employee.last_name=\"Clarke\"\nRETURN employee, worksIn, department, employee.start_date",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the average amount spent on payments by users with three or more applications?",
+        "Cypher": "MATCH (person:Person)-[applied:APPLIED_FOR]->(application:Application)\nWITH person, COUNT(application) AS applicationsCount\nWHERE applicationsCount >= 3\nMATCH (person)-[:MADE]->(payment:Payment)\nRETURN AVG(payment.amount)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (person:Person)-[applied:APPLIED_FOR]->(application:Application)\nWITH person, COUNT(application) AS applicationsCount\nWHERE applicationsCount >= 3\nMATCH (person)-[relation4:MADE]->(payment:Payment)\nRETURN AVG(payment.amount)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical expenditure on transactions by users who have three or more applications?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many vehicles were purchased by persons born after '1985-01-01'?",
+        "Cypher": "MATCH (person:Person)-[owns:OWNS]->(vehicle:Vehicle)\nWHERE person.birth_date > date('1985-01-01')\nRETURN COUNT(DISTINCT vehicle)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many vehicles have been bought by individuals born post '1985-01-01'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Count the number of documents submitted by each person who has applied for more than two services.",
+        "Cypher": "MATCH (person:Person)-[requested:REQUESTED]->(service:Service)\nWITH person, COUNT(service) AS servicesCount\nWHERE servicesCount > 2\nMATCH (person)-[submitted:SUBMITTED]->(document:Document)\nRETURN person.person_id, COUNT(document) AS NumberOfDocumentsSubmitted",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Tally the number of documents each applicant has provided when they applied for more than two services."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Calculate the total number of employees working in departments with more than ten employees.",
+        "Cypher": "MATCH (employee:Employee)-[:WORKS_IN]->(department:Department)\nWITH department, COUNT(employee) AS employee_count\nWHERE employee_count > 10\nRETURN SUM(employee_count) AS total_employees_in_large_departments",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (employee:Employee)-[relation2:WORKS_IN]->(department:Department)\nWITH department, COUNT(employee) AS employee_count\nWHERE employee_count > 10\nRETURN SUM(employee_count) AS total_employees_in_large_departments",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the total count of workers in departments that have over ten employees."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the maximum payment amount made by any person for applications submitted before '2022-12-31'?",
+        "Cypher": "MATCH (person:Person)-[made:MADE]->(payment:Payment)-[associated:ASSOCIATED_WITH]->(application:Application)\nWHERE application.submission_date < date('2022-12-31')\nRETURN MAX(payment.amount) AS MaximumPaymentAmount",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest payment made by any individual for applications that were submitted prior to '2022-12-31'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the total number of vehicles owned by persons who have made a payment of over $5000?",
+        "Cypher": "MATCH (person:Person)-[madePayment:MADE]->(payment:Payment)\nWHERE payment.amount > 5000\nMATCH (person)-[owns:OWNS]->(vehicle:Vehicle)\nRETURN COUNT(DISTINCT vehicle)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many vehicles are owned by individuals who have paid more than $5000?"
+    }
+]

@@ -1,0 +1,186 @@
+[
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What is the title of the question that has an accepted answer which received more than 100 upvotes, and what tag is associated with this question?",
+        "Cypher": "MATCH (question:Question)-[tagged:TAGGED]->(tag:Tag), (answer:Answer)-[answered:ANSWERED]->(question)\nWHERE question.accepted_answer_id = answer.uuid AND answer.score > 100 AND answer.is_accepted = TRUE\nRETURN question, tagged, tag, answer, answered, question.title, tag.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the name of the question with an accepted answer garnering over 100 upvotes, and which tag is linked to that question?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Can you display the names of users who commented on a question titled 'How to optimize SQL query?', and also show the scores of their comments?",
+        "Cypher": "MATCH (user:User)-[commented:COMMENTED]->(comment:Comment)-[commentedOn:COMMENTED_ON]->(question:Question)\nWHERE question.title = \"How to optimize SQL query?\"\nRETURN user, commented, comment, commentedOn, question, user.display_name, comment.score",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you show the names of users who have commented on the question 'How to optimize SQL query?' and display the scores of their comments as well?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "List the user who provided an answer to the question 'What is graph theory?', and include the link to the user's profile along with the link of the answer.",
+        "Cypher": "MATCH (user:User)-[provided:PROVIDED]->(answer:Answer)-[answered:ANSWERED]->(question:Question)\nWHERE question.title = \"What is graph theory?\"\nRETURN user, provided, answer, answered, question, user.display_name, user.uuid, answer.link",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the name of the user who responded to the question 'What is graph theory?', and supply the corresponding links to both the user's profile and the answer."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Identify the tags associated with questions that received answers from a user named 'John Doe' and provide the links to those tags.",
+        "Cypher": "MATCH (user:User)-[:PROVIDED]->(answer:Answer)-[:ANSWERED]->(question:Question)-[tagged:TAGGED]->(tag:Tag)\nWHERE user.display_name = \"John Doe\"\nRETURN user, answer, question, tagged, tag, tag.link",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)-[relation4:PROVIDED]->(answer:Answer)-[relation5:ANSWERED]->(question:Question)-[tagged:TAGGED]->(tag:Tag)\nWHERE user.display_name = \"John Doe\"\nRETURN relation5, relation4, user, answer, question, tagged, tag, tag.link",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Locate and list the tags linked to questions answered by 'John Doe', including the URLs for those tags."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "For the comments made on the question with UUID 12345, can you tell me the authors of these comments and the scores of the answers related to this question?",
+        "Cypher": "MATCH (commentingUser:User)-[commented:COMMENTED]->(comment:Comment)-[commentedOn:COMMENTED_ON]->(targetQuestion:Question {uuid: 12345}), \n      (answer:Answer)-[answered:ANSWERED]->(targetQuestion)\nRETURN commentingUser, commented, comment, commentedOn, targetQuestion, answer, answered, commentingUser.display_name, comment.score",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide the names of the individuals who commented on the question identified by UUID 12345 and the scores of the answers associated with that question?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Show me the display names of users who commented on answers accepted for questions tagged 'JavaScript', and include the actual comment contents.",
+        "Cypher": "MATCH (commenter:User)-[commented:COMMENTED]->(comment:Comment)-[commentedOn:COMMENTED_ON]->(answer:Answer)-[answered:ANSWERED]->(question:Question)<-[:TAGGED]-(tag:Tag)\nWHERE tag.name=\"JavaScript\" AND answer.is_accepted = TRUE\nRETURN commenter, commented, comment, commentedOn, answer, answered, question, tag, commenter.display_name, comment.body_markdown",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (commenter:User)-[commented:COMMENTED]->(comment:Comment)-[commentedOn:COMMENTED_ON]->(answer:Answer)-[answered:ANSWERED]->(question:Question)<-[relation8:TAGGED]-(tag:Tag)\nWHERE tag.name=\"JavaScript\" AND answer.is_accepted = TRUE\nRETURN relation8, commenter, commented, comment, commentedOn, answer, answered, question, tag, commenter.display_name, comment.body_markdown",
+        "num-hop": 4,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Which users have asked a question and also provided an answer to another question within the same day, according to the 'ASKED' and 'PROVIDED' relationships?",
+        "Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question),\n      (user)-[provided:PROVIDED]->(answer:Answer)-[:ANSWERED]->(otherQuestion:Question)\nWHERE date(question.creation_date) = date(otherQuestion.creation_date)\nRETURN user, asked, question, provided, answer, otherQuestion",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question),\n      (user)-[provided:PROVIDED]->(answer:Answer)-[relation6:ANSWERED]->(otherQuestion:Question)\nWHERE date(question.creation_date) = date(otherQuestion.creation_date)\nRETURN relation6, user, asked, question, provided, answer, otherQuestion",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which users posed a question and also supplied an answer to a different question on the same day, as indicated by the 'ASKED' and 'PROVIDED' relationships?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "List all instances where users commented on their own answers, including the comment content and the related question's title.",
+        "Cypher": "MATCH (user:User)-[provided:PROVIDED]->(answer:Answer)-[:ANSWERED]->(question:Question), (user)-[commented:COMMENTED]->(comment:Comment)-[:COMMENTED_ON]->(answer)\nRETURN user, provided, answer, commented, comment, question, comment.link, question.title",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)-[provided:PROVIDED]->(answer:Answer)-[relation5:ANSWERED]->(question:Question), (user)-[commented:COMMENTED]->(comment:Comment)-[relation7:COMMENTED_ON]->(answer)\nRETURN relation7, relation5, user, provided, answer, commented, comment, question, comment.link, question.title",
+        "num-hop": 4,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Find all users who have both answered and commented on the same question and list the corresponding question titles.",
+        "Cypher": "MATCH (user:User)-[provided:PROVIDED]->(answer:Answer)-[answered:ANSWERED]->(question:Question),\n      (user)-[commented:COMMENTED]->(comment:Comment)-[commentedOn:COMMENTED_ON]->(question)\nRETURN user, provided, answer, answered, question, commented, comment, commentedOn, question.title",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Retrieve the titles of questions on which users have both commented and provided answers."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Identify relationships where a user tagged a question, provided an answer to the same question, and include the tag name in the results.",
+        "Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question)-[tagged:TAGGED]->(tag:Tag), (user)-[provided:PROVIDED]->(answer:Answer)-[answered:ANSWERED]->(question)\nRETURN user, asked, question, tagged, tag, provided, answer, answered, tag.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Find instances where a user both tagged a question and answered that question, ensuring to display the tag name in the output."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Show the link to the questions where 'Sam' has both commented and provided an answer, and include the scores of these answers.",
+        "Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question)<-[answered:ANSWERED]-(answer:Answer), (user)-[commented:COMMENTED]->(comment:Comment)-[commented_on:COMMENTED_ON]->(question)\nWHERE user.display_name = \"Sam\"\nRETURN user, asked, question, answered, answer, commented, comment, commented_on, question.link, answer.score",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Display the URL for the questions on which 'Sam' has both commented and answered, and show the scores of those answers."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Can you indicate all the occasions when a user commented on an answer they provided for the same question and list the date these comments were made?",
+        "Cypher": "MATCH (user:User)-[provided:PROVIDED]->(answer:Answer)-[answered:ANSWERED]->(question:Question), (user)-[commented:COMMENTED]->(comment:Comment)-[commentedOn:COMMENTED_ON]->(answer)\nRETURN user, provided, answer, answered, question, commented, comment, commentedOn, comment.creation_date",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the average score of comments on questions which have been tagged as 'Machine Learning'?",
+        "Cypher": "MATCH (comment:Comment)-[:COMMENTED_ON]->(question:Question)-[:TAGGED]->(tag:Tag)\nWHERE tag.name=\"Machine Learning\"\nRETURN AVG(comment.score)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (comment:Comment)-[relation3:COMMENTED_ON]->(question:Question)-[relation4:TAGGED]->(tag:Tag)\nWHERE tag.name=\"Machine Learning\"\nRETURN AVG(comment.score)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the mean score of comments for questions tagged with 'Machine Learning'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "For questions tagged 'JavaScript', what is the maximum view count among those that received at least two answers?",
+        "Cypher": "MATCH (question:Question)-[:TAGGED]->(tag:Tag)\nWHERE tag.name=\"JavaScript\" AND question.answer_count >= 2\nRETURN MAX(question.view_count)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (question:Question)-[relation2:TAGGED]->(tag:Tag)\nWHERE tag.name=\"JavaScript\" AND question.answer_count >= 2\nRETURN MAX(question.view_count)",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest number of views for questions with the 'JavaScript' tag that have received at least two answers?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Calculate the average number of comments received by questions that were asked by users with more than 10 questions to their name.",
+        "Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question)\nWITH user, COUNT(question) AS totalQuestions\nWHERE totalQuestions > 10\nMATCH (question)-[receivedComment:COMMENTED_ON]->(comment:Comment)\nWITH user, AVG(COUNT(comment)) as averageComments\nRETURN averageComments",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question)\nWITH user, COUNT(question) AS totalQuestions\nWHERE totalQuestions > 10\nMATCH (question)-[receivedComment:COMMENTED_ON]-(comment:Comment)\nWITH user, AVG(COUNT(comment)) as averageComments\nRETURN averageComments",
+        "num-hop": 2,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Compute the average score of answers to questions which both have the tag 'Python' and were answered by the same user.",
+        "Cypher": "MATCH (user:User)-[provided:PROVIDED]->(answer:Answer)-[answered:ANSWERED]->(question:Question)-[tagged:TAGGED]->(tag:Tag)\nWHERE tag.name=\"Python\"\nWITH user, AVG(answer.score) AS averageScore\nRETURN averageScore",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the mean score of responses to questions that are tagged with 'Python' and were replied to by the same user."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Determine the minimum score of all comments made on accepted answers of questions tagged 'Database'.",
+        "Cypher": "MATCH (comment:Comment)-[:COMMENTED_ON]->(answer:Answer)-[:ANSWERED]->(question:Question)-[:TAGGED]->(tag:Tag)\nWHERE tag.name=\"Database\" AND question.accepted_answer_id=answer.uuid\nRETURN MIN(comment.score)",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (comment:Comment)-[relation4:COMMENTED_ON]->(answer:Answer)-[relation5:ANSWERED]->(question:Question)-[relation6:TAGGED]->(tag:Tag)\nWHERE tag.name=\"Database\" AND question.accepted_answer_id=answer.uuid\nRETURN MIN(comment.score)",
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "How many questions have been asked with the tag 'Java' which have also been answered by users with a score greater than 100 on their answers?",
+        "Cypher": "MATCH (question:Question)-[:TAGGED]->(tag:Tag), (answer:Answer)-[:ANSWERED]->(question), (user:User)-[:PROVIDED]->(answer)\nWHERE tag.name=\"Java\" AND answer.score > 100\nRETURN COUNT(DISTINCT question)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (question:Question)-[relation4:TAGGED]->(tag:Tag), (answer:Answer)-[relation5:ANSWERED]->(question), (user:User)-[relation6:PROVIDED]->(answer)\nWHERE tag.name=\"Java\" AND answer.score > 100\nRETURN COUNT(DISTINCT question)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many queries tagged 'Java' have received responses from users whose answers have a score above 100?"
+    }
+]

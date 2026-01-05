@@ -1,0 +1,188 @@
+[
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the titles and ISBNs of books authored by 'John Doe' that were published in the English language after 2010?",
+        "Cypher": "MATCH (book:Book)<-[authored:AUTHOR_OF]-(author:Author)\nWHERE author.Name=\"John Doe\" AND book.Language=\"English\" AND book.PublicationYear>2010\nRETURN book, authored, author, book.Title, book.ISBN",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide the titles and ISBNs of books written by 'John Doe' in English and published post-2010?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "List the names and email addresses of members who started their membership before 2015 and have a 'Premium' membership type.",
+        "Cypher": "MATCH (member:Member)\nWHERE member.MembershipStart < date(\"2015-01-01\") AND member.MembershipType = \"Premium\"\nRETURN member, member.Name, member.Email",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the names and email addresses of individuals who began their membership prior to 2015 and hold a 'Premium' membership status."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Display the names and positions of employees working at the 'Central Branch' who were hired after January 1st, 2020.",
+        "Cypher": "MATCH (employee:Employee)-[employed_at:EMPLOYED_AT]->(branch:Branch {Name:\"Central Branch\"})\nWHERE employee.HireDate > date(\"2020-01-01\")\nRETURN employee, employed_at, branch, employee.Name, employee.Position",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Show the names and roles of employees at the 'Central Branch' who started their jobs subsequent to January 1st, 2020."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Can you provide the publication year and subject of all books that are available in 'Spanish' and have more than 5 copies available?",
+        "Cypher": "MATCH (book:Book)\nWHERE book.Language=\"Spanish\" AND book.CopiesAvailable>5\nRETURN book, book.PublicationYear, book.Subject",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the year of publication and the topic for every book available in 'Spanish' with an availability of over 5 copies?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the names and phone numbers of members who have an 'Active' membership status and borrowed a book during the last month?",
+        "Cypher": "MATCH (member:Member)-[has_loan:HAS_LOAN]->(loan:Loan)-[checked_out:CHECKED_OUT]->(book:Book)\nWHERE member.MembershipType = 'Active' AND loan.IssueDate >= date() - duration({days: 30})\nRETURN member, has_loan, loan, checked_out, book, member.Name, member.Phone",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (member:Member)-[has_loan:HAS_LOAN]->(loan:Loan)-[checked_out:CHECKED_OUT]-(book:Book)\nWHERE member.MembershipType = 'Active' AND loan.IssueDate >= date() - duration({days: 30})\nRETURN member, has_loan, loan, checked_out, book, member.Name, member.Phone",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Please provide the names and contact numbers of members currently listed as 'Active' who have also checked out a book in the previous month."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Retrieve all authors' names and their nationalities who have authored books with more than 200 pages and published by 'XYZ Publishers'.",
+        "Cypher": "MATCH (author:Author)-[authored:AUTHOR_OF]->(book:Book)<-[published_by:PUBLISHED_BY]-(publisher:Publisher {Name:\"XYZ Publishers\"})\nWHERE book.CopiesTotal > 200\nRETURN author, authored, book, published_by, publisher, author.Name, author.Nationality",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (author:Author)-[authored:AUTHOR_OF]->(book:Book)-[published_by:PUBLISHED_BY]-(publisher:Publisher {Name:\"XYZ Publishers\"})\nWHERE book.CopiesTotal > 200\nRETURN author, authored, book, published_by, publisher, author.Name, author.Nationality",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Fetch the names and nationalities of all authors who have written books exceeding 200 pages and are published by 'XYZ Publishers'."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What is the checkout timestamp for the loan pertaining to the book titled 'The Great Gatsby'?",
+        "Cypher": "MATCH (book:Book)-[checked_out:CHECKED_OUT]->(loan:Loan)\nWHERE book.Title=\"The Great Gatsby\"\nRETURN book, checked_out, loan, checked_out.CheckoutTimestamp",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the time and date of checkout for the book loan named 'The Great Gatsby'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Determine the return timestamp for books that were checked out by members living in 'New York City' and returned late.",
+        "Cypher": "MATCH (book:Book)-[checked_out:CHECKED_OUT]->(loan:Loan)-[borrowed_by:BORROWED_BY]->(member:Member)\nWHERE member.Location=\"New York City\" AND loan.DueDate < loan.ReturnDate\nRETURN book, checked_out, loan, borrowed_by, member, loan.ReturnTimestamp",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Since which date was 'Susan Lee' the manager of the 'Downtown Branch'?",
+        "Cypher": "MATCH (manager:Employee {Name:\"Susan Lee\"})<-[managing:MANAGED_BY]-(branch:Branch {Name:\"Downtown Branch\"})\nRETURN manager, managing, branch, managing.ManagerSince",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "From what date did 'Susan Lee' serve as the manager of the 'Downtown Branch'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "List the dates when the book with ISBN '978-3-16-148410-0' was available at the 'North Branch'.",
+        "Cypher": "MATCH (book:Book {ISBN:\"978-3-16-148410-0\"})-[:AVAILABLE_AT]->(branch:Branch {Name:\"North Branch\"})\nRETURN book, branch",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (book:Book {ISBN:\"978-3-16-148410-0\"})-[relation2:AVAILABLE_AT]->(branch:Branch {Name:\"North Branch\"})\nRETURN relation2, book, branch",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Identify the days on which the 'North Branch' had the book with ISBN '978-3-16-148410-0' available."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "When did the book 'Origin of Species' get checked out last and by which member?",
+        "Cypher": "MATCH (book:Book {Title: \"Origin of Species\"})<-[checkout:CHECKED_OUT]-(loan:Loan)-[borrowed_by:BORROWED_BY]->(member:Member)\nRETURN book, checkout, loan, borrowed_by, member, checkout.CheckoutTimestamp, member.Name\nORDER BY checkout.CheckoutTimestamp DESC\nLIMIT 1",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (book:Book {Title: \"Origin of Species\"})-[checkout:CHECKED_OUT]-(loan:Loan)-[borrowed_by:BORROWED_BY]->(member:Member)\nRETURN book, checkout, loan, borrowed_by, member, checkout.CheckoutTimestamp, member.Name\nORDER BY checkout.CheckoutTimestamp DESC\nLIMIT 1",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "When was the last time a member checked out the book 'Origin of Species'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Identify the earliest loan creation timestamp for any book borrowed by 'John Smith'.",
+        "Cypher": "MATCH (member:Member {Name: \"John Smith\"})-[:HAS_LOAN]->(loan:Loan)-[:CHECKED_OUT]->(book:Book)\nRETURN member, loan, book, min(loan.IssueDate) as IssueDate",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (member:Member {Name: \"John Smith\"})-[relation3:HAS_LOAN]->(loan:Loan)-[relation4:CHECKED_OUT]-(book:Book)\nRETURN relation4, relation3, member, loan, book, min(loan.IssueDate) as IssueDate",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Find the earliest timestamp of a loan for a book that 'John Smith' has borrowed."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the average number of copies available for books published by 'Penguin Books'?",
+        "Cypher": "MATCH (book:Book)-[publishedBy:PUBLISHED_BY]->(publisher:Publisher)\nWHERE publisher.Name=\"Penguin Books\"\nRETURN AVG(book.CopiesAvailable)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical quantity of copies in stock for titles released by 'Penguin Books'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Calculate the total number of loans created in the year 2022 across all library branches.",
+        "Cypher": "MATCH (loan:Loan)\nWHERE loan.IssueDate.year = 2022\nRETURN COUNT(loan) AS TotalLoansIn2022",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the aggregate count of loans issued in 2022 by all library branches."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many employees are currently employed at branches located in 'Seattle'?",
+        "Cypher": "MATCH (employee:Employee)-[:EMPLOYED_AT]->(branch:Branch)\nWHERE branch.Location = \"Seattle\"\nRETURN COUNT(employee)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (employee:Employee)-[relation2:EMPLOYED_AT]->(branch:Branch)\nWHERE branch.Location = \"Seattle\"\nRETURN COUNT(employee)",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the current number of employees working at the 'Seattle' branches?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Find out the maximum number of copies of any book authored by 'Agatha Christie'.",
+        "Cypher": "MATCH (author:Author)-[authored:AUTHOR_OF]->(book:Book)\nWHERE author.Name=\"Agatha Christie\"\nRETURN MAX(book.CopiesTotal)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the greatest quantity of any single book written by 'Agatha Christie'."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the sum of all copies of books that have been loaned out more than 50 times?",
+        "Cypher": "MATCH (book:Book)-[checked_out:CHECKED_OUT]->(loan:Loan)\nWITH book, COUNT(loan) AS timesLoaned\nWHERE timesLoaned > 50\nRETURN SUM(book.CopiesTotal)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the total number of book copies that have been borrowed over 50 times?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Determine the average number of days books are loaned out for from the 'Main Street Branch'.",
+        "Cypher": "MATCH (book:Book)-[:AVAILABLE_AT]->(branch:Branch {Name: \"Main Street Branch\"}),\n      (book)-[:CHECKED_OUT]->(loan:Loan)\nWHERE loan.ReturnDate IS NOT NULL\nRETURN AVG(duration.inDays(loan.IssueDate, loan.ReturnDate).days) AS AverageLoanDays",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (book:Book)-[relation3:AVAILABLE_AT]->(branch:Branch {Name: \"Main Street Branch\"}),\n      (book)-[relation4:CHECKED_OUT]->(loan:Loan)\nWHERE loan.ReturnDate IS NOT NULL\nRETURN AVG(duration.inDays(loan.IssueDate, loan.ReturnDate).days) AS AverageLoanDays",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the mean duration of days that books are borrowed from the 'Main Street Branch'."
+    }
+]

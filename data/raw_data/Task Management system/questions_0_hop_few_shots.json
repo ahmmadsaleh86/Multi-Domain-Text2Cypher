@@ -1,0 +1,123 @@
+[
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the first name, last name, and role of the user with userId 'U123'?",
+        "Cypher": "MATCH (user:User)\nWHERE user.userId=\"U123\"\nRETURN user, user.firstName, user.lastName, user.role",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the first name, last name, and role of the user whose userId is 'U123'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "List the project name, description, and status for projects that started between January 1, 2022, and December 31, 2022.",
+        "Cypher": "MATCH (project:Project)\nWHERE project.startDate >= date('2022-01-01') AND project.startDate <= date('2022-12-31')\nRETURN project, project.name, project.description, project.status",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the name, description, and current status of projects initiated between January 1, 2022, and December 31, 2022."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Retrieve the name and description of the team with teamId 'T456' which has more than 10 members.",
+        "Cypher": "MATCH (team:Team {teamId: \"T456\"})<-[:MEMBER_OF]-(user:User)\nWITH team, count(user) AS memberCount\nWHERE memberCount > 10\nRETURN team, team.name, team.description",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (team:Team {teamId: \"T456\"})<-[relation2:MEMBER_OF]-(user:User)\nWITH team, count(user) AS memberCount\nWHERE memberCount > 10\nRETURN relation2, user, team, team.name, team.description",
+        "num-hop": 1,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Fetch all details regarding the milestone with a milestoneId 'M789' that has passed its deadline.",
+        "Cypher": "MATCH (milestone:Milestone)\nWHERE milestone.milestoneId = 'M789' AND milestone.deadline < date()\nRETURN milestone, milestone.title, milestone.description, milestone.deadline",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Retrieve all information about the milestone labeled with milestoneId 'M789' that has exceeded its deadline."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Show the taskId, name, status, estimatedHours, actualHours, and dueDate for tasks that are 'High' priority and are overdue.",
+        "Cypher": "MATCH (task:Task)\nWHERE task.priority=\"High\" AND task.dueDate < date() AND task.status=\"overdue\"\nRETURN task, task.taskId, task.name, task.status, task.estimatedHours, task.actualHours, task.dueDate",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Display the taskId, name, status, estimatedHours, actualHours, and dueDate for tasks with a 'High' priority that have passed their dueDate."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Display the commentId, text, and timestamp for comments made after January 1, 2023.",
+        "Cypher": "MATCH (comment:Comment)\nWHERE comment.timestamp > datetime('2023-01-01T00:00:00')\nRETURN comment, comment.commentId, comment.text, comment.timestamp",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Show the commentId, text, and timestamp of comments posted since January 1, 2023."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many projects are currently in 'Active' status?",
+        "Cypher": "MATCH (project:Project)\nWHERE project.status=\"Active\"\nRETURN COUNT(project) AS ActiveProjectCount",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many projects currently have an 'Active' status?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the average estimated hours for tasks assigned in the year 2022?",
+        "Cypher": "MATCH (task:Task)-[assigned:ASSIGNED_TO]->(user:User)\nWHERE assigned.assignedDate.year = 2022\nRETURN avg(task.estimatedHours) AS AverageEstimatedHours",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the typical estimated hours for tasks allocated in the year 2022?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Count the number of Teams that have 'Engineering' as part of their team name.",
+        "Cypher": "MATCH (team:Team)\nWHERE team.name CONTAINS \"Engineering\"\nRETURN COUNT(team)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate how many Teams include 'Engineering' in their team name."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the total number of tasks that are marked as 'Completed' across all projects?",
+        "Cypher": "MATCH (task:Task)\nWHERE task.status = \"Completed\"\nRETURN COUNT(task) AS TotalCompletedTasks",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many tasks have been marked as 'Completed' in all projects?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Calculate the maximum, minimum, average, and total actual hours spent on tasks within the 'Development' project.",
+        "Cypher": "MATCH (task:Task)<-[:INCLUDES_TASK]-(project:Project)\nWHERE project.name=\"Development\"\nRETURN max(task.actualHours) AS MaxHours, min(task.actualHours) AS MinHours, avg(task.actualHours) AS AvgHours, sum(task.actualHours) AS TotalHours",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (task:Task)<-[relation2:INCLUDES_TASK]-(project:Project)\nWHERE project.name=\"Development\"\nRETURN max(task.actualHours) AS MaxHours, min(task.actualHours) AS MinHours, avg(task.actualHours) AS AvgHours, sum(task.actualHours) AS TotalHours",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the maximum, minimum, average, and total actual hours spent on tasks in the 'Development' project."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many Users hold the role of 'Manager' across all teams?",
+        "Cypher": "MATCH (user:User)-[membership:MEMBER_OF]->(team:Team)\nWHERE membership.role = \"Manager\"\nRETURN COUNT(DISTINCT user)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many Users are assigned the 'Manager' role in all teams?"
+    }
+]

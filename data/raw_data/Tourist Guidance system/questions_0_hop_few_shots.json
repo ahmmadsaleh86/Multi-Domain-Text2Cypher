@@ -1,0 +1,122 @@
+[
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Could you provide the attributes for the city labeled 'San Francisco'?",
+        "Cypher": "MATCH (city:City)\nWHERE city.name=\"San Francisco\"\nRETURN city, city.name, city.population, city.country",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you list the characteristics of the city named 'San Francisco'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What details are available for the 'Blue Lagoon' attraction in our database?",
+        "Cypher": "MATCH (attraction:Attraction)\nWHERE attraction.name=\"Blue Lagoon\"\nRETURN attraction, attraction.type, attraction.rating",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What information do we have in our database about the 'Blue Lagoon' attraction?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "I would like to know the rating and cuisine type of the 'Saffron Lounge' restaurant.",
+        "Cypher": "MATCH (restaurant:Restaurant)\nWHERE restaurant.name=\"Saffron Lounge\"\nRETURN restaurant, restaurant.rating, restaurant.cuisine",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "I'm interested in finding out the cuisine type and rating of the 'Saffron Lounge' restaurant."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Please, fetch the star rating and overall user rating for the 'Grand Plaza' hotel.",
+        "Cypher": "MATCH (hotel:Hotel)\nWHERE hotel.name=\"Grand Plaza\"\nRETURN hotel, hotel.stars, hotel.rating",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Kindly retrieve the star rating and the overall user rating for the 'Grand Plaza' hotel."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Show me the information about the tourist named 'John Doe'.",
+        "Cypher": "MATCH (tourist:Tourist)\nWHERE tourist.name=\"John Doe\"\nRETURN tourist, tourist.name, tourist.nationality",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Display the details regarding the tourist named 'John Doe'."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Can you list the attributes of the 'Tokyo Tower' attraction?",
+        "Cypher": "MATCH (attraction:Attraction)\nWHERE attraction.name=\"Tokyo Tower\"\nRETURN attraction, attraction.name, attraction.type, attraction.rating",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide the features of the 'Tokyo Tower' attraction?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many attractions are recorded in the 'Tokyo' city node?",
+        "Cypher": "MATCH (attraction:Attraction)-[locatedIn:LOCATED_IN]->(city:City)\nWHERE city.name=\"Tokyo\"\nRETURN COUNT(attraction)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many attractions are listed under the 'Tokyo' city node?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the maximum rating achieved by any restaurant in the database?",
+        "Cypher": "MATCH (restaurant:Restaurant)\nRETURN MAX(restaurant.rating) AS MaximumRating",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest rating attained by any restaurant listed in the database?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Could you calculate the average rating of all hotels available in our system?",
+        "Cypher": "MATCH (hotel:Hotel)\nRETURN AVG(hotel.rating) AS AverageHotelRating",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you compute the mean rating for all the hotels listed in our system?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the total population for all cities in the 'United States' present in the database?",
+        "Cypher": "MATCH (city:City)\nWHERE city.country = \"United States\"\nRETURN SUM(city.population) AS TotalPopulation",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the combined population of all the cities within the 'United States' that are listed in the database?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Can you tell me how many tourists have listed 'French' as their nationality?",
+        "Cypher": "MATCH (tourist:Tourist)\nWHERE tourist.nationality=\"French\"\nRETURN COUNT(tourist)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you inform me of the number of tourists who have declared 'French' as their nationality?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Please compute the average population of cities located in 'Germany'.",
+        "Cypher": "MATCH (city:City)\nWHERE city.country = \"Germany\"\nRETURN AVG(city.population) AS averagePopulation",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the mean population of cities in 'Germany'."
+    }
+]

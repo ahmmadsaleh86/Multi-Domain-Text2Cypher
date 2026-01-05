@@ -1,0 +1,194 @@
+[
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Can you provide the names of students who are enrolled in the 'Advanced Algorithms' course taught by Professor Smith in the Computer Science department?",
+        "Cypher": "MATCH (prof:Professor)-[teaches:TEACHES]->(course:Course)-[offer:OFFERS]->(dept:Department), (student:Student)-[enroll:ENROLLED_IN]->(course)\nWHERE prof.last_name=\"Smith\" AND course.name=\"Advanced Algorithms\" AND dept.name=\"Computer Science\"\nRETURN student, prof, teaches, course, offer, dept, enroll, student.first_name, student.last_name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (prof:Professor)-[teaches:TEACHES]->(course:Course)-[offer:OFFERS]-(dept:Department), (student:Student)-[enroll:ENROLLED_IN]->(course)\nWHERE prof.last_name=\"Smith\" AND course.name=\"Advanced Algorithms\" AND dept.name=\"Computer Science\"\nRETURN student, prof, teaches, course, offer, dept, enroll, student.first_name, student.last_name",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you list the students enrolled in the Computer Science department's 'Advanced Algorithms' course instructed by Professor Smith?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What are the office locations and specializations of professors teaching 'Introduction to Psychology' for students in the Humanities department?",
+        "Cypher": "MATCH (course:Course)-[taught:TEACHES]->(prof:Professor)-[manages:MANAGES]->(dept:Department {name:\"Humanities\"})\nWHERE course.name=\"Introduction to Psychology\"\nRETURN prof, taught, course, manages, dept, prof.office, prof.specialization",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (course:Course)-[taught:TEACHES]-(prof:Professor)-[manages:MANAGES]->(dept:Department {name:\"Humanities\"})\nWHERE course.name=\"Introduction to Psychology\"\nRETURN prof, taught, course, manages, dept, prof.office, prof.specialization",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Where are the offices situated, and what are the areas of expertise of professors who teach the 'Introduction to Psychology' course to Humanities department students?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Could you list the email addresses of professors who teach 'Quantum Mechanics' courses taken by students born after January 1st, 2000?",
+        "Cypher": "MATCH (student:Student)-[enroll:ENROLLED_IN]->(course:Course)<-[teaches:TEACHES]-(professor:Professor)\nWHERE student.date_of_birth > date('2000-01-01') AND course.name = \"Quantum Mechanics\"\nRETURN student, enroll, course, teaches, professor, professor.email",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide the email contacts of professors instructing in 'Quantum Mechanics' for students born post-January 1st, 2000?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What is the capacity of classrooms where 'Microeconomics' courses are held that are offered by the Economics department?",
+        "Cypher": "MATCH (department:Department {name:\"Economics\"})-[:OFFERS]->(course:Course {name:\"Microeconomics\"})\nMATCH (course)<-[:TEACHES]-(professor:Professor)\nMATCH (classroom:Classroom)<-[:LECTURES_IN]-(professor)\nRETURN department, course, professor, classroom, classroom.capacity",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (department:Department {name:\"Economics\"})-[relation4:OFFERS]->(course:Course {name:\"Microeconomics\"})\nMATCH (course)<-[relation5:TEACHES]-(professor:Professor)\nMATCH (classroom:Classroom)<-[relation6:LECTURES_IN]-(professor)\nRETURN relation6, relation5, relation4, department, course, professor, classroom, classroom.capacity",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the seating capacity of the classrooms used for 'Microeconomics' courses provided by the Economics department?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Please provide the first and last names of all students enrolled in 'Machine Learning', which is offered by the Information Technology department and taught by a professor specializing in Artificial Intelligence.",
+        "Cypher": "MATCH (department:Department {name:\"Information Technology\"})-[:OFFERS]->(course:Course {name:\"Machine Learning\"})<-[enroll:ENROLLED_IN]-(student:Student)\nMATCH (professor:Professor {specialization:\"Artificial Intelligence\"})-[:TEACHES]->(course)\nRETURN student, enroll, course, department, professor, student.first_name, student.last_name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (department:Department {name:\"Information Technology\"})-[relation4:OFFERS]->(course:Course {name:\"Machine Learning\"})<-[enroll:ENROLLED_IN]-(student:Student)\nMATCH (professor:Professor {specialization:\"Artificial Intelligence\"})-[relation6:TEACHES]->(course)\nRETURN relation6, relation4, student, enroll, course, department, professor, student.first_name, student.last_name",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Kindly furnish the full names of all students registered in the 'Machine Learning' course, a subject presented by the Information Technology department and instructed by a professor expert in Artificial Intelligence."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Who are the professors with an office in the 'Engineering Building' that teach courses where students from the 'Biotechnology' department are enrolled?",
+        "Cypher": "MATCH (professor:Professor {office:\"Engineering Building\"})-[teaches:TEACHES]->(course:Course)<-[enrolled:ENROLLED_IN]-(student:Student)-[belongs:BELONGS_TO]->(department:Department {name:\"Biotechnology\"})\nRETURN professor, teaches, course, enrolled, student, belongs, department, professor.first_name, professor.last_name, professor.email",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which professors based in the 'Engineering Building' instruct classes attended by students from the 'Biotechnology' department?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the grades received by students of the 'Physics' department in courses taught by Professor Johnson during the Fall semester of 2021?",
+        "Cypher": "MATCH (student:Student)-[enroll:ENROLLED_IN]->(course:Course)<-[teaches:TEACHES]-(professor:Professor),\n      (department:Department)-[offer:OFFERS]->(course),\n      (student)-[belong:BELONGS_TO]->(department)\nWHERE department.name = \"Physics\" AND professor.last_name = \"Johnson\" AND teaches.semester = \"Fall\" AND teaches.year = 2021\nRETURN student, enroll, course, teaches, professor, department, belong, offer, enroll.grade",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (department:Department {name:\"Physics\"})<-[relation4:BELONGS_TO]-(student:Student)-[enrollment:ENROLLED_IN]->(course:Course)<-[:TEACHES {semester:\"Fall\", year:2021}]-(professor:Professor {last_name:\"Johnson\"})\nRETURN relation6, relation4, department, student, enrollment, course, professor, enrollment.grade",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "What grades did 'Physics' department students earn in courses instructed by Professor Johnson in the Fall 2021 semester?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Could you tell me the semesters and years when students who attended 'Contemporary Arts' workshops also enrolled in courses held by a professor with the office number '405B'?",
+        "Cypher": "MATCH (evt:Event {title:\"Contemporary Arts\"})<-[attend:ATTENDS]-(student:Student)-[enroll:ENROLLED_IN]->(course:Course)<-[teach:TEACHES]-(prof:Professor {office:\"405B\"})\nRETURN student, attend, evt, enroll, course, teach, prof, teach.semester, teach.year",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the semesters and years during which students who participated in 'Contemporary Arts' workshops were also registered for classes taught by a professor whose office is '405B'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the enrollment dates for students in the 'Marketing' department taking the 'Consumer Behavior' course taught in Spring 2022?",
+        "Cypher": "MATCH (student:Student)-[enroll:ENROLLED_IN]->(course:Course)\nMATCH (professor:Professor)-[teaches:TEACHES]->(course)\nMATCH (student)-[belong:BELONGS_TO]->(department:Department)\nWHERE department.name=\"Marketing\" AND course.name=\"Consumer Behavior\" AND teaches.semester=\"Spring\" AND teaches.year=2022\nRETURN student, enroll, course, professor, teaches, department, belong, enroll.enrollment_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (department:Department {name: \"Marketing\"})-[relation4:OFFERS]->(course:Course {name: \"Consumer Behavior\"})\nMATCH (professor:Professor)-[teaches:TEACHES {semester: \"Spring\", year: 2022}]->(course)\nMATCH (student:Student)-[enrolled:ENROLLED_IN]->(course)-[relation7:BELONGS_TO]->(department)\nRETURN relation7, relation4, student, enrolled, course, department, teaches, professor, enrolled.enrollment_date",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "When can students from the 'Marketing' department register for the 'Consumer Behavior' course offered in Spring 2022?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Can you specify the periods (start date to end date) during which professors managed the 'Chemistry' department and taught 'Organic Chemistry' courses?",
+        "Cypher": "MATCH (prof:Professor)-[manages:MANAGES]->(dept:Department {name: \"Chemistry\"})\nMATCH (prof)-[teaches:TEACHES]->(course:Course {name: \"Organic Chemistry\"})\nRETURN prof, manages, dept, teaches, course, manages.start_date, manages.end_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you identify the time frames (from beginning to end) where professors were in charge of the 'Chemistry' department and instructed 'Organic Chemistry' classes?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What is the latest attendance date of any student from the 'Law' department to events held in the 'Main Auditorium'?",
+        "Cypher": "MATCH (department:Department {name:\"Law\"})-[belongsTo:BELONGS_TO]->(student:Student)-[attends:ATTENDS]->(event:Event)\nMATCH (event)-[heldIn:HELD_IN]->(classroom:Classroom {building:\"Main Auditorium\"})\nRETURN department, belongsTo, student, attends, event, heldIn, classroom, MAX(attends.attendance_date)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (department:Department {name:\"Law\"})-[belongsTo:BELONGS_TO]-(student:Student)-[attends:ATTENDS]->(event:Event)\nMATCH (event)-[heldIn:HELD_IN]->(classroom:Classroom {building:\"Main Auditorium\"})\nRETURN department, belongsTo, student, attends, event, heldIn, classroom, MAX(attends.attendance_date)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the most recent date on which a student from the 'Law' department attended an event in the 'Main Auditorium'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Please provide the dates and times of lectures given by professors in 'Room 101' of the 'Business Building' who also advise students majoring in Finance.",
+        "Cypher": "MATCH (professor:Professor)-[lectures:LECTURES_IN]->(classroom:Classroom {building:\"Business Building\", room_number:\"Room 101\"})\nMATCH (professor)-[advises:ADVISES]->(student:Student)-[belongs:BELONGS_TO]->(department:Department {name:\"Finance\"})\nRETURN professor, lectures, classroom, advises, student, belongs, department, lectures.scheduled_time",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Kindly supply the schedule for lectures conducted by professors in 'Room 101' of the 'Business Building', who also counsel students pursuing a major in Finance."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "How many male students from the Psychology department have been advised by professors specializing in 'Clinical Psychology'?",
+        "Cypher": "MATCH (department:Department)<-[:BELONGS_TO]-(student:Student)-[advise:ADVISES]->(professor:Professor)\nWHERE department.name = \"Psychology\" AND student.gender = \"male\" AND professor.specialization = \"Clinical Psychology\"\nRETURN COUNT(DISTINCT student)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (department:Department)<-[relation3:BELONGS_TO]-(student:Student)-[advise:ADVISES]-(professor:Professor)\nWHERE department.name = \"Psychology\" AND student.gender = \"male\" AND professor.specialization = \"Clinical Psychology\"\nRETURN COUNT(DISTINCT student)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many male students in the Psychology department are under the guidance of professors who specialize in 'Clinical Psychology'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Can you count the number of courses offered by the History department that have been taught by more than three different professors?",
+        "Cypher": "MATCH (department:Department)-[:OFFERS]->(course:Course)<-[:TEACHES]-(professor:Professor)\nWHERE department.name = \"History\"\nWITH course, COUNT(DISTINCT professor) AS professorsCount\nWHERE professorsCount > 3\nRETURN COUNT(DISTINCT course)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (department:Department)-[relation3:OFFERS]->(course:Course)<-[relation4:TEACHES]-(professor:Professor)\nWHERE department.name = \"History\"\nWITH course, COUNT(DISTINCT professor) AS professorsCount\nWHERE professorsCount > 3\nRETURN COUNT(DISTINCT course)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you tally the total courses the History department offers that more than three distinct professors have taught?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the average credits of courses taken by students in the 'Electrical Engineering' department that have hosted more than 50 events?",
+        "Cypher": "MATCH (department:Department)-[:OFFERS]->(course:Course)<-[:ENROLLED_IN]-(student:Student)-[:BELONGS_TO]->(dept:Department)\nWHERE department.name=\"Electrical Engineering\"\nWITH dept, course\nMATCH (classroom:Classroom)<-[:HELD_IN]-(event:Event)\nWITH dept, course, classroom, COUNT(event) AS numEvents\nWHERE numEvents > 50\nRETURN AVG(course.credits)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (department:Department)-[relation6:OFFERS]->(course:Course)<-[relation7:ENROLLED_IN]-(student:Student)-[relation8:BELONGS_TO]->(dept:Department)\nWHERE department.name=\"Electrical Engineering\"\nWITH dept, course\nMATCH (classroom:Classroom)<-[relation9:HELD_IN]-(event:Event)\nWITH dept, course, classroom, COUNT(event) AS numEvents\nWHERE numEvents > 50\nRETURN AVG(course.credits)",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the mean number of credits for courses in the 'Electrical Engineering' department, where more than 50 events have been hosted, taken by students?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Could I get the total number of students from the 'Computer Science' department enrolled in courses related to 'Data Structures' taught by professors who also manage the department?",
+        "Cypher": "MATCH (department:Department)-[:MANAGES]-(professor:Professor)-[:TEACHES]->(course:Course)<-[:ENROLLED_IN]-(student:Student)-[:BELONGS_TO]->(sameDepartment:Department)\nWHERE department.name = \"Computer Science\" AND course.name CONTAINS \"Data Structures\" AND sameDepartment.name = \"Computer Science\"\nRETURN COUNT(DISTINCT student)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (department:Department)-[relation5:MANAGES]-(professor:Professor)-[relation6:TEACHES]->(course:Course)<-[relation7:ENROLLED_IN]-(student:Student)-[relation8:BELONGS_TO]->(sameDepartment:Department)\nWHERE department.name = \"Computer Science\" AND course.name CONTAINS \"Data Structures\" AND sameDepartment.name = \"Computer Science\"\nRETURN COUNT(DISTINCT student)",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could I obtain the headcount of students in the 'Computer Science' department who are registered for 'Data Structures' courses instructed by professors who are also in charge of the department?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the maximum capacity of classrooms where 'Public Speaking' events were held, which have been attended by students from the 'Communications' department?",
+        "Cypher": "MATCH (event:Event)-[held_in:HELD_IN]->(classroom:Classroom)\nWHERE event.title = \"Public Speaking\"\nMATCH (student:Student)-[attends:ATTENDS]->(event)\nMATCH (student)-[belongs_to:BELONGS_TO]->(department:Department)\nWHERE department.name = \"Communications\"\nRETURN MAX(classroom.capacity)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the largest number of seats in classrooms that hosted 'Public Speaking' events attended by students from the 'Communications' department?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Calculate the minimum grade achieved by students in 'Artificial Intelligence' courses managed by professors from the 'Tech Innovations' department.",
+        "Cypher": "MATCH (department:Department {name: \"Tech Innovations\"})-[manages:MANAGES]->(professor:Professor)-[teaches:TEACHES]->(course:Course {name: \"Artificial Intelligence\"}), \n(student:Student)-[enrolled:ENROLLED_IN]->(course)\nRETURN MIN(enrolled.grade)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (department:Department {name: \"Tech Innovations\"})-[manages:MANAGES]-(professor:Professor)-[teaches:TEACHES]->(course:Course {name: \"Artificial Intelligence\"}), \n(student:Student)-[enrolled:ENROLLED_IN]->(course)\nRETURN MIN(enrolled.grade)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the lowest score obtained by students enrolled in 'Artificial Intelligence' classes overseen by faculty members of the 'Tech Innovations' department."
+    }
+]

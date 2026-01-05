@@ -1,0 +1,145 @@
+[
+    {
+        "Type": "Node",
+        "Label": "Book",
+        "Attributes": {
+            "ISBN": "String",
+            "Title": "String",
+            "PublicationYear": "Int",
+            "Language": "String",
+            "Subject": "String",
+            "CopiesTotal": "Int",
+            "CopiesAvailable": "Int"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Author",
+        "Attributes": {
+            "AuthorID": "String",
+            "Name": "String",
+            "DOB": "Date",
+            "Nationality": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Member",
+        "Attributes": {
+            "MemberID": "String",
+            "Name": "String",
+            "Email": "String",
+            "Phone": "String",
+            "MembershipStart": "Date",
+            "MembershipType": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Employee",
+        "Attributes": {
+            "EmployeeID": "String",
+            "Name": "String",
+            "Position": "String",
+            "HireDate": "Date",
+            "Email": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Publisher",
+        "Attributes": {
+            "PublisherID": "String",
+            "Name": "String",
+            "Location": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Branch",
+        "Attributes": {
+            "BranchID": "String",
+            "Name": "String",
+            "Location": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Loan",
+        "Attributes": {
+            "LoanID": "String",
+            "IssueDate": "DateTime",
+            "DueDate": "DateTime",
+            "ReturnDate": "DateTime"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "AUTHOR_OF",
+        "From": "Author",
+        "To": "Book",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "PUBLISHED_BY",
+        "From": "Book",
+        "To": "Publisher",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "AVAILABLE_AT",
+        "From": "Book",
+        "To": "Branch",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "CHECKED_OUT",
+        "From": "Book",
+        "To": "Loan",
+        "Attributes": {
+            "CheckoutTimestamp": "DateTime"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "RETURNED_AT",
+        "From": "Book",
+        "To": "Loan",
+        "Attributes": {
+            "ReturnTimestamp": "DateTime"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "EMPLOYED_AT",
+        "From": "Employee",
+        "To": "Branch",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "BORROWED_BY",
+        "From": "Loan",
+        "To": "Member",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "MANAGED_BY",
+        "From": "Branch",
+        "To": "Employee",
+        "Attributes": {
+            "ManagerSince": "Date"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_LOAN",
+        "From": "Member",
+        "To": "Loan",
+        "Attributes": {}
+    }
+]

@@ -1,0 +1,185 @@
+[
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What is the address and phone number of the hospital where a patient named 'John Doe' who took 'Aspirin' was treated?",
+        "Cypher": "MATCH (patient:Patient)-[takes:TAKES]->(medication:Medication)\nMATCH (patient)-[visits:VISITS]->(hospital:Hospital)\nWHERE patient.first_name = \"John\" AND patient.last_name = \"Doe\" AND medication.name = \"Aspirin\"\nRETURN patient, takes, medication, visits, hospital, hospital.address, hospital.phone_number",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the contact details for the hospital that treated a patient called 'John Doe' who was given 'Aspirin'?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Can you find the email addresses of doctors specializing in 'Cardiology' who have seen patients over 65 years old?",
+        "Cypher": "MATCH (doctor:Doctor)-[consult:CONSULTS]->(appointment:Appointment)<-[has:HAS_APPOINTMENT]-(patient:Patient)\nWHERE doctor.specialization=\"Cardiology\" AND duration.between(date(patient.date_of_birth), date()).years > 65\nRETURN doctor, consult, appointment, has, patient, doctor.email",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you locate the email addresses of cardiologists who have treated patients aged 65 and older?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What are the names and addresses of the departments where Dr. 'Emily White', a neurologist, consults patients with appointments in March 2023?",
+        "Cypher": "MATCH (doctor:Doctor)-[consults:CONSULTS]->(appointment:Appointment)-[isIn:IS_IN]->(department:Department)\nWHERE doctor.first_name=\"Emily\" AND doctor.last_name=\"White\" AND doctor.specialization=\"neurologist\" \nAND appointment.date >= datetime(\"2023-03-01T00:00:00\") AND appointment.date < datetime(\"2023-04-01T00:00:00\")\nRETURN doctor, consults, appointment, isIn, department, department.name, department.address",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Provide the first names and last names of patients who were prescribed medication by doctors working in 'General Surgery' department at 'Mercy Hospital'.",
+        "Cypher": "MATCH (hospital:Hospital {name:\"Mercy Hospital\"})<-[works:WORKS_AT]-(doctor:Doctor)-[isIn:IS_IN]->(department:Department {name:\"General Surgery\"})\nMATCH (doctor)-[prescribes:PRESCRIBES]->(medication:Medication)<-[takes:TAKES]-(patient:Patient)\nRETURN hospital, works, doctor, isIn, department, prescribes, medication, takes, patient, patient.first_name, patient.last_name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the first and last names of patients who received prescriptions from physicians in the 'General Surgery' department at 'Mercy Hospital'."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "List the names and contact details of insurance companies that cover patients who have encrypted payments over $2000.",
+        "Cypher": "MATCH (insuranceCompany:InsuranceCompany)-[offers:OFFERS]->(insurancePlan:InsurancePlan)<-[coveredBy:COVERED_BY]-(patient:Patient)-[makesPayment:MAKES_PAYMENT]->(payment:Payment)\nWHERE payment.amount > 2000\nRETURN insuranceCompany, offers, insurancePlan, coveredBy, patient, makesPayment, payment, insuranceCompany.name, insuranceCompany.phone_number",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the names and contact information of insurance companies that offer coverage to patients with encrypted transactions exceeding $2000."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What are the first and last names of patients who have been diagnosed with 'Chronic Kidney Disease' by doctors affiliated with 'St. Luke's Hospital'?",
+        "Cypher": "MATCH (patient:Patient)-[:OWNS]->(medicalRecord:MedicalRecord)<-[:RECORDS]-(doctor:Doctor)-[:WORKS_AT]->(hospital:Hospital)\nWHERE medicalRecord.diagnosis=\"Chronic Kidney Disease\" AND hospital.name=\"St. Luke's Hospital\"\nRETURN patient, medicalRecord, doctor, hospital, patient.first_name, patient.last_name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (patient:Patient)-[relation4:OWNS]->(medicalRecord:MedicalRecord)<-[relation5:RECORDS]-(doctor:Doctor)-[relation6:WORKS_AT]->(hospital:Hospital)\nWHERE medicalRecord.diagnosis=\"Chronic Kidney Disease\" AND hospital.name=\"St. Luke's Hospital\"\nRETURN relation6, relation5, relation4, patient, medicalRecord, doctor, hospital, patient.first_name, patient.last_name",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the given names and surnames of individuals diagnosed with 'Chronic Kidney Disease' by physicians associated with 'St. Luke's Hospital'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the prescription start and end dates for the medication 'Lisinopril' given by Dr. 'Susan Park' to patients with a history of heart issues?",
+        "Cypher": "MATCH (doctor:Doctor)-[prescribes:PRESCRIBES]->(medication:Medication)<-[takes:TAKES]-(patient:Patient)-[owns:OWNS]->(medicalRecord:MedicalRecord)\nWHERE doctor.first_name=\"Susan\" AND doctor.last_name=\"Park\" AND medication.name=\"Lisinopril\" AND medicalRecord.diagnosis CONTAINS \"heart\"\nRETURN doctor, prescribes, medication, takes, patient, owns, medicalRecord, prescribes.start_date, prescribes.end_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "For patients who have had heart problems, what are the start and end dates of the 'Lisinopril' prescription provided by Dr. 'Susan Park'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What was the dosage and prescription date for 'Metformin' that Mr. 'George Carmen', a diabetic patient, received?",
+        "Cypher": "MATCH (patient:Patient)-[take:TAKES]->(medication:Medication)\nWHERE patient.first_name=\"George\" AND patient.last_name=\"Carmen\" AND medication.name=\"Metformin\"\nRETURN patient, take, medication, take.dose, take.prescription_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What was the amount and date of the 'Metformin' prescription for Mr. 'George Carmen', who is diabetic?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "During what date did patient 'Mary Lewis' visit 'Brighton Hospital' and for what purpose, according to the records in early 2022?",
+        "Cypher": "MATCH (patient:Patient)-[visit:VISITS]->(hospital:Hospital)\nWHERE patient.first_name=\"Mary\" AND patient.last_name=\"Lewis\" AND hospital.name=\"Brighton Hospital\" AND visit.visit_date >= date('2022-01-01') AND visit.visit_date <= date('2022-12-31')\nRETURN patient, visit, hospital, visit.visit_date, visit.purpose",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the date and reason for 'Mary Lewis''s visit to 'Brighton Hospital' based on early 2022 records?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What positions do the doctors who have appointments with patients diagnosed with 'Acute Leukemia' hold at their respective hospitals?",
+        "Cypher": "MATCH (doctor:Doctor)-[worksAt:WORKS_AT]->(hospital:Hospital)\nMATCH (doctor)-[:CONSULTS]->(appointment:Appointment)<-[:HAS_APPOINTMENT]-(patient:Patient)-[:OWNS]->(medicalRecord:MedicalRecord)\nWHERE medicalRecord.diagnosis=\"Acute Leukemia\"\nRETURN doctor, worksAt, hospital, appointment, patient, medicalRecord, worksAt.position",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (doctor:Doctor)-[worksAt:WORKS_AT]->(hospital:Hospital)\nMATCH (doctor)-[relation6:CONSULTS]->(appointment:Appointment)<-[relation7:HAS_APPOINTMENT]-(patient:Patient)-[relation8:OWNS]->(medicalRecord:MedicalRecord)\nWHERE medicalRecord.diagnosis=\"Acute Leukemia\"\nRETURN relation8, relation7, relation6, doctor, worksAt, hospital, appointment, patient, medicalRecord, worksAt.position",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the job titles of the doctors who see patients diagnosed with 'Acute Leukemia' at their hospitals?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Can you detail the payment method used by elderly patients aged 70 and above for treatments above $1,000 in 2021?",
+        "Cypher": "MATCH (patient:Patient)-[make_payment:MAKES_PAYMENT]->(payment:Payment)\nWHERE patient.date_of_birth <= date('1951-01-01') AND payment.amount > 1000 AND payment.date.year = 2021\nRETURN patient, make_payment, payment, make_payment.payment_method",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you explain the means of payment employed by patients aged 70 and older for treatments costing over $1,000 in 2021?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the join dates and departments for doctors who have consulted with patients suffering from 'Osteoporosis' in the last 5 years?",
+        "Cypher": "MATCH (doctor:Doctor)-[consult:CONSULTS]->(appointment:Appointment)<-[has:HAS_APPOINTMENT]-(patient:Patient)\nMATCH (patient)-[owns:OWNS]->(medicalRecord:MedicalRecord)\nMATCH (doctor)-[isIn:IS_IN]->(department:Department)\nWHERE medicalRecord.diagnosis = \"Osteoporosis\" AND appointment.date >= datetime({years: date().year - 5})\nRETURN doctor, consult, appointment, has, patient, owns, medicalRecord, isIn, department, isIn.join_date, department.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "For doctors who have treated patients with 'Osteoporosis' in the past five years, what are their joining dates and departments?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "How many patients had more than three appointments in the 'Dermatology' department at 'Alliance Hospital' last year?",
+        "Cypher": "MATCH (patient:Patient)-[hasApp:HAS_APPOINTMENT]->(appointment:Appointment),\n      (doctor:Doctor)-[consults:CONSULTS]->(appointment),\n      (doctor)-[worksAt:WORKS_AT]->(hospital:Hospital),\n      (doctor)-[isIn:IS_IN]->(department:Department)\nWHERE hospital.name=\"Alliance Hospital\" AND department.name=\"Dermatology\" \n      AND appointment.date.year = date().year - 1\nWITH patient, COUNT(appointment) AS appointmentCount\nWHERE appointmentCount > 3\nRETURN COUNT(patient)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many patients attended over three appointments in the 'Dermatology' department at 'Alliance Hospital' last year?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the average amount of payments made by patients under 30 years old for dental treatments in 2023?",
+        "Cypher": "MATCH (patient:Patient)-[makesPayment:MAKES_PAYMENT]->(payment:Payment)\nWHERE patient.date_of_birth.year > (2023 - 30)\n  AND payment.date.year = 2023\n  AND payment.status = \"Dental Treatment\"\nRETURN AVG(payment.amount)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical payment amount for dental treatments in 2023 by patients younger than 30 years old?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Can you calculate the minimum, maximum, and average premiums of insurance plans held by patients diagnosed with 'Lung Cancer'?",
+        "Cypher": "MATCH (patient:Patient)-[:OWNS]->(record:MedicalRecord)\nWHERE record.diagnosis = \"Lung Cancer\"\nMATCH (patient)-[:COVERED_BY]->(plan:InsurancePlan)\nRETURN MIN(plan.premium) AS MinimumPremium, MAX(plan.premium) AS MaximumPremium, AVG(plan.premium) AS AveragePremium",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (patient:Patient)-[relation3:OWNS]->(record:MedicalRecord)\nWHERE record.diagnosis = \"Lung Cancer\"\nMATCH (patient)-[relation4:COVERED_BY]->(plan:InsurancePlan)\nRETURN MIN(plan.premium) AS MinimumPremium, MAX(plan.premium) AS MaximumPremium, AVG(plan.premium) AS AveragePremium",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you compute the lowest, highest, and mean insurance premiums for patients who have been diagnosed with 'Lung Cancer'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "How many times did patients visit 'Central Medical Hospital' for the purpose of 'Routine Checkup' between January and June 2023?",
+        "Cypher": "MATCH (patient:Patient)-[visit:VISITS]->(hospital:Hospital)\nWHERE hospital.name = \"Central Medical Hospital\" AND visit.purpose = \"Routine Checkup\" \n  AND visit.visit_date >= date(\"2023-01-01\") AND visit.visit_date <= date(\"2023-06-30\")\nRETURN COUNT(visit)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Between January and June 2023, how many visits did patients make to 'Central Medical Hospital' specifically for 'Routine Checkup'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the total number of medical records associated with patients over the age of 65 who were treated by a cardiologist in 2022?",
+        "Cypher": "MATCH (patient:Patient)-[:OWNS]->(record:MedicalRecord)\nWHERE patient.date_of_birth <= date({year: 2023-65, month: 1, day: 1}) AND record.date_recorded.year=2022\nMATCH (record)<-[:RECORDS]-(doctor:Doctor)-[:IS_IN]->(department:Department)\nWHERE department.name=\"Cardiology\"\nRETURN COUNT(DISTINCT record)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (patient:Patient)-[relation4:OWNS]->(record:MedicalRecord)\nWHERE patient.date_of_birth <= date({year: 2023-65, month: 1, day: 1}) AND record.date_recorded.year=2022\nMATCH (record)<-[relation5:RECORDS]-(doctor:Doctor)-[relation6:IS_IN]->(department:Department)\nWHERE department.name=\"Cardiology\"\nRETURN COUNT(DISTINCT record)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many medical files are there for patients aged 65 and older who received treatment from a cardiologist in 2022?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Calculate the total dosage of 'Ibuprofen' prescribed by doctors from 'Healthbridge Hospital' for patients under 18 in the last two years.",
+        "Cypher": "MATCH (hospital:Hospital {name: \"Healthbridge Hospital\"})<-[:WORKS_AT]-(doctor:Doctor)-[:PRESCRIBES]->(medication:Medication {name: \"Ibuprofen\"})\nMATCH (doctor)-[:CONSULTS]->(appointment:Appointment)<-[:HAS_APPOINTMENT]-(patient:Patient)\nWHERE patient.date_of_birth >= date()-duration({years: 18}) AND appointment.date >= date().year - 2\nRETURN SUM(toInteger(medication.dosage))",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (hospital:Hospital {name: \"Healthbridge Hospital\"})<-[relation5:WORKS_AT]-(doctor:Doctor)-[relation6:PRESCRIBES]->(medication:Medication {name: \"Ibuprofen\"})\nMATCH (doctor)-[relation7:CONSULTS]->(appointment:Appointment)<-[relation8:HAS_APPOINTMENT]-(patient:Patient)\nWHERE patient.date_of_birth >= date()-duration({years: 18}) AND appointment.date >= date().year - 2\nRETURN SUM(toInteger(medication.dosage))",
+        "num-hop": 4,
+        "Grammatical-Validation": true
+    }
+]

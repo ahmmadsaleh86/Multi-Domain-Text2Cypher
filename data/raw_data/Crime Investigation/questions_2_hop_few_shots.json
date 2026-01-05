@@ -1,0 +1,201 @@
+[
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What are the names and ages of individuals who both own a vehicle registered after 2015 and are involved in crimes of type 'Burglary'?",
+        "Cypher": "MATCH (person:Person)-[partyTo:PARTY_TO]->(crime:Crime), (vehicle:Vehicle)-[involvedIn:INVOLVED_IN]->(crime)\nWHERE vehicle.year > 2015 AND crime.type = \"Burglary\"\nRETURN person, partyTo, crime, involvedIn, vehicle, person.name, person.age",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the names and ages of people who own a vehicle registered post-2015 and are implicated in Burglary crimes?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "List the email addresses and phone numbers of people who are family of 'John Doe' and have reported crimes in the 'Downtown' area.",
+        "Cypher": "MATCH (johnDoe:Person {name:\"John\", surname:\"Doe\"})-[:FAMILY_REL]->(familyMember:Person),\n      (familyMember)-[:PARTY_TO]->(crime:Crime)-[:OCCURRED_AT]->(crimeLocation:Location)-[:LOCATION_IN_AREA]->(area:Area {areaCode:\"Downtown\"}),\n      (familyMember)-[:HAS_EMAIL]->(email:Email),\n      (familyMember)-[:HAS_PHONE]->(phone:Phone)\nRETURN johnDoe, familyMember, crime, crimeLocation, area, email, phone, email.email_address, phone.phoneNo",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (johnDoe:Person {name:\"John\", surname:\"Doe\"})-[relation7:FAMILY_REL]->(familyMember:Person),\n      (familyMember)-[relation8:PARTY_TO]->(crime:Crime)-[relation9:OCCURRED_AT]->(crimeLocation:Location)-[relation10:LOCATION_IN_AREA]->(area:Area {areaCode:\"Downtown\"}),\n      (familyMember)-[relation11:HAS_EMAIL]->(email:Email),\n      (familyMember)-[relation12:HAS_PHONE]->(phone:Phone)\nRETURN relation12, relation11, relation10, relation9, relation8, relation7, johnDoe, familyMember, crime, crimeLocation, area, email, phone, email.email_address, phone.phoneNo",
+        "num-hop": 6,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "Who are the family members of John Doe connected to crimes in the Downtown area, and how can they be contacted via email or phone?",
+        "Max-Semantic-Score": 0.9207596182823181,
+        "Avg-Semantic-Score": 0.8866055846214295,
+        "Rewrite": "Provide the email addresses and phone numbers of relatives of 'John Doe' who have reported criminal activities in the 'Downtown' region."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Identify the make and model of vehicles involved in crimes investigated by officers with the rank of 'Sergeant' and where the last outcome was 'Charged'.",
+        "Cypher": "MATCH (vehicle:Vehicle)-[involved:INVOLVED_IN]->(crime:Crime), (officer:Officer)-[investigates:INVESTIGATED_BY]->(crime)\nWHERE officer.rank=\"Sergeant\" AND crime.last_outcome=\"Charged\"\nRETURN vehicle, involved, crime, officer, investigates, vehicle.make, vehicle.model",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (vehicle:Vehicle)-[involved:INVOLVED_IN]->(crime:Crime), (officer:Officer)-[investigates:INVESTIGATED_BY]-(crime)\nWHERE officer.rank=\"Sergeant\" AND crime.last_outcome=\"Charged\"\nRETURN vehicle, involved, crime, officer, investigates, vehicle.make, vehicle.model",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the brand and type of vehicles used in crimes that were probed by sergeants and resulted in a final status of 'Charged'."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Provide the badge numbers and ranks of officers who investigated crimes involving red vehicles registered in 2019.",
+        "Cypher": "MATCH (vehicle:Vehicle {year:2019})-[involved:INVOLVED_IN]->(crime:Crime), (officer:Officer)-[investigates:INVESTIGATED_BY]->(crime)\nWHERE vehicle.make = \"red\"\nRETURN vehicle, involved, crime, officer, investigates, officer.badge_no, officer.rank",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (vehicle:Vehicle {year:2019})-[involved:INVOLVED_IN]->(crime:Crime), (officer:Officer)-[investigates:INVESTIGATED_BY]-(crime)\nWHERE vehicle.make = \"red\"\nRETURN vehicle, involved, crime, officer, investigates, officer.badge_no, officer.rank",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Supply the badge numbers and ranks of the officers who conducted investigations into crimes related to red vehicles registered in 2019."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Determine the names and email addresses of individuals who live in the 'EH11' postcode and who have made phone calls longer than 5 minutes on the date '2021-05-15'.",
+        "Cypher": "MATCH (person:Person)-[currentAddressRel:CURRENT_ADDRESS]->(location:Location)-[hasPostcodeRel:HAS_POSTCODE]->(postcode:PostCode {code:\"EH11\"}),\n      (person)-[hasPhoneRel:HAS_PHONE]->(phone:Phone)-[phoneCallRel:CALLED]->(phoneCall:PhoneCall {call_date:date(\"2021-05-15\"), call_duration: duration({minutes: 5})}),\n      (person)-[hasEmailRel:HAS_EMAIL]->(email:Email)\nRETURN person, currentAddressRel, location, hasPostcodeRel, postcode, hasPhoneRel, phone, phoneCallRel, phoneCall, hasEmailRel, email, person.name, email.email_address",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (person:Person)-[currentAddressRel:CURRENT_ADDRESS]->(location:Location)-[hasPostcodeRel:HAS_POSTCODE]->(postcode:PostCode {code:\"EH11\"}),\n      (person)-[hasPhoneRel:HAS_PHONE]->(phone:Phone)-[phoneCallRel:CALLED]-(phoneCall:PhoneCall {call_date:date(\"2021-05-15\"), call_duration: duration({minutes: 5})}),\n      (person)-[hasEmailRel:HAS_EMAIL]->(email:Email)\nRETURN person, currentAddressRel, location, hasPostcodeRel, postcode, hasPhoneRel, phone, phoneCallRel, phoneCall, hasEmailRel, email, person.name, email.email_address",
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "Identify the names and email addresses of people residing in the 'EH11' postcode who have engaged in phone calls exceeding 5 minutes on '2021-05-15'."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Who are the persons residing in the location with postcode 'AB12', and what is the type and description of the objects they own?",
+        "Cypher": "MATCH (person:Person)-[currentAddrRel:CURRENT_ADDRESS]->(location:Location)-[hasPostcodeRel:HAS_POSTCODE]->(postcode:PostCode {code:\"AB12\"})\nRETURN person, currentAddrRel, location, hasPostcodeRel, postcode, person.name, person.surname, person.age",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (person:Person)-[current_address:CURRENT_ADDRESS]->(location:Location)-[has_postcode:HAS_POSTCODE]->(postcode:PostCode {code:\"AB12\"}), (person)-[relation6:OWNS]->(object:Object)\nRETURN relation6, person, current_address, location, has_postcode, postcode, object, object.type, object.description",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Who resides at the location with the postcode 'AB12', and what are the types and descriptions of the possessions they own?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What is the type of relationship between 'Sarah Connor' and other individuals she knows, who have also been parties to a crime in the last year?",
+        "Cypher": "MATCH (sarah:Person {name:\"Sarah\", surname:\"Connor\"})-[relType]->(knownPerson:Person)-[party:PARTY_TO]->(relatedCrime:Crime)\nWHERE relatedCrime.date >= date({year:date().year - 1})\nRETURN sarah, relType, knownPerson, party, relatedCrime, relType.rel_type",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Can you describe the familial relationships between persons who have shared phone calls with duration over 10 minutes?",
+        "Cypher": "MATCH (callerPerson:Person)-[:HAS_PHONE]->(callerPhone:Phone)<-[:CALLER]-(phoneCall:PhoneCall)-[:CALLED]->(receiverPhone:Phone)<-[:HAS_PHONE]-(receiverPerson:Person)\nMATCH (callerPerson)-[familyRel:FAMILY_REL]->(receiverPerson)\nWHERE phoneCall.call_duration > 10\nRETURN callerPerson, receiverPerson, phoneCall, familyRel, familyRel.rel_type",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (callerPerson:Person)-[relation5:HAS_PHONE]->(callerPhone:Phone)<-[relation6:CALLER]-(phoneCall:PhoneCall)-[relation7:CALLED]->(receiverPhone:Phone)<-[relation8:HAS_PHONE]-(receiverPerson:Person)\nMATCH (callerPerson)-[familyRel:FAMILY_REL]->(receiverPerson)\nWHERE phoneCall.call_duration > 10\nRETURN relation8, relation7, relation6, relation5, receiverPhone, callerPhone, callerPerson, receiverPerson, phoneCall, familyRel, familyRel.rel_type",
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you explain the family connections among individuals who have engaged in phone conversations lasting more than 10 minutes?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the relationships and roles of people in crimes that occurred at locations within the 'Westside' area?",
+        "Cypher": "MATCH (area:Area {areaCode:\"Westside\"})<-[inArea:LOCATION_IN_AREA]-(location:Location)<-[occurred:OCCURRED_AT]-(crime:Crime),\n      (person:Person)-[partyTo:PARTY_TO]->(crime)\nRETURN area, inArea, location, occurred, crime, person, partyTo",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the roles and connections of individuals involved in criminal activities in places located in the 'Westside' region?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Identify the call types involving people who reside at '123 Maple Street' and the phone numbers of their callers.",
+        "Cypher": "MATCH (residentLocation:Location {address:\"123 Maple Street\"})<-[currentAddressRel:CURRENT_ADDRESS]-(person:Person)-[hasPhoneRel:HAS_PHONE]->(phone:Phone)\nMATCH (phoneCall:PhoneCall)-[calledRel:CALLED]->(phone)\nRETURN residentLocation, currentAddressRel, person, hasPhoneRel, phone, phoneCall, calledRel, phoneCall.call_type, phone.phoneNo",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the types of calls made to individuals living at '123 Maple Street' and the phone numbers of the callers."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Detail the types of connections between multiple offenders who have been involved in 'Fraud' type crimes and their respective investigating officers.",
+        "Cypher": "MATCH (offender:Person)-[partyTo:PARTY_TO]->(fraudCrime:Crime {type:\"Fraud\"}), (fraudCrime)-[investigatedBy:INVESTIGATED_BY]->(officer:Officer)\nRETURN offender, partyTo, fraudCrime, investigatedBy, officer, officer.name, officer.surname, officer.badge_no, officer.rank",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Explain the various relationships between numerous perpetrators involved in 'Fraud' crimes and the corresponding officers investigating them."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the relational links between crimes involving stolen vehicles and the officers investigating these crimes?",
+        "Cypher": "MATCH (vehicle:Vehicle)-[involved:INVOLVED_IN]->(crime:Crime {type:\"Stolen Vehicle\"}), (officer:Officer)-[investigates:INVESTIGATED_BY]-(crime)\nRETURN vehicle, involved, crime, officer, investigates",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the relationship between crimes related to vehicle theft and the police officers who investigate these incidents?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the average age of individuals who own at least two vehicles and have been accused of felonies in 'Sector 4'?",
+        "Cypher": "MATCH (person:Person)-[:HAS_PHONE]->(phone:Phone),\n      (person)-[:PARTY_TO]->(crime:Crime)-[:OCCURRED_AT]->(location:Location)-[:LOCATION_IN_AREA]->(area:Area {areaCode: \"Sector 4\"}),\n      (person)-[:CURRENT_ADDRESS]->(current_location:Location)-[:HAS_POSTCODE]->(postcode:PostCode)-[:POSTCODE_IN_AREA]->(current_area:Area)\nWHERE crime.type = \"Felony\" AND current_area.areaCode = \"Sector 4\"\nWITH person, COLLECT(DISTINCT phone) AS phones\nWHERE SIZE(phones) >= 2\nRETURN AVG(person.age)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (person:Person)-[relation8:HAS_PHONE]->(phone:Phone),\n      (person)-[relation9:PARTY_TO]->(crime:Crime)-[relation10:OCCURRED_AT]->(location:Location)-[relation11:LOCATION_IN_AREA]->(area:Area {areaCode: \"Sector 4\"}),\n      (person)-[relation12:CURRENT_ADDRESS]->(current_location:Location)-[relation13:HAS_POSTCODE]->(postcode:PostCode)-[relation14:POSTCODE_IN_AREA]->(current_area:Area)\nWHERE crime.type = \"Felony\" AND current_area.areaCode = \"Sector 4\"\nWITH person, COLLECT(DISTINCT phone) AS phones\nWHERE SIZE(phones) >= 2\nRETURN AVG(person.age)",
+        "num-hop": 7,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "What is the average age of persons living in Sector 4 with multiple phone connections who have been implicated in felonies within Sector 4?",
+        "Max-Semantic-Score": 0.7760418653488159,
+        "Avg-Semantic-Score": 0.7349916815757751,
+        "Rewrite": "What is the mean age of people who possess a minimum of two cars and face felony charges in 'Sector 4'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Calculate the average call duration involving individuals over the age of 50 who are suspects in ongoing investigation cases.",
+        "Cypher": "MATCH (suspect:Person)-[:PARTY_TO]->(crime:Crime)\nWHERE suspect.age > 50 AND crime.last_outcome = \"ongoing investigation\"\nMATCH (suspect)-[:HAS_PHONE]->(phone:Phone)<-[:CALLED]-(phone_call:PhoneCall)\nRETURN AVG(phone_call.call_duration)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (suspect:Person)-[relation4:PARTY_TO]->(crime:Crime)\nWHERE suspect.age > 50 AND crime.last_outcome = \"ongoing investigation\"\nMATCH (suspect)-[relation5:HAS_PHONE]->(phone:Phone)<-[relation6:CALLED]-(phone_call:PhoneCall)\nRETURN AVG(phone_call.call_duration)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Compute the mean duration of calls that include people older than 50 who are suspects in active investigations."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the maximum number of crime types associated with individuals living in the 'Greenfield' area code, and involved in driving offences?",
+        "Cypher": "MATCH (area:Area {areaCode: \"Greenfield\"})<-[:POSTCODE_IN_AREA]-(postcode:PostCode)<-[:HAS_POSTCODE]-(location:Location)<-[:CURRENT_ADDRESS]-(person:Person)-[:PARTY_TO]->(crime:Crime)\nWHERE crime.type CONTAINS \"driving offence\"\nRETURN crime.type, COUNT(*) AS Count\nORDER BY Count DESC\nLIMIT 1",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (area:Area {areaCode: \"Greenfield\"})<-[relation5:POSTCODE_IN_AREA]-(postcode:PostCode)<-[relation6:HAS_POSTCODE]-(location:Location)<-[relation7:CURRENT_ADDRESS]-(person:Person)-[relation8:PARTY_TO]->(crime:Crime)\nWHERE crime.type CONTAINS \"driving offence\"\nRETURN crime.type, COUNT(*) AS Count\nORDER BY Count DESC\nLIMIT 1",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest count of different crime categories linked to people from the 'Greenfield' area code who are implicated in driving offenses?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Determine the minimum and maximum year of vehicles involved in hit-and-run incidents in the 'Northview' area.",
+        "Cypher": "MATCH (vehicle:Vehicle)-[:INVOLVED_IN]->(crime:Crime {type:\"hit-and-run\"})\nMATCH (crime)-[:OCCURRED_AT]->(location:Location)-[:LOCATION_IN_AREA]->(area:Area {areaCode:\"Northview\"})\nRETURN MIN(vehicle.year) AS MinYear, MAX(vehicle.year) AS MaxYear",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (vehicle:Vehicle)-[relation4:INVOLVED_IN]->(crime:Crime {type:\"hit-and-run\"})\nMATCH (crime)-[relation5:OCCURRED_AT]->(location:Location)-[relation6:LOCATION_IN_AREA]->(area:Area {areaCode:\"Northview\"})\nRETURN MIN(vehicle.year) AS MinYear, MAX(vehicle.year) AS MaxYear",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Identify the earliest and latest model years of vehicles implicated in hit-and-run accidents in the 'Northview' region."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "How many different types of familial relationships exist among individuals living in the same postcode and connected to more than three crimes?",
+        "Cypher": "MATCH (person1:Person)-[family_rel:FAMILY_REL]->(person2:Person)\nWHERE family_rel.rel_type IN ['Parent', 'Child', 'Sibling', 'Spouse']\nMATCH (person1)-[:CURRENT_ADDRESS]->(loc1:Location)-[:HAS_POSTCODE]->(postcode1:PostCode),\n      (person2)-[:CURRENT_ADDRESS]->(loc2:Location)-[:HAS_POSTCODE]->(postcode2:PostCode)\nWHERE postcode1 = postcode2\nWITH person1, person2, family_rel.rel_type AS FamilyType\nMATCH (person1)-[:PARTY_TO]->(crime:Crime)\nWITH person1, person2, FamilyType, COUNT(DISTINCT crime) AS NumCrimes\nWHERE NumCrimes > 3\nRETURN DISTINCT FamilyType",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (person1:Person)-[family_rel:FAMILY_REL]->(person2:Person)\nWHERE family_rel.rel_type IN ['Parent', 'Child', 'Sibling', 'Spouse']\nMATCH (person1)-[relation8:CURRENT_ADDRESS]->(loc1:Location)-[relation11:HAS_POSTCODE]->(postcode1:PostCode),\n      (person2)-[relation9:CURRENT_ADDRESS]->(loc2:Location)-[:HAS_POSTCODE]->(postcode2:PostCode)\nWHERE postcode1 = postcode2\nWITH person1, person2, family_rel.rel_type AS FamilyType\nMATCH (person1)-[relation12:PARTY_TO]->(crime:Crime)\nWITH person1, person2, FamilyType, COUNT(DISTINCT crime) AS NumCrimes\nWHERE NumCrimes > 3\nRETURN DISTINCT FamilyType",
+        "num-hop": 6,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "What types of family relationships exist between individuals who share the same postcode and have at least one member involved in more than three criminal activities?",
+        "Max-Semantic-Score": 0.8691580295562744,
+        "Avg-Semantic-Score": 0.8054747104644775,
+        "Rewrite": "How many varied familial connections are there among people residing in the same postal code who are linked to over three criminal activities?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Count the number of crimes that both occurred in locations inside 'Area 99' and involved blue vehicles with registrations predating 2010.",
+        "Cypher": "MATCH (vehicle:Vehicle)-[involved:INVOLVED_IN]->(crime:Crime)-[occurred:OCCURRED_AT]->(location:Location)-[location_in_area:LOCATION_IN_AREA]->(area:Area)\nWHERE area.areaCode = '99' AND vehicle.make = 'blue' AND vehicle.year < 2010\nRETURN COUNT(crime)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate how many incidents involved blue vehicles registered before 2010 and took place within 'Area 99'."
+    }
+]

@@ -1,0 +1,125 @@
+[
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What are the email addresses of persons older than 50?",
+        "Cypher": "MATCH (person:Person)-[hasEmail:HAS_EMAIL]->(email:Email)\nWHERE person.age > 50\nRETURN person, hasEmail, email, email.email_address",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the email addresses of individuals who are over the age of 50?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Display the registration numbers of all vehicles involved in crimes of type 'Arson'.",
+        "Cypher": "MATCH (vehicle:Vehicle)-[involved:INVOLVED_IN]->(crime:Crime)\nWHERE crime.type = \"Arson\"\nRETURN vehicle, involved, crime, vehicle.reg",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Show the license numbers of all vehicles implicated in 'Arson' crimes."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Retrieve the phone numbers associated with the person named 'John Doe'.",
+        "Cypher": "MATCH (person:Person)-[hasPhoneRelation:HAS_PHONE]->(phone:Phone)\nWHERE person.name = \"John\" AND person.surname = \"Doe\"\nRETURN person, hasPhoneRelation, phone, phone.phoneNo",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Obtain the phone numbers linked to the individual named 'John Doe'."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Can you provide the addresses of locations within the postcode 'SW1A 2AA'?",
+        "Cypher": "MATCH (location:Location)-[hasPostcode:HAS_POSTCODE]->(postcode:PostCode)\nWHERE postcode.code = \"SW1A 2AA\"\nRETURN location, hasPostcode, postcode, location.address",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you give me the addresses for places in the postcode 'SW1A 2AA'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Find the make and model of every vehicle registered after the year 2015.",
+        "Cypher": "MATCH (vehicle:Vehicle)\nWHERE vehicle.year > 2015\nRETURN vehicle, vehicle.make, vehicle.model",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Identify the make and model of all vehicles registered post-2015."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "List the names and badge numbers of officers of rank 'Chief Inspector'.",
+        "Cypher": "MATCH (chiefInspector:Officer)\nWHERE chiefInspector.rank = \"Chief Inspector\"\nRETURN chiefInspector, chiefInspector.name, chiefInspector.badge_no",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the names and badge numbers of officers holding the rank of 'Chief Inspector'."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many crimes occurred at locations with the postcode 'EC2M 7PY' in 2019?",
+        "Cypher": "MATCH (crime:Crime)-[:OCCURRED_AT]->(location:Location)-[:HAS_POSTCODE]->(postcode:PostCode {code: \"EC2M 7PY\"})\nWHERE crime.date.year = 2019\nRETURN COUNT(crime)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (crime:Crime)-[relation3:OCCURRED_AT]->(location:Location)-[relation4:HAS_POSTCODE]->(postcode:PostCode {code: \"EC2M 7PY\"})\nWHERE crime.date.year = 2019\nRETURN COUNT(crime)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "In 2019, how many criminal incidents were recorded at places bearing the postcode 'EC2M 7PY'?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Count the number of vehicle makes involved in crimes where the type was either 'Theft' or 'Burglary'.",
+        "Cypher": "MATCH (vehicle:Vehicle)-[involved:INVOLVED_IN]->(crime:Crime)\nWHERE crime.type IN ['Theft', 'Burglary']\nRETURN COUNT(DISTINCT vehicle.make)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate how many different vehicle brands are associated with crimes classified as either 'Theft' or 'Burglary'."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the average age of persons involved in crimes of type 'Robbery'?",
+        "Cypher": "MATCH (person:Person)-[party_to:PARTY_TO]->(crime:Crime {type: \"Robbery\"})\nRETURN AVG(person.age)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical age of individuals engaged in 'Robbery' offenses?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Determine the total number of phone calls made between '2020-01-01' and '2020-12-31'.",
+        "Cypher": "MATCH (phone_call:PhoneCall)\nWHERE phone_call.call_date >= date(\"2020-01-01\") AND phone_call.call_date <= date(\"2020-12-31\")\nRETURN COUNT(phone_call)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the aggregate count of telephone calls from '2020-01-01' to '2020-12-31'."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many distinct types of crimes were recorded in the area 'AreaCode123'?",
+        "Cypher": "MATCH (crime:Crime)-[:OCCURRED_AT]->(location:Location)-[:LOCATION_IN_AREA]->(area:Area {areaCode:\"AreaCode123\"})\nRETURN COUNT(DISTINCT crime.type)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (crime:Crime)-[relation3:OCCURRED_AT]->(location:Location)-[relation4:LOCATION_IN_AREA]->(area:Area {areaCode:\"AreaCode123\"})\nRETURN COUNT(DISTINCT crime.type)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the number of unique crime categories reported in the area 'AreaCode123'?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Sum up the call durations for calls labeled as 'Emergency' occurring during the night.",
+        "Cypher": "MATCH (call:PhoneCall)-[:CALLED]->(phone:Phone)\nWHERE call.call_type=\"Emergency\" AND call.call_time=\"Night\"\nRETURN SUM(call.call_duration)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (call:PhoneCall)-[relation2:CALLED]->(phone:Phone)\nWHERE call.call_type=\"Emergency\" AND call.call_time=\"Night\"\nRETURN SUM(call.call_duration)",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the total duration of calls marked as 'Emergency' that took place at night."
+    }
+]

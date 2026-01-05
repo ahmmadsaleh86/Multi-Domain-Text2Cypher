@@ -1,0 +1,122 @@
+[
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Can you provide the details of the patient named John Doe, born on January 1, 1990?",
+        "Cypher": "MATCH (patient:Patient)\nWHERE patient.first_name=\"John\" AND patient.last_name=\"Doe\" AND patient.date_of_birth= date(\"1990-01-01\")\nRETURN patient, patient.patient_id, patient.first_name, patient.last_name, patient.date_of_birth, patient.gender, patient.phone_number, patient.email, patient.address",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the information for the patient John Doe, who was born on January 1, 1990?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the email and phone number of Dr. Sarah Lee who specializes in cardiology?",
+        "Cypher": "MATCH (doctor:Doctor)\nWHERE doctor.first_name=\"Sarah\" AND doctor.last_name=\"Lee\" AND doctor.specialization=\"cardiology\"\nRETURN doctor, doctor.email, doctor.phone_number",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide the email and phone number for Dr. Sarah Lee, the cardiology specialist?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "I need the address and contact information of the Metropolitan Hospital.",
+        "Cypher": "MATCH (hospital:Hospital)\nWHERE hospital.name=\"Metropolitan Hospital\"\nRETURN hospital, hospital.address, hospital.phone_number",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "I require the contact details and address for the Metropolitan Hospital."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Could you list the side effects of the medication called 'Aspirin'?",
+        "Cypher": "MATCH (medication:Medication)\nWHERE medication.name=\"Aspirin\"\nRETURN medication, medication.side_effects",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide a list of side effects for the drug named 'Aspirin'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What was the diagnosis and treatment in the latest medical record for the patient with ID 'P12345'?",
+        "Cypher": "MATCH (patient:Patient)-[owns:OWNS]->(medicalRecord:MedicalRecord)\nWHERE patient.patient_id = 'P12345'\nRETURN patient, owns, medicalRecord, medicalRecord.diagnosis, medicalRecord.treatment\nORDER BY medicalRecord.date_recorded DESC\nLIMIT 1",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What does the most recent medical record indicate about the diagnosis and treatment for the patient identified as 'P12345'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "I'm looking for the premium and coverage details of the insurance plan with ID 'Plan789'.",
+        "Cypher": "MATCH (plan:InsurancePlan)\nWHERE plan.plan_id=\"Plan789\"\nRETURN plan, plan.premium, plan.coverage_details",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "I am seeking the coverage and premium information for the insurance plan identified by ID 'Plan789'."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many doctors are currently working at City Hospital?",
+        "Cypher": "MATCH (doctor:Doctor)-[worksAt:WORKS_AT]->(hospital:Hospital)\nWHERE hospital.name = \"City Hospital\"\nRETURN COUNT(DISTINCT doctor)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the current number of doctors employed at City Hospital?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the average premium cost of all the insurance plans offered by 'PrimeCare Insurance'?",
+        "Cypher": "MATCH (plan:InsurancePlan)<-[offer:OFFERS]-(company:InsuranceCompany)\nWHERE company.name=\"PrimeCare Insurance\"\nRETURN AVG(plan.premium) AS AveragePremiumCost",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical cost of premiums for all the insurance policies provided by 'PrimeCare Insurance'?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Can you tell me the total number of appointments scheduled for January 2024?",
+        "Cypher": "MATCH (appointment:Appointment)\nWHERE appointment.date.year = 2024 AND appointment.date.month = 1\nRETURN COUNT(appointment) AS TotalAppointmentsInJanuary2024",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you inform me about the total count of appointments set for January 2024?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "I would like to know the minimum, maximum, and average dosage prescribed for the medication 'Lipitor'.",
+        "Cypher": "MATCH (medication:Medication)<-[prescribe:PRESCRIBES]-(doctor:Doctor)\nWHERE medication.name=\"Lipitor\"\nRETURN MIN(prescribe.dosage) AS MinDosage, MAX(prescribe.dosage) AS MaxDosage, AVG(prescribe.dosage) AS AvgDosage",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "I want to find out the lowest, highest, and typical prescribed amounts of the drug 'Lipitor'."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many patients are currently taking the medication 'Insulin'?",
+        "Cypher": "MATCH (patient:Patient)-[takes:TAKES]->(medication:Medication)\nWHERE medication.name=\"Insulin\"\nRETURN COUNT(DISTINCT patient)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the current number of patients prescribed the medication 'Insulin'?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the total number of hospitals listed in our health administration system?",
+        "Cypher": "MATCH (hospital:Hospital)\nRETURN COUNT(hospital) AS TotalHospitals",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many hospitals are registered in our health administration system?"
+    }
+]

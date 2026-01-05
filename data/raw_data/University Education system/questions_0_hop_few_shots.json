@@ -1,0 +1,124 @@
+[
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the office location and specialization of Professor John Doe who teaches the advanced robotics course?",
+        "Cypher": "MATCH (professor:Professor)-[teaches:TEACHES]->(course:Course)\nWHERE professor.first_name = \"John\" AND professor.last_name = \"Doe\" AND course.name = \"advanced robotics\"\nRETURN professor, teaches, course, professor.office, professor.specialization",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Where is Professor John Doe's office located, and what is his area of expertise, given that he instructs the advanced robotics course?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Could you give me the detailed attributes of the course 'Introduction to Machine Learning'?",
+        "Cypher": "MATCH (course:Course) \nWHERE course.name = \"Introduction to Machine Learning\"\nRETURN course, course.course_id, course.name, course.description, course.credits, course.level",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the detailed attributes of the course titled 'Introduction to Machine Learning'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What are the email and date of birth of the student Sarah Smith enrolled in the cybersecurity course?",
+        "Cypher": "MATCH (student:Student)-[enrollment:ENROLLED_IN]->(course:Course)\nWHERE student.first_name = \"Sarah\" AND student.last_name = \"Smith\" AND course.name = \"cybersecurity\"\nRETURN student, enrollment, course, student.email, student.date_of_birth",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the email address and birthdate for Sarah Smith, who is registered in the cybersecurity course?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "I need the event details for the 'Annual Computer Science Conference' including its description and date.",
+        "Cypher": "MATCH (conference:Event) \nWHERE conference.title = \"Annual Computer Science Conference\"\nRETURN conference, conference.description, conference.date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Please provide me with the description and date for the 'Annual Computer Science Conference'."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Can you provide the building name and room number for the classroom where the 'Data Structures' course is held?",
+        "Cypher": "MATCH (course:Course)-[:TEACHES]-(:Professor)-[:LECTURES_IN]->(classroom:Classroom) \nWHERE course.name = \"Data Structures\"\nRETURN course, classroom, classroom.building, classroom.room_number",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (course:Course)-[relation3:TEACHES]-(node1:Professor)-[relation4:LECTURES_IN]->(classroom:Classroom) \nWHERE course.name = \"Data Structures\"\nRETURN relation4, relation3, node1, course, classroom, classroom.building, classroom.room_number",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the name of the building and the number of the room where the 'Data Structures' course takes place?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the budget and the name of the department located in the 'Tech Building'?",
+        "Cypher": "MATCH (department:Department)\nWHERE department.building = \"Tech Building\"\nRETURN department, department.name, department.budget",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the name and budget of the department situated in the 'Tech Building'?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many courses are offered by the Computer Science department?",
+        "Cypher": "MATCH (department:Department)-[offer:OFFERS]->(course:Course)\nWHERE department.name=\"Computer Science\"\nRETURN COUNT(DISTINCT course)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many classes does the Computer Science department provide?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the maximum capacity of classrooms across the university?",
+        "Cypher": "MATCH (classroom:Classroom)\nRETURN MAX(classroom.capacity)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest number of students that classrooms can accommodate throughout the university?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Can you calculate the average number of students enrolled per professor in technology-related courses?",
+        "Cypher": "MATCH (professor:Professor)-[:TEACHES]->(course:Course)<-[:ENROLLED_IN]-(student:Student)\nWHERE course.description CONTAINS \"technology\"\nWITH professor, COUNT(DISTINCT student) AS studentsEnrolled\nRETURN AVG(studentsEnrolled)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (professor:Professor)-[relation3:TEACHES]->(course:Course)<-[relation4:ENROLLED_IN]-(student:Student)\nWHERE course.description CONTAINS \"technology\"\nWITH professor, COUNT(DISTINCT student) AS studentsEnrolled\nRETURN AVG(studentsEnrolled)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you determine the average enrollment of students per professor in technology-focused classes?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the total number of events planned to be held in the 'Main Auditorium'?",
+        "Cypher": "MATCH (classroom:Classroom {building: 'Main Auditorium'})<-[held:HELD_IN]-(event:Event)\nRETURN COUNT(event)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many events are scheduled to take place in the 'Main Auditorium'?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Determine the average budget of all departments that are housed within the 'Engineering Complex'.",
+        "Cypher": "MATCH (department:Department)\nWHERE department.building = \"Engineering Complex\"\nRETURN AVG(department.budget)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the mean budget for all departments located in the 'Engineering Complex'."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many professors work in departments with a budget greater than $1 million?",
+        "Cypher": "MATCH (department:Department)<-[manages:MANAGES]-(professor:Professor)\nWHERE department.budget > 1000000\nRETURN COUNT(DISTINCT professor)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many professors are employed by departments that have a budget exceeding $1 million?"
+    }
+]

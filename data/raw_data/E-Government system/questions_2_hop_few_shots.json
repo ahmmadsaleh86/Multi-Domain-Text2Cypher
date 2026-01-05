@@ -1,0 +1,184 @@
+[
+    {
+        "Category": "2-hop Node Level",
+        "Question": "List the email addresses and phone numbers of employees who work in the 'Tax Department' and have been in their current position since '2018'.",
+        "Cypher": "MATCH (employee:Employee)-[works:WORKS_IN]->(department:Department {name:\"Tax Department\"})\nWHERE employee.start_date.year = 2018\nRETURN employee, works, department, employee.email, employee.phone_number",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the email addresses and phone numbers for employees in the 'Tax Department' who have held their current roles since '2018'."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Identify the first name and last name of every person who owns a vehicle made after '2015' and currently lives in 'New York'.",
+        "Cypher": "MATCH (person:Person)-[lives:LIVES_AT]->(address:Address {city:\"New York\"}), (person)-[owns:OWNS]->(vehicle:Vehicle)\nWHERE vehicle.year > 2015\nRETURN person, lives, address, owns, vehicle, person.first_name, person.last_name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the first and last names of all individuals who possess a vehicle manufactured post-2015 and presently reside in 'New York'."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Provide the name and description of services that require a 'passport' document where the passport has an expiration date later than '2025'.",
+        "Cypher": "MATCH (service:Service)-[requires:REQUIRES]->(document:Document {type:\"passport\"})\nWHERE document.expiration_date.year > 2025\nRETURN service, requires, document, service.name, service.description",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the services needing a 'passport' with an expiration date beyond '2025', along with a description of each."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Fetch the street and city of addresses where persons who applied for the 'Employment Support' service live, focusing on applications made in '2021'.",
+        "Cypher": "MATCH (person:Person)-[applied_for:APPLIED_FOR]->(application:Application)-[relates_to:RELATES_TO]->(service:Service {name: \"Employment Support\"}), (person)-[lives_at:LIVES_AT]->(address:Address)\nWHERE application.submission_date.year = 2021\nRETURN person, applied_for, application, relates_to, service, lives_at, address, address.street, address.city",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Retrieve the street and city from addresses of individuals who applied for the 'Employment Support' service and whose applications were submitted in '2021'."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What are the titles and start dates of employees who manage another employee named 'John Doe'?",
+        "Cypher": "MATCH (manager:Employee)-[manages:MANAGES]->(employee:Employee)\nWHERE employee.first_name = \"John\" AND employee.last_name = \"Doe\"\nRETURN manager, manages, employee, manager.title, manager.start_date",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Show the names and emails of all department heads whose departments have more than 50 employees, assuming this count is stored as an attribute in each department node.",
+        "Cypher": "MATCH (departmentHead:Employee)-[worksIn:WORKS_IN]->(department:Department {employee_count: count})\nWHERE count > 50\nRETURN departmentHead, worksIn, department, departmentHead.name, departmentHead.email",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Can you provide the method of payment and the corresponding application status for payments made by 'Maria Garcia' for her applications submitted in '2019'?",
+        "Cypher": "MATCH (person:Person {first_name:\"Maria\", last_name:\"Garcia\"})-[made:MADE]->(payment:Payment)-[associated:ASSOCIATED_WITH]->(application:Application)<-[applied:APPLIED_FOR]-(person)\nWHERE application.submission_date.year = 2019\nRETURN person, made, payment, associated, application, applied, payment.method, application.status",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you give me the payment method and the status of the application for payments 'Maria Garcia' used for her 2019 submissions?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the service names and the role of applications that were requested and applied for by people living at the address with postal_code '90210'?",
+        "Cypher": "MATCH (person:Person)-[lives:LIVES_AT]->(address:Address {postal_code: \"90210\"})\nMATCH (person)-[requested:REQUESTED]->(service:Service)\nMATCH (person)-[applied:APPLIED_FOR]->(application:Application)-[related:RELATES_TO]->(service)\nRETURN person, lives, address, requested, service, applied, application, related, service.name, applied.role",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the names of the services and the functions of applications that residents at the address with postal_code '90210' have requested and applied for?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "For each person owning a vehicle with make 'Toyota', can you list the services they requested and whether those services have documents related to them?",
+        "Cypher": "MATCH (person:Person)-[own:OWNS]->(vehicle:Vehicle {make:\"Toyota\"})\nMATCH (person)-[requested:REQUESTED]->(service:Service)\nOPTIONAL MATCH (service)-[requires:REQUIRES]->(document:Document)\nRETURN person, own, vehicle, requested, service, requires, document",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide a list of services requested by every person who owns a 'Toyota' vehicle, along with information on whether there are documents associated with those services?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Retrieve the types of documents and the total number of associated services for each person named 'James Smith'.",
+        "Cypher": "MATCH (person:Person {first_name: \"James\", last_name: \"Smith\"})-[submit:SUBMITTED]->(document:Document)\nMATCH (document)<-[required:REQUIRES]-(service:Service)\nRETURN person, submit, document, required, service, document.type, count(service) AS total_services",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Obtain the variety of documents and the overall count of related services for each individual named 'James Smith'."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Identify the relation attributes, including dates and roles, for persons named 'Emily Johnson' associated with their applications and service requests.",
+        "Cypher": "MATCH (person:Person {first_name:\"Emily\", last_name:\"Johnson\"})-[appliedFor:APPLIED_FOR]->(application:Application)\nMATCH (person)-[requested:REQUESTED]->(service:Service)\nRETURN person, appliedFor, application, requested, service, appliedFor.role, requested.submission_date",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Get the model and purchase date of vehicles owned by individuals who have made payments via 'credit card' for their applications.",
+        "Cypher": "MATCH (person:Person)-[made:MADE]->(payment:Payment {method:\"credit card\"})-[:ASSOCIATED_WITH]->(application:Application)\nMATCH (person)-[own:OWNS]->(vehicle:Vehicle)\nRETURN person, made, payment, application, own, vehicle, vehicle.model, own.purchase_date",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (person:Person)-[made:MADE]->(payment:Payment {method:\"credit card\"})-[relation5:ASSOCIATED_WITH]->(application:Application)\nMATCH (person)-[own:OWNS]->(vehicle:Vehicle)\nRETURN relation5, person, made, payment, application, own, vehicle, vehicle.model, own.purchase_date",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Retrieve the model and acquisition date of vehicles belonging to people who have used a 'credit card' to pay for their applications."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Calculate the average number of applications submitted per person for residents of 'California' compared to those in 'Texas'.",
+        "Cypher": "MATCH (person:Person)-[:LIVES_AT]->(address:Address)\nWHERE address.state IN ['California', 'Texas']\nWITH address.state AS State, COUNT(person) AS TotalPeople\nMATCH (person:Person)-[:LIVES_AT]->(address:Address)\nWHERE address.state = State\nMATCH (person)-[:APPLIED_FOR]->(application:Application)\nWITH State, TotalPeople, COUNT(application) AS TotalApplications\nRETURN State, TotalApplications / TotalPeople AS AvgApplicationsPerPerson",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (person:Person)-[relation5:LIVES_AT]->(address:Address)\nWHERE address.state IN ['California', 'Texas']\nWITH address.state AS State, COUNT(person) AS TotalPeople\nMATCH (person:Person)-[relation6:LIVES_AT]->(address:Address)\nWHERE address.state = State\nMATCH (person)-[relation7:APPLIED_FOR]->(application:Application)\nWITH State, TotalPeople, COUNT(application) AS TotalApplications\nRETURN State, TotalApplications / TotalPeople AS AvgApplicationsPerPerson",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the mean number of applications each individual submits by comparing residents from 'California' to those in 'Texas'."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the maximum payment amount made for applications related to the 'Healthcare' services submitted by individuals older than 60 years?",
+        "Cypher": "MATCH (person:Person)-[made:MADE]->(payment:Payment)-[associated:ASSOCIATED_WITH]->(application:Application)-[relatesTo:RELATES_TO]->(service:Service)\nWHERE service.name = 'Healthcare' AND duration.between(date(person.birth_date), date()).years > 60\nRETURN MAX(payment.amount)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest payment amount for 'Healthcare' service applications submitted by people over 60 years old?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Determine the total number of distinct services applied for by employees working in the 'Finance Department' between '2020' and '2023'.",
+        "Cypher": "MATCH (employee:Employee)-[:WORKS_IN]->(department:Department {name: \"Finance Department\"})\nMATCH (employee)-[:APPLIED_FOR]->(application:Application)\nWHERE application.submission_date.year >= 2020 AND application.submission_date.year <= 2023\nMATCH (application)-[:RELATES_TO]->(service:Service)\nRETURN COUNT(DISTINCT service)",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (employee:Employee)-[relation4:WORKS_IN]->(department:Department {name: \"Finance Department\"})\nMATCH (employee)-[relation5:APPLIED_FOR]->(application:Application)\nWHERE application.submission_date.year >= 2020 AND application.submission_date.year <= 2023\nMATCH (application)-[relation6:RELATES_TO]->(service:Service)\nRETURN COUNT(DISTINCT service)",
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Can you compute the sum of all payments made for applications associated with 'Education Support' services for the year '2022'?",
+        "Cypher": "MATCH (payment:Payment)-[:ASSOCIATED_WITH]->(application:Application)-[:RELATES_TO]->(service:Service {name: \"Education Support\"})\nWHERE payment.payment_date.year = 2022\nRETURN SUM(payment.amount)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (payment:Payment)-[relation3:ASSOCIATED_WITH]->(application:Application)-[relation4:RELATES_TO]->(service:Service {name: \"Education Support\"})\nWHERE payment.payment_date.year = 2022\nRETURN SUM(payment.amount)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you calculate the total amount paid for applications linked to 'Education Support' services in the year '2022'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Provide the average age of persons who have made payments of over '1000' units in currency for their applications in the last year.",
+        "Cypher": "MATCH (person:Person)-[:MADE]->(payment:Payment)-[:ASSOCIATED_WITH]->(application:Application)\nWHERE payment.amount > 1000 AND payment.payment_date.year = date().year - 1\nRETURN AVG(date().year - person.birth_date.year) AS average_age",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (person:Person)-[relation3:MADE]->(payment:Payment)-[relation4:ASSOCIATED_WITH]->(application:Application)\nWHERE payment.amount > 1000 AND payment.payment_date.year = date().year - 1\nRETURN AVG(date().year - person.birth_date.year) AS average_age",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the mean age of individuals who spent more than '1000' units of money on their applications in the previous year."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Find the minimum and maximum year of vehicles owned by persons who requested 'Driver's License Renewal' services.",
+        "Cypher": "MATCH (person:Person)-[:REQUESTED]->(service:Service {name: \"Driver's License Renewal\"})\nMATCH (person)-[:OWNS]->(vehicle:Vehicle)\nRETURN MIN(vehicle.year) AS MinYear, MAX(vehicle.year) AS MaxYear",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (person:Person)-[relation3:REQUESTED]->(service:Service {name: \"Driver's License Renewal\"})\nMATCH (person)-[relation4:OWNS]->(vehicle:Vehicle)\nRETURN MIN(vehicle.year) AS MinYear, MAX(vehicle.year) AS MaxYear",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the earliest and latest year of vehicles possessed by individuals who applied for 'Driver's License Renewal' services."
+    }
+]

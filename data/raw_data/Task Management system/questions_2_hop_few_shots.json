@@ -1,0 +1,192 @@
+[
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What are the last names and email addresses of users assigned to tasks which are part of the project with projectId 'P-123'?",
+        "Cypher": "MATCH (user:User)<-[assignedTo:ASSIGNED_TO]-(task:Task)-[includedIn:INCLUDES_TASK]->(project:Project {projectId:\"P-123\"})\nRETURN user, assignedTo, task, includedIn, project, user.lastName, user.email",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)<-[assignedTo:ASSIGNED_TO]-(task:Task)-[includedIn:INCLUDES_TASK]-(project:Project {projectId:\"P-123\"})\nRETURN user, assignedTo, task, includedIn, project, user.lastName, user.email",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the surnames and email contacts for users allocated to tasks within the project having projectId 'P-123'?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "List all the project names and descriptions where the user with userId 'U-009' is a member and also assigned to tasks that depend on other tasks with 'High' priority.",
+        "Cypher": "MATCH (user:User {userId:\"U-009\"})-[:PART_OF]->(project:Project)-[:INCLUDES_TASK]->(task:Task)-[:DEPENDS_ON]->(dependentTask:Task {priority:\"High\"})\nWHERE (task)-[:ASSIGNED_TO]->(user)\nRETURN user, project, task, dependentTask, project.name, project.description",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User {userId:\"U-009\"})-[relation4:PART_OF]->(project:Project)-[relation5:INCLUDES_TASK]->(task:Task)-[relation6:DEPENDS_ON]->(dependentTask:Task {priority:\"High\"})\nWHERE (task)-[relation7:ASSIGNED_TO]->(user)\nRETURN relation7, relation6, relation5, relation4, user, project, task, dependentTask, project.name, project.description",
+        "num-hop": 4,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Retrieve the task names and estimated hours for tasks that are due on '2023-12-01' and are part of projects that Team 'DevOps' is working on.",
+        "Cypher": "MATCH (team:Team {name:\"DevOps\"})-[worksOn:TEAM_WORKS_ON]->(project:Project)-[includes:INCLUDES_TASK]->(task:Task {dueDate: date(\"2023-12-01\")})\nRETURN team, worksOn, project, includes, task, task.name, task.estimatedHours",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Fetch the names and estimated hours of tasks due on '2023-12-01' associated with projects handled by Team 'DevOps'."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "For the user 'John Doe', identify all the milestone titles and deadlines for milestones related to the tasks he is assigned to.",
+        "Cypher": "MATCH (user:User)-[assignedTo:ASSIGNED_TO]->(task:Task)-[milestoneFor:MILESTONE_FOR]->(milestone:Milestone)\nWHERE user.firstName=\"John\" AND user.lastName=\"Doe\"\nRETURN user, assignedTo, task, milestoneFor, milestone, milestone.title, milestone.deadline",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)-[assignedTo:ASSIGNED_TO]-(task:Task)-[milestoneFor:MILESTONE_FOR]-(milestone:Milestone)\nWHERE user.firstName=\"John\" AND user.lastName=\"Doe\"\nRETURN user, assignedTo, task, milestoneFor, milestone, milestone.title, milestone.deadline",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Retrieve all the titles and deadlines of milestones associated with the tasks assigned to the user 'John Doe'."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Can you provide the descriptions and due dates of tasks which are dependent on the task 'Task101' managed by user 'Jane Smith'?",
+        "Cypher": "MATCH (dependentTask:Task)-[dependency:DEPENDS_ON]->(mainTask:Task)<-[:ASSIGNED_TO]-(manager:User)\nWHERE mainTask.taskId = 'Task101' AND manager.firstName = 'Jane' AND manager.lastName = 'Smith'\nRETURN dependentTask, dependency, mainTask, manager, dependentTask.description, dependentTask.dueDate",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (dependentTask:Task)-[dependency:DEPENDS_ON]->(mainTask:Task)-[relation4:ASSIGNED_TO]-(manager:User)\nWHERE mainTask.taskId = 'Task101' AND manager.firstName = 'Jane' AND manager.lastName = 'Smith'\nRETURN relation4, dependentTask, dependency, mainTask, manager, dependentTask.description, dependentTask.dueDate",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the details and deadlines for the tasks that rely on 'Task101', overseen by 'Jane Smith'?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Display the names and statuses of projects that include milestones with a deadline before '2023-07-30' and are being led by a user from the 'Management' team.",
+        "Cypher": "MATCH (managementTeam:Team {name:\"Management\"})-[:MEMBER_OF]-(manager:User)-[manages:MANAGES]->(project:Project)-[includesMilestone:INCLUDES_MILESTONE]->(milestone:Milestone)\nWHERE milestone.deadline < DATE('2023-07-30')\nRETURN managementTeam, manager, manages, project, includesMilestone, milestone, project.name, project.status",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (managementTeam:Team {name:\"Management\"})-[relation4:MEMBER_OF]-(manager:User)-[manages:MANAGES]->(project:Project)-[includesMilestone:INCLUDES_MILESTONE]->(milestone:Milestone)\nWHERE milestone.deadline < DATE('2023-07-30')\nRETURN relation4, managementTeam, manager, manages, project, includesMilestone, milestone, project.name, project.status",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Show the names and statuses of projects containing milestones due before '2023-07-30', which are overseen by a user on the 'Management' team."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "When did user 'U-776' join the team assigned to the project 'ProjectX'?",
+        "Cypher": "MATCH (user:User {userId:\"U-776\"})-[memberOf:MEMBER_OF]->(team:Team)-[worksOn:TEAM_WORKS_ON]->(project:Project {name:\"ProjectX\"})\nRETURN user, memberOf, team, worksOn, project, memberOf.joinedDate",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "When was user 'U-776' added to the team working on 'ProjectX'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the start dates of teams working on the projects where task 'TaskX' is included, and the specific task has a 'Critical' status?",
+        "Cypher": "MATCH (criticalTask:Task {status:\"Critical\", name:\"TaskX\"})<-[included:INCLUDES_TASK]-(project:Project)<-[worksOn:TEAM_WORKS_ON]-(team:Team)\nRETURN criticalTask, included, project, worksOn, team, worksOn.startDate",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the commencement dates for teams involved in projects that include 'TaskX', where the task in question is marked as 'Critical'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the assigned dates of users to the tasks that are milestones for the 'Yearly Review' project that concluded on '2023-05-15'?",
+        "Cypher": "MATCH (project:Project {name: \"Yearly Review\", endDate: date(\"2023-05-15\")})-[:INCLUDES_MILESTONE]->(milestone:Milestone)-[:MILESTONE_FOR]->(task:Task)<-[assignedTo:ASSIGNED_TO]-(user:User)\nRETURN project, milestone, task, user, assignedTo, assignedTo.assignedDate",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (project:Project {name: \"Yearly Review\", endDate: date(\"2023-05-15\")})-[relation4:INCLUDES_MILESTONE]-(milestone:Milestone)-[relation5:MILESTONE_FOR]->(task:Task)-[assignedTo:ASSIGNED_TO]-(user:User)\nRETURN relation5, relation4, project, milestone, task, user, assignedTo, assignedTo.assignedDate",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the dates allocated to users for milestone tasks in the 'Yearly Review' project, which concluded on '2023-05-15'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "How many users were assigned to tasks by 'Manager M' in the project 'Expansion2023' and what was the latest assigned date among them?",
+        "Cypher": "MATCH (manager:User)-[:MANAGES]->(project:Project)-[:INCLUDES_TASK]->(task:Task)-[assigned:ASSIGNED_TO]->(user:User)\nWHERE manager.firstName=\"Manager\" AND manager.lastName=\"M\" AND project.name=\"Expansion2023\"\nRETURN manager, project, task, assigned, user, COUNT(user) as count, MAX(assigned.assignedDate) as latestAssignedDate",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (manager:User)-[relation4:MANAGES]->(project:Project)-[relation5:INCLUDES_TASK]->(task:Task)-[assigned:ASSIGNED_TO]->(user:User)\nWHERE manager.firstName=\"Manager\" AND manager.lastName=\"M\" AND project.name=\"Expansion2023\"\nRETURN relation5, relation4, manager, project, task, assigned, user, COUNT(user) as count, MAX(assigned.assignedDate) as latestAssignedDate",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many users did 'Manager M' assign to tasks in the 'Expansion2023' project, and what is the most recent assignment date among those?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What is the earliest date that a task was reported as 'Completed' under milestone 'Milestone 5' of project 'P-500'?",
+        "Cypher": "MATCH (proj:Project {projectId:\"P-500\"})-[includesMilestone:INCLUDES_MILESTONE]->(milestone:Milestone {title:\"Milestone 5\"})\nMATCH (milestone)-[milestoneFor:MILESTONE_FOR]->(task:Task)\nMATCH (task)-[reportStatus:REPORTS_STATUS {status:\"Completed\"}]->(milestone)\nRETURN proj, includesMilestone, milestone, milestoneFor, task, reportStatus, reportStatus.updateTime AS updateTime\nORDER BY reportStatus.updateTime ASC\nLIMIT 1",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the earliest date on which a task was marked as 'Completed' for milestone 'Milestone 5' in project 'P-500'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Determine the assignment and joined dates for employees working on 'High Risk' tasks that are part of a project led by 'Jane Austin'.",
+        "Cypher": "MATCH (leader:User)-[manages:MANAGES]->(project:Project)-[includes:INCLUDES_TASK]->(task:Task)-[assignedTo:ASSIGNED_TO]->(employee:User)-[memberOf:MEMBER_OF]->(team:Team)\nWHERE leader.firstName=\"Jane\" AND leader.lastName=\"Austin\" AND task.priority=\"High Risk\"\nRETURN leader, manages, project, includes, task, assignedTo, employee, memberOf, team, assignedTo.assignedDate, memberOf.joinedDate",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Identify the assignment details and the dates of joining for employees engaged in 'High Risk' tasks within a project overseen by 'Jane Austin'."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "How many tasks, with priority 'High', are there on projects managed by users who belong to the 'Executive' team?",
+        "Cypher": "MATCH (team:Team {name: \"Executive\"})<-[:MEMBER_OF]-(user:User)-[:MANAGES]->(project:Project)\nMATCH (project)-[:INCLUDES_TASK]->(task:Task {priority: \"High\"})\nRETURN COUNT(DISTINCT task)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (team:Team {name: \"Executive\"})<-[relation4:MEMBER_OF]-(user:User)-[relation5:MANAGES]->(project:Project)\nMATCH (project)-[relation6:INCLUDES_TASK]->(task:Task {priority: \"High\"})\nRETURN COUNT(DISTINCT task)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many 'High' priority tasks exist on projects overseen by members of the 'Executive' team?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the average estimated hours of tasks that depend on tasks assigned to users who joined the team before '2020-01-01'?",
+        "Cypher": "MATCH (dependentTask:Task)-[:DEPENDS_ON]->(task:Task)-[assigned:ASSIGNED_TO]->(user:User)-[memberOf:MEMBER_OF]->(team:Team)\nWHERE memberOf.joinedDate < date('2020-01-01')\nRETURN AVG(dependentTask.estimatedHours)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (dependentTask:Task)-[relation4:DEPENDS_ON]->(task:Task)-[assigned:ASSIGNED_TO]->(user:User)-[memberOf:MEMBER_OF]->(team:Team)\nWHERE memberOf.joinedDate < date('2020-01-01')\nRETURN AVG(dependentTask.estimatedHours)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the mean estimated duration of tasks reliant on tasks given to users added to the team prior to '2020-01-01'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Count the number of unique projects worked on by the members of the team 'QuickSolution' where they contributed to tasks of 'Low' priority.",
+        "Cypher": "MATCH (team:Team {name: \"QuickSolution\"})-[:TEAM_WORKS_ON]->(project:Project)<-[:PART_OF]-(member:User)-[:ASSIGNED_TO]->(task:Task {priority: \"Low\"})\nRETURN COUNT(DISTINCT project)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (team:Team {name: \"QuickSolution\"})-[relation4:TEAM_WORKS_ON]->(project:Project)<-[relation5:PART_OF]-(member:User)-[relation6:ASSIGNED_TO]-(task:Task {priority: \"Low\"})\nRETURN COUNT(DISTINCT project)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate how many distinct projects the 'QuickSolution' team members have worked on, specifically where they tackled 'Low' priority tasks."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the maximum number of tasks any user has been assigned in projects having at least ten milestones?",
+        "Cypher": "MATCH (project:Project)-[:INCLUDES_MILESTONE]->(milestone:Milestone)\nWITH project, COUNT(milestone) AS milestonesCount\nWHERE milestonesCount >= 10\nMATCH (project)<-[:INCLUDES_TASK]-(task:Task)-[:ASSIGNED_TO]->(user:User)\nRETURN user.userId, COUNT(task) AS tasksCount\nORDER BY tasksCount DESC\nLIMIT 1",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (project:Project)-[relation4:INCLUDES_MILESTONE]->(milestone:Milestone)\nWITH project, COUNT(milestone) AS milestonesCount\nWHERE milestonesCount >= 10\nMATCH (project)-[relation5:INCLUDES_TASK]-(task:Task)-[relation6:ASSIGNED_TO]->(user:User)\nRETURN user.userId, COUNT(task) AS tasksCount\nORDER BY tasksCount DESC\nLIMIT 1",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest number of tasks assigned to a single user in projects that have at least ten milestones?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Determine the minimum and maximum actual hours spent by users on tasks that were part of the milestones completed within the last quarter.",
+        "Cypher": "MATCH (milestone:Milestone)-[milestoneFor:MILESTONE_FOR]->(task:Task)-[assigned:ASSIGNED_TO]->(user:User)\nWHERE milestone.deadline >= date.truncate('quarter', date()) - duration({months: 3}) AND milestone.deadline < date.truncate('quarter', date())\nRETURN MIN(task.actualHours) AS MinActualHours, MAX(task.actualHours) AS MaxActualHours",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Identify the lowest and highest actual hours users dedicated to tasks associated with milestones finished in the previous quarter."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Calculate the sum of due dates for tasks associated with the projects that each team in '2023 Business Expansion' is working on.",
+        "Cypher": "MATCH (team:Team)-[worksOn:TEAM_WORKS_ON]->(project:Project)-[includesTask:INCLUDES_TASK]->(task:Task)\nWHERE project.name=\"2023 Business Expansion\"\nRETURN team.name AS TeamName, SUM(task.dueDate) AS SumDueDates",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Compute the total of due dates for tasks linked to the projects being handled by every team in '2023 Business Expansion'."
+    }
+]

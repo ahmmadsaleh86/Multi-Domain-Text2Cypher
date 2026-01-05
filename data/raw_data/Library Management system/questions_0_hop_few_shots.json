@@ -1,0 +1,123 @@
+[
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the email address and the position of the employee with EmployeeID 'E-12345'?",
+        "Cypher": "MATCH (employee:Employee)\nWHERE employee.EmployeeID = 'E-12345'\nRETURN employee, employee.Email, employee.Position",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Please provide the email address and job title of the employee who has EmployeeID 'E-12345'."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Provide the Title and Language of the book that has the ISBN '987-1234567890'.",
+        "Cypher": "MATCH (book:Book)\nWHERE book.ISBN = '987-1234567890'\nRETURN book, book.Title, book.Language",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Give the Title and Language of the book associated with the ISBN '987-1234567890'."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Show the Name and MembershipType for the member with MemberID 'M-98765'.",
+        "Cypher": "MATCH (member:Member)\nWHERE member.MemberID = 'M-98765'\nRETURN member, member.Name, member.MembershipType",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Display the Name and MembershipType of the member who has the MemberID 'M-98765'."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Retrieve the Name and DOB of the author identified by AuthorID 'A-55555'.",
+        "Cypher": "MATCH (author:Author)\nWHERE author.AuthorID = 'A-55555'\nRETURN author, author.Name, author.DOB",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Fetch the Name and Date of Birth for the author with AuthorID 'A-55555'."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Display the Location and Name of the Branch where BranchID is 'B-2222'.",
+        "Cypher": "MATCH (branch:Branch)\nWHERE branch.BranchID = 'B-2222'\nRETURN branch, branch.Location, branch.Name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Show the Name and Location of the Branch with the BranchID 'B-2222'."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "List the Publisher Name and Location for the publisher with PublisherID 'P-3333'.",
+        "Cypher": "MATCH (publisher:Publisher)\nWHERE publisher.PublisherID = 'P-3333'\nRETURN publisher, publisher.Name, publisher.Location",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the Name and Location of the publisher whose PublisherID is 'P-3333'."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many books are published in the 'Fiction' subject?",
+        "Cypher": "MATCH (book:Book)\nWHERE book.Subject=\"Fiction\"\nRETURN COUNT(book)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the number of books released under the 'Fiction' category?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the average number of copies available across all books in the library?",
+        "Cypher": "MATCH (book:Book)\nRETURN AVG(book.CopiesAvailable) AS AverageCopiesAvailable",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many copies of each book are there on average in the library?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Count the total number of members who started their membership in the year 2020.",
+        "Cypher": "MATCH (member:Member)\nWHERE member.MembershipStart.year = 2020\nRETURN COUNT(member)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the total number of members who initiated their membership in the year 2020."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the maximum number of copies total for any single book in the database?",
+        "Cypher": "MATCH (book:Book)\nRETURN MAX(book.CopiesTotal)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest number of individual copies of a single book recorded in the database?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Calculate the total number of employees working across all library branches.",
+        "Cypher": "MATCH (employee:Employee)-[:EMPLOYED_AT]->(branch:Branch)\nRETURN COUNT(DISTINCT employee)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (employee:Employee)-[relation2:EMPLOYED_AT]->(branch:Branch)\nRETURN COUNT(DISTINCT employee)",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the cumulative count of staff members employed at all the library branches."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many authors have a Nationality of 'Canadian'?",
+        "Cypher": "MATCH (author:Author)\nWHERE author.Nationality = \"Canadian\"\nRETURN COUNT(author)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many writers hold Canadian nationality?"
+    }
+]

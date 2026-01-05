@@ -1,0 +1,182 @@
+[
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What are the names and balances of all bank accounts directly linked to account holders born before 1990 that have performed transactions over $1000?",
+        "Cypher": "MATCH (accountHolder:AccountHolder)-[has_bankAccount:HAS_BANKACCOUNT]->(bankAccount:BankAccount)-[transacted:SEND]->(transaction:MoneyTransfer)\nWHERE accountHolder.birthDate < date('1990-01-01') AND transaction.amount > 1000\nRETURN accountHolder, has_bankAccount, bankAccount, transacted, transaction, bankAccount.accountNumber, bankAccount.balance",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the names and balances of bank accounts connected directly to clients born before 1990, who have executed transactions exceeding $1000?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Can you list the first and last names of all flagged individuals who hold a credit card with a limit exceeding $5000 and with more than two late payments?",
+        "Cypher": "MATCH (flagged_person:Flagged)-[has_creditcard:HAS_CREDITCARD]->(credit_card:CreditCard)\nWHERE credit_card.limit > 5000 AND credit_card.latePayments > 2\nRETURN flagged_person, has_creditcard, credit_card, flagged_person.firstName, flagged_person.lastName",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the first and last names of all marked persons possessing a credit card with a limit over $5000 and more than two overdue payments?"
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Identify all shop names associated with purchases made from IP addresses registered in states with names starting with 'C'.",
+        "Cypher": "MATCH (purchase:Purchase)-[from_ip:FROM_IP]->(ip:IP)-[located_in:LOCATED_IN]->(state:State)\nWHERE state.name STARTS WITH 'C'\nMATCH (purchase)-[with_login:WITH_LOGIN]->(login:Login)-[for_shop:FOR_SHOP]->(shop:Shop)\nRETURN purchase, from_ip, ip, located_in, state, with_login, login, for_shop, shop, shop.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (purchase:Purchase)-[relation5:FROM_IP]->(ip:IP)-[relation6:LOCATED_IN]->(state:State)\nWHERE state.name STARTS WITH 'C'\nMATCH (login:Login)-[relation7:FOR_SHOP]->(shop:Shop)\nWHERE (purchase)-[relation8:WITH_LOGIN]->(login)\nRETURN relation8, relation7, relation6, relation5, purchase, ip, state, login, shop, shop.name",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Locate the names of all stores linked to transactions conducted from IP addresses situated in states whose names begin with 'C'."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Provide details of Account Holders (full name, SSN) who have a Bank Account and a Bank Card both with a balance less than $500.",
+        "Cypher": "MATCH (account_holder:AccountHolder)-[has_bank_account:HAS_BANKACCOUNT]->(bank_account:BankAccount),\n(account_holder)-[has_credit_card:HAS_CREDITCARD]->(bank_card:BankCard),\n(account_holder)-[has_ssn:HAS_SSN]->(ssn:SSN)\nWHERE bank_account.balance<500 AND bank_card.balance<500\nRETURN account_holder, has_bank_account, bank_account, has_credit_card, bank_card, has_ssn, ssn, account_holder.fullName, ssn.ssn",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Who are the account holders (Full Name, Unique ID) with unsecured loans greater than $2000 activated after January 2020 and residing in zip code '90210'?",
+        "Cypher": "MATCH (accountHolder:AccountHolder)-[has_unsecuredLoan:HAS_UNSECUREDLOAN]->(unsecuredLoan:UnsecuredLoan)-[has_phoneNumber:HAS_PHONENUMBER]->(phoneNumber:PhoneNumber), (accountHolder)-[has_address:HAS_ADDRESS]->(address:Address)\nWHERE unsecuredLoan.loanAmount > 2000 AND unsecuredLoan.startDate.year > 2020 AND address.zip = '90210'\nRETURN accountHolder, has_unsecuredLoan, unsecuredLoan, has_phoneNumber, phoneNumber, has_address, address, accountHolder.fullName, accountHolder.UniqueId",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "List the account numbers and amount details for purchases that were delivered at addresses in the city 'San Francisco' and charged to a credit card.",
+        "Cypher": "MATCH (purchase:Purchase)-[delivered_at:DELIVERED_AT]->(delivery_address:DeliveryAddress {city: \"San Francisco\"})\nMATCH (purchase)-[with_card:WITH_CARD]->(credit_card:CreditCard)\nRETURN purchase, delivered_at, delivery_address, with_card, credit_card, credit_card.accountNumber, purchase.amount",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What is the range and average 'lastUsed' dates for money transfers associated with phone numbers used in December 2023?",
+        "Cypher": "MATCH (transfer:MoneyTransfer)-[with_phone:WITH]->(phone:PhoneNumber)\nWHERE with_phone.lastUsed.year = 2023 AND with_phone.lastUsed.month = 12\nRETURN transfer, with_phone, phone, min(with_phone.lastUsed), max(with_phone.lastUsed), avg(with_phone.lastUsed)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the minimum and maximum 'lastUsed' dates and their average for money transfers linked to phone numbers active in December 2023?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "For accounts flagged this year, how many have a direct relational link to a bank account with any transaction from last month?",
+        "Cypher": "MATCH (flagged_person:Flagged)-[has_bankaccount:HAS_BANKACCOUNT]->(bank_account:BankAccount)-[send:SEND]->(transfer:MoneyTransfer)\nWHERE flagged_person.birthDate.year = date().year AND transfer.transactionDate >= date({year:date().year, month:date().month - 1, day:1}) AND transfer.transactionDate < date({year:date().year, month:date().month, day:1})\nRETURN flagged_person, has_bankaccount, bank_account, send, transfer, count(transfer)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "For accounts identified this year, how many possess a direct relationship with a bank account that had transactions in the previous month?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Can you determine how many purchases linked to IP addresses from 'Texas' were made using bank cards in the last quarter?",
+        "Cypher": "MATCH (purchase:Purchase)-[from_ip:FROM_IP]->(ip:IP)-[located_in:LOCATED_IN]->(state:State {name:\"Texas\"})\nMATCH (purchase)-[with_card:WITH_CARD]->(card:BankCard)\nWHERE purchase.date >= date({year: 2023, month: 7, day: 1}) AND purchase.date <= date({year: 2023, month: 9, day: 30})\nRETURN purchase, from_ip, ip, located_in, state, with_card, card, count(purchase) AS count",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you ascertain the number of transactions associated with 'Texas' IP addresses conducted with bank cards in the previous quarter?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "How many account holders linked to purchases over $500 also have direct relations to financial institutes located in the state of 'Illinois'?",
+        "Cypher": "MATCH (account:AccountHolder)-[:HAS_BANKACCOUNT]->(bank_account:BankAccount)-[:FROM]->(financial_institute:FinancialInstitute)-[:LOCATED_IN]->(state:State {name:\"Illinois\"})\nMATCH (account)-[:HAS_BANKACCOUNT]->(:BankAccount)<-[:SEND]-(purchase:Purchase {amount: 500})\nRETURN account, bank_account, financial_institute, state, purchase, purchase.amount",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (account:AccountHolder)-[relation6:HAS_BANKACCOUNT]->(bank_account:BankAccount)-[relation7:FROM]->(financial_institute:FinancialInstitute)-[relation8:LOCATED_IN]->(state:State {name:\"Illinois\"})\nMATCH (account)-[relation9:HAS_BANKACCOUNT]->(node4:BankAccount)<-[relation10:SEND]-(purchase:Purchase {amount: 500})\nRETURN relation10, relation9, relation8, relation7, relation6, node4, account, bank_account, financial_institute, state, purchase, purchase.amount",
+        "num-hop": 5,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Identify the number of flagged individuals who have had any form of money transfer to or from their bank account in the past year.",
+        "Cypher": "MATCH (flagged_person:Flagged)-[has_bankaccount:HAS_BANKACCOUNT]->(bank_account:BankAccount)-[money_transfer:SEND]-(transfer:MoneyTransfer)\nWHERE transfer.transactionDate >= date({year: date().year - 1})\nRETURN flagged_person, has_bankaccount, bank_account, money_transfer, transfer, count(flagged_person) AS number_of_flagged_individuals",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (flagged:Flagged)-[has_bank_account:HAS_BANKACCOUNT]->(bank_account:BankAccount)-[transfer_rel:SEND]->(transfer:MoneyTransfer)\nWHERE transfer.transactionDate >= date({years:2022})\nRETURN flagged, has_bank_account, bank_account, transfer_rel, transfer, transfer.transactionDate\nUNION\nMATCH (flagged:Flagged)-[has_bank_account:HAS_BANKACCOUNT]->(bank_account:BankAccount)<-[transfer_rel:SEND]-(transfer:MoneyTransfer)\nWHERE transfer.transactionDate >= date({years:2022})\nRETURN flagged, transfer.transactionDate",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine how many flagged individuals engaged in any type of money transfer to or from their bank account in the previous year."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Determine the frequency of Shop-associated logins that resulted in purchases over $1000 via IP addresses from the 'New York' state.",
+        "Cypher": "MATCH (login:Login)-[:FOR_SHOP]->(shop:Shop),\n      (login)-[:WITH_LOGIN]->(purchase:Purchase)-[:FROM_IP]->(ip:IP)-[:LOCATED_IN]->(state:State {name:\"New York\"})\nWHERE purchase.amount > 1000\nRETURN login, shop, purchase, ip, state, COUNT(purchase) AS purchaseCount",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (login:Login)-[relation5:FOR_SHOP]->(shop:Shop),\n      (login)-[relation6:WITH_LOGIN]-(purchase:Purchase)-[relation7:FROM_IP]->(ip:IP)-[relation8:LOCATED_IN]->(state:State {name:\"New York\"})\nWHERE purchase.amount > 1000\nRETURN relation8, relation7, relation6, relation5, login, shop, purchase, ip, state, COUNT(purchase) AS purchaseCount",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate how often logins associated with the Shop from IP addresses in 'New York' state lead to purchases exceeding $1000."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Calculate the total and average amounts transferred from MoneyTransfers to BankAccounts and other MoneyTransfers in the regions with zips starting '90'.",
+        "Cypher": "MATCH (moneyTransfer:MoneyTransfer)-[:SEND]->(recipient)\nWHERE recipient:BankAccount OR recipient:MoneyTransfer\nWITH recipient, moneyTransfer\nMATCH (recipient)-[:FROM]->(financialInstitute:FinancialInstitute)-[:LOCATED_IN]->(state:State)<-[:LOCATED_IN]-(ip:IP)\nWHERE ip.zip STARTS WITH '90'\nRETURN SUM(moneyTransfer.amount) AS totalAmount, AVG(moneyTransfer.amount) AS averageAmount",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the maximum balance of a bank account linked via HAS_BANKACCOUNT relation to account holders born after 1985?",
+        "Cypher": "MATCH (holder:AccountHolder)-[:HAS_BANKACCOUNT]->(bankAccount:BankAccount)\nWHERE holder.birthDate.year > 1985\nRETURN MAX(bankAccount.balance)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (holder:AccountHolder)-[relation2:HAS_BANKACCOUNT]->(bankAccount:BankAccount)\nWHERE holder.birthDate.year > 1985\nRETURN MAX(bankAccount.balance)",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest balance in a bank account connected through the HAS_BANKACCOUNT relation to account holders who were born post-1985?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What are the minimum, maximum, and average balances of Credit Cards linked to flagged accounts in the state of California?",
+        "Cypher": "MATCH (flagged:Flagged)-[:HAS_CREDITCARD]->(credit_card:CreditCard),\n      (flagged)-[:HAS_ADDRESS]->(address:Address)\nWHERE address.state = \"California\"\nRETURN MIN(credit_card.balance) AS MinBalance, MAX(credit_card.balance) AS MaxBalance, AVG(credit_card.balance) AS AvgBalance",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (flagged:Flagged)-[relation3:HAS_CREDITCARD]->(credit_card:CreditCard),\n      (flagged)-[relation4:HAS_ADDRESS]->(address:Address)\nWHERE address.state = \"California\"\nRETURN MIN(credit_card.balance) AS MinBalance, MAX(credit_card.balance) AS MaxBalance, AVG(credit_card.balance) AS AvgBalance",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the lowest, highest, and mean balances of Credit Cards associated with marked accounts in California?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "I'm curious about the average and total loan amount for unsecured loans connected to account holders with bank accounts at Financial Institutes having more than $100,000 in total deposits.",
+        "Cypher": "MATCH (institute:FinancialInstitute)<-[from:FROM]-(account:BankAccount)\nWHERE account.balance > 100000\nMATCH (account)<-[has_bank:HAS_BANKACCOUNT]-(holder:AccountHolder)-[has_loan:HAS_UNSECUREDLOAN]->(loan:UnsecuredLoan)\nRETURN AVG(loan.loanAmount) AS averageLoanAmount, SUM(loan.loanAmount) AS totalLoanAmount",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "I would like to know the average and total amounts of unsecured loans linked to customers who have bank accounts at Financial Institutes, where these accounts collectively hold over $100,000 in deposits."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Determine the average number of transactions associated with IP addresses local to the 'Texas' region and linked to shops during the last fiscal year.",
+        "Cypher": "MATCH (ip:IP)-[:LOCATED_IN]->(state:State {name: \"Texas\"}),\n      (ip)<-[:FROM_IP]-(purchase:Purchase)-[:WITH_LOGIN]->(login:Login)-[:FOR_SHOP]->(shop:Shop)\nWHERE purchase.date.year = date().year - 1\nRETURN AVG(size((ip)<-[:FROM_IP]-(:Purchase)))",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (ip:IP)-[:LOCATED_IN]->(state:State {name: \"Texas\"}),\n      (ip)<-[:FROM_IP]-(purchase:Purchase)-[:WITH_LOGIN]->(login:Login)-[:FOR_SHOP]->(shop:Shop)\nWHERE purchase.date.year = date().year - 1\nRETURN AVG(size((ip)<-[:FROM_IP]-(node5:Purchase)))",
+        "num-hop": 5,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "How many account holders and flagged individuals have performed at least three money transfers to the same account within 2022?",
+        "Cypher": "MATCH (person)-[has_bank:HAS_BANKACCOUNT]->(bank_account:BankAccount)-[send:SEND]->(transfer:MoneyTransfer)-[send_to:SEND]->(target_account:BankAccount)\nWHERE (person:AccountHolder OR person:Flagged) AND transfer.transactionDate.year = 2022\nWITH person, target_account, COUNT(transfer) AS transfers_to_same_account\nWHERE transfers_to_same_account >= 3\nRETURN COUNT(DISTINCT person) AS num_persons",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    }
+]

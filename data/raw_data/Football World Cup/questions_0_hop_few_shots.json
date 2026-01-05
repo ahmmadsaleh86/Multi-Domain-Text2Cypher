@@ -1,0 +1,130 @@
+[
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What are the names of the teams that participated in the World Cup tournament held in 2018?",
+        "Cypher": "MATCH (team:Team)-[participation:PARTICIPATED_IN]->(tournament:Tournament)\nWHERE tournament.year = 2018\nRETURN team, participation, tournament, team.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which teams competed in the 2018 World Cup tournament?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Can you find the birthday and name of the player who scored the winning goal in the 2014 final match?",
+        "Cypher": "MATCH (final_match:Match)-[:IN_TOURNAMENT]->(tournament:Tournament {year: 2014}),\n      (scorer:Person)-[scored:SCORED_GOAL]->(final_match),\n      (scorer)-[:REPRESENTS]->(team:Team),\n      (other_team:Team)-[:PLAYED_IN]->(final_match)\nWHERE final_match.stage = 'Final' AND scored.minute = '90' AND\n      (team)-[:PLAYED_IN {score: scorer_score, penaltyScore: scorer_penaltyScore}]->(final_match) AND\n      (other_team)-[:PLAYED_IN {score: other_team_score, penaltyScore: other_team_penaltyScore}]->(final_match) AND\n      scorer_score > other_team_score\nRETURN final_match, tournament, scorer, scored, team, other_team, scorer.name, scorer.dob",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (final_match:Match)-[relation5:IN_TOURNAMENT]->(tournament:Tournament {year: 2014}),\n      (scorer:Person)-[scored:SCORED_GOAL]->(final_match),\n      (scorer)-[relation7:REPRESENTS]->(team:Team),\n      (other_team:Team)-[relation8:PLAYED_IN]->(final_match)\nWHERE final_match.stage = 'Final' AND scored.minute = '90' AND\n      (team)-[relation9:PLAYED_IN {score: scorer_score, penaltyScore: scorer_penaltyScore}]->(final_match) AND\n      (other_team)-[relation10:PLAYED_IN {score: other_team_score, penaltyScore: other_team_penaltyScore}]->(final_match) AND\n      scorer_score > other_team_score\nRETURN relation10, relation9, relation8, relation7, relation5, final_match, tournament, scorer, scored, team, other_team, scorer.name, scorer.dob",
+        "num-hop": 6,
+        "Grammatical-Validation": false,
+        "Semantic-EQL-Question": "Can you provide the full match details, including the teams and the scorer's personal information, for the winning goal scored in the last minute of the 2014 Tournament Final?",
+        "Max-Semantic-Score": 0.8053156733512878,
+        "Avg-Semantic-Score": 0.7541753053665161
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Could you list the date and stage of every match where the score was above 3-3 in the 2022 World Cup?",
+        "Cypher": "MATCH (world_cup:Tournament)-[match_tournament_relation:IN_TOURNAMENT]->(football_match:Match)<-[team_played_relation:PLAYED_IN]-(team:Team)\nWHERE world_cup.year = 2022 AND team_played_relation.score > 3\nRETURN world_cup, football_match, match_tournament_relation, team_played_relation, team, football_match.date, football_match.stage",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (world_cup:Tournament)-[match_tournament_relation:IN_TOURNAMENT]-(football_match:Match)<-[team_played_relation:PLAYED_IN]-(team:Team)\nWHERE world_cup.year = 2022 AND team_played_relation.score > 3\nRETURN world_cup, football_match, match_tournament_relation, team_played_relation, team, football_match.date, football_match.stage",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the date and stage of each game in the 2022 World Cup where the score exceeded 3-3?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What are the names of all persons who were coaches for any squad in the 2006 World Cup?",
+        "Cypher": "MATCH (coach:Person)-[:COACH_FOR]->(squad:Squad)-[:FOR]->(tournament:Tournament {year: 2006})\nRETURN coach, coach.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (coach:Person)-[relation3:COACH_FOR]->(squad:Squad)-[relation4:FOR]->(tournament:Tournament {year: 2006})\nRETURN relation4, relation3, tournament, squad, coach, coach.name",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "List all individuals who served as coaches for any team during the 2006 World Cup."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Retrieve the names of the tournaments where a team scored more than 5 goals in any match during the 1998 World Cup.",
+        "Cypher": "MATCH (team:Team)-[played_rel:PLAYED_IN]->(match:Match)-[in_tournament_rel:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.year = 1998 AND played_rel.score > 5\nRETURN tournament, tournament.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (team:Team)-[played_rel:PLAYED_IN]->(match:Match)-[in_tournament_rel:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.year = 1998 AND played_rel.score > 5\nRETURN in_tournament_rel, played_rel, match, team, tournament, tournament.name",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the names of tournaments in which a team netted over 5 goals in a single match throughout the 1998 World Cup."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Identify the players who played for more than 90 minutes in the matches of the 2010 World Cup quarter-finals.",
+        "Cypher": "MATCH (player:Person)-[play_in:PLAYED_IN]->(match:Match)-[in_tournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.year = 2010 AND match.stage = \"Quarter-finals\" AND toInteger(play_in.minuteOn) > 90\nRETURN player, play_in, match, in_tournament, tournament, player.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine which players participated for over 90 minutes in the 2010 World Cup quarter-final games."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the average number of goals per match in the 2014 World Cup?",
+        "Cypher": "MATCH (player:Person)-[scored:SCORED_GOAL]->(match:Match)-[inTournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.year=2014\nRETURN AVG(COUNT(scored)) as AvgGoalsPerMatch",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many different teams have appeared in all the finals of the World Cup tournaments between 1998 and 2018?",
+        "Cypher": "MATCH (team:Team)-[:PARTICIPATED_IN]->(tournament:Tournament)<-[:IN_TOURNAMENT]-(match:Match)\nWHERE tournament.year >= 1998 AND tournament.year <= 2018 AND match.stage = \"Final\"\nWITH team, COUNT(DISTINCT tournament) AS finalsCount\nMATCH (totalTournament:Tournament)\nWHERE totalTournament.year >= 1998 AND totalTournament.year <= 2018\nWITH team, finalsCount, COUNT(totalTournament) AS totalFinals\nWHERE finalsCount = totalFinals\nRETURN COUNT(DISTINCT team)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Corrected-Cypher": "MATCH (team:Team)-[relation4:PARTICIPATED_IN]->(tournament:Tournament)<-[relation5:IN_TOURNAMENT]-(match:Match)\nWHERE tournament.year >= 1998 AND tournament.year <= 2018 AND match.stage = \"Final\"\nWITH team, COUNT(DISTINCT tournament) AS finalsCount\nMATCH (totalTournament:Tournament)\nWHERE totalTournament.year >= 1998 AND totalTournament.year <= 2018\nWITH team, finalsCount, COUNT(totalTournament) AS totalFinals\nWHERE finalsCount = totalFinals\nRETURN COUNT(DISTINCT team)",
+        "Rewrite": "Between 1998 and 2018, how many unique teams participated in every World Cup final?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the total number of players who participated in both the 2002 and 2006 World Cups?",
+        "Cypher": "MATCH (player:Person)-[:IN_SQUAD]->(squad:Squad)-[:FOR]->(tournament:Tournament)\nWHERE tournament.year=2002 OR tournament.year=2006\nWITH player, COLLECT(tournament.year) AS years\nWHERE ALL(y IN [2002, 2006] WHERE y IN years)\nRETURN COUNT(DISTINCT player)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (player:Person)-[relation3:IN_SQUAD]->(squad:Squad)-[relation4:FOR]->(tournament:Tournament)\nWHERE tournament.year=2002 OR tournament.year=2006\nWITH player, COLLECT(tournament.year) AS years\nWHERE ALL(y IN [2002, 2006] WHERE y IN years)\nRETURN COUNT(DISTINCT player)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many players took part in both the 2002 and 2006 World Cups?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Can you calculate the minimum age of players who scored a goal in the 2018 World Cup?",
+        "Cypher": "MATCH (player:Person)-[scoredGoal:SCORED_GOAL]->(match:Match)-[inTournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.year = 2018\nRETURN MIN(date().year - player.dob.year) AS MinAgeOfScoringPlayer",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you determine the youngest age among those who netted a goal during the 2018 World Cup?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What was the maximum score achieved by any team during the matches of World Cup 2002?",
+        "Cypher": "MATCH (team:Team)-[playedIn:PLAYED_IN]->(match:Match)-[inTournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.year = 2002\nRETURN MAX(playedIn.score)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What was the highest score attained by any team in the 2002 World Cup matches?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many matches ended in a penalty shootout in the World Cup from 1990 to 2010?",
+        "Cypher": "MATCH (match:Match)-[:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.year >= 1990 AND tournament.year <= 2010 AND match.stage = \"Penalty Shootout\"\nRETURN COUNT(match) AS NumberOfPenaltyShootouts",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (match:Match)-[relation2:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.year >= 1990 AND tournament.year <= 2010 AND match.stage = \"Penalty Shootout\"\nRETURN COUNT(match) AS NumberOfPenaltyShootouts",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Between 1990 and 2010, how many World Cup matches were decided by a penalty shootout?"
+    }
+]

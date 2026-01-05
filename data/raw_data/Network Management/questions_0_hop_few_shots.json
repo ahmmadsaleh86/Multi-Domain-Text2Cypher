@@ -1,0 +1,125 @@
+[
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What are the available versions for the software named 'Nginx'?",
+        "Cypher": "MATCH (software:Software {name:\"Nginx\"})-[:VERSION]->(version:Version)\nRETURN software, version, version.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (software:Software {name:\"Nginx\"})-[relation2:VERSION]->(version:Version)\nRETURN relation2, software, version, version.name",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What versions of the software called 'Nginx' are available?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Could you provide the IP address of the interface connected to the 'MainZone' zone?",
+        "Cypher": "MATCH (zone:Zone {name:\"MainZone\"})-[:ROUTES]->(interface:Interface)\nRETURN zone, interface, interface.ip",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (zone:Zone {name:\"MainZone\"})-[relation2:ROUTES]->(interface:Interface)\nRETURN relation2, zone, interface, interface.ip",
+        "num-hop": 1,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the CPU specification for the type with ID 1020?",
+        "Cypher": "MATCH (typeNode:Type {id:1020})\nRETURN typeNode, typeNode.cpu",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the specifications of the CPU with the ID 1020?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Can you list all ports that are utilized by the 'EmailService' application?",
+        "Cypher": "MATCH (application:Application {name:\"EmailService\"})-[:LISTENS]->(port:Port)\nRETURN application, port, port.port",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (application:Application {name:\"EmailService\"})-[relation2:LISTENS]->(port:Port)\nRETURN relation2, application, port, port.port",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide a list of all the ports used by the 'EmailService' application?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the disk space specification for the machine type named 'HighPerformance'?",
+        "Cypher": "MATCH (machineType:Type {name:\"HighPerformance\"})\nRETURN machineType, machineType.disk",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the storage capacity for the 'HighPerformance' machine type?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Please provide the start time for the process with PID 456123.",
+        "Cypher": "MATCH (process:Process {pid: 456123})\nRETURN process, process.startTime",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you tell me the start time of the process that has the PID 456123?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many Routers are there in zone 5?",
+        "Cypher": "MATCH (router:Router)\nWHERE router.zone = 5\nRETURN COUNT(router)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the count of Routers in zone 5?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "I'm curious to know the average memory size across all machine types listed in our system.",
+        "Cypher": "MATCH (machine:Machine)-[:TYPE]->(type:Type)\nRETURN AVG(type.ram) AS AverageMemorySize",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (machine:Machine)-[relation2:TYPE]->(type:Type)\nRETURN AVG(type.ram) AS AverageMemorySize",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "I'm interested in finding out the average memory size for all the machine types recorded in our system."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Can you calculate the total number of Services that started after January 1, 2020?",
+        "Cypher": "MATCH (service:Service)\nWHERE service.startTime > datetime(\"2020-01-01T00:00:00\").epochMillis\nRETURN COUNT(service)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you determine how many Services commenced after January 1, 2020?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the maximum number of dependencies any single application has within our network?",
+        "Cypher": "MATCH (application:Application)-[dependency:DEPENDS_ON]->()\nRETURN application.name AS ApplicationName, COUNT(dependency) AS NumberOfDependencies\nORDER BY NumberOfDependencies DESC\nLIMIT 1",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Could you tell me the number of distinct software versions used across all applications?",
+        "Cypher": "MATCH (application:Application)-[:DEPENDS_ON]->(software:Software)-[:VERSION]->(version:Version)\nRETURN COUNT(DISTINCT version.name)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (application:Application)-[relation3:DEPENDS_ON]->(software:Software)-[relation4:VERSION]->(version:Version)\nRETURN COUNT(DISTINCT version.name)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the total number of unique software versions employed in all the applications?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the minimum start time among all processes currently running in our system?",
+        "Cypher": "MATCH (process:Process)\nRETURN MIN(process.startTime) AS MinStartTime",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the earliest start time for any of the processes that are presently active in our system?"
+    }
+]

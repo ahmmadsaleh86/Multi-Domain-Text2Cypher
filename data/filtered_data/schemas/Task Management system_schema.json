@@ -1,0 +1,156 @@
+[
+    {
+        "Type": "Node",
+        "Label": "User",
+        "Attributes": {
+            "userId": "String",
+            "firstName": "String",
+            "lastName": "String",
+            "email": "String",
+            "role": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Team",
+        "Attributes": {
+            "teamId": "String",
+            "name": "String",
+            "description": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Project",
+        "Attributes": {
+            "projectId": "String",
+            "name": "String",
+            "description": "String",
+            "status": "String",
+            "startDate": "Date",
+            "endDate": "Date"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Task",
+        "Attributes": {
+            "taskId": "String",
+            "name": "String",
+            "description": "String",
+            "priority": "String",
+            "status": "String",
+            "estimatedHours": "Float",
+            "actualHours": "Float",
+            "dueDate": "Date"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Milestone",
+        "Attributes": {
+            "milestoneId": "String",
+            "title": "String",
+            "description": "String",
+            "deadline": "Date"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Comment",
+        "Attributes": {
+            "commentId": "String",
+            "text": "String",
+            "timestamp": "DateTime"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "MEMBER_OF",
+        "From": "User",
+        "To": "Team",
+        "Attributes": {
+            "joinedDate": "Date",
+            "role": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "MANAGES",
+        "From": "User",
+        "To": "Project",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "PART_OF",
+        "From": "User",
+        "To": "Project",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "ASSIGNED_TO",
+        "From": "Task",
+        "To": "User",
+        "Attributes": {
+            "assignedDate": "Date"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "From": "Task",
+        "To": "Task",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "INCLUDES_TASK",
+        "From": "Project",
+        "To": "Task",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "INCLUDES_MILESTONE",
+        "From": "Project",
+        "To": "Milestone",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "MILESTONE_FOR",
+        "From": "Milestone",
+        "To": "Task",
+        "Attributes": {
+            "setDate": "Date"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "COMMENTED_ON",
+        "From": "User",
+        "To": "Task",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "TEAM_WORKS_ON",
+        "From": "Team",
+        "To": "Project",
+        "Attributes": {
+            "startDate": "Date"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "REPORTS_STATUS",
+        "From": "Task",
+        "To": "Milestone",
+        "Attributes": {
+            "updateTime": "DateTime",
+            "status": "String"
+        }
+    }
+]

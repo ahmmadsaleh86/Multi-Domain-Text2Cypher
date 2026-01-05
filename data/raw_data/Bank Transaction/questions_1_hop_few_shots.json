@@ -1,0 +1,182 @@
+[
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What is the expiration date of the credit card for account holder 'John Doe' who has a balance over $5000?",
+        "Cypher": "MATCH (accountHolder:AccountHolder)-[hasCreditCard:HAS_CREDITCARD]->(creditCard:CreditCard)\nWHERE accountHolder.fullName=\"John Doe\" AND creditCard.balance>5000\nRETURN accountHolder, hasCreditCard, creditCard, creditCard.expirationDate",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the expiry date of the credit card belonging to the account holder 'John Doe' with a balance exceeding $5000?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Could you tell me the city and zip code of the delivery address for the purchase transaction that occurred on '2023-09-15'?",
+        "Cypher": "MATCH (purchase:Purchase)-[delivered_at:DELIVERED_AT]->(address:DeliveryAddress)\nWHERE purchase.date = date('2023-09-15')\nRETURN purchase, delivered_at, address, address.city, address.zip",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the city and postal code for the delivery location associated with the transaction made on '2023-09-15'?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Are there any account holders with an 'UnsecuredLoan' balance greater than $10,000 as of last year?",
+        "Cypher": "MATCH (holder:AccountHolder)-[has_loan:HAS_UNSECUREDLOAN]->(loan:UnsecuredLoan)\nWHERE loan.balance > 10000 AND loan.transactionDate.year = date().year - 1\nRETURN holder, has_loan, loan, loan.balance",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the names of the shops where purchases were made that originated from a flagged IP address?",
+        "Cypher": "MATCH (purchase:Purchase)-[:FROM_IP]->(ip:IP)-[:LOCATED_IN]->(state:State),\n      (purchase)-[:WITH_LOGIN]->(login:Login)-[:FOR_SHOP]->(shop:Shop)\nWHERE ip:Flagged\nRETURN purchase, ip, state, login, shop, shop.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (purchase:Purchase)-[relation5:FROM_IP]->(ip:IP)-[relation6:LOCATED_IN]->(state:State),\n      (purchase)-[relation7:WITH_LOGIN]->(login:Login)-[relation8:FOR_SHOP]->(shop:Shop)\nWHERE ip:Flagged\nRETURN relation8, relation7, relation6, relation5, purchase, ip, state, login, shop, shop.name",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the names of the stores where transactions occurred that came from a flagged IP address?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "List the phone numbers and providers for accounts that have been active since '2023-01-01'.",
+        "Cypher": "MATCH (accountHolder:AccountHolder)-[has_phoneNumber:HAS_PHONENUMBER]->(phoneNumber:PhoneNumber)\nWHERE phoneNumber.touched >= 2023\nRETURN accountHolder, has_phoneNumber, phoneNumber, phoneNumber.phone, phoneNumber.provider",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the phone numbers and service providers for accounts active from '2023-01-01' onwards."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Show me the last name and mail of the login information that was used for a purchase containing transaction 'TXN12345678'.",
+        "Cypher": "MATCH (purchase:Purchase)-[with_login:WITH_LOGIN]->(login:Login)\nWHERE purchase.purchaseCode=\"TXN12345678\"\nRETURN purchase, with_login, login, login.lastName, login.mail",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Display the surname and email from the login details used in a purchase transaction 'TXN12345678'."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What is the last used date of the phone number involved in a money transfer more than $2000?",
+        "Cypher": "MATCH (transfer:MoneyTransfer)-[withPhone:WITH]->(phoneNumber:PhoneNumber)\nWHERE transfer.amount > 2000\nRETURN transfer, withPhone, phoneNumber, withPhone.lastUsed",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "When was the phone number last used in a transaction exceeding $2000?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Can we identify the transactions linked to financial institutes which have unpaid balances in the last month?",
+        "Cypher": "MATCH (transfer:MoneyTransfer)-[toAccount:SEND]->(account:BankAccount)-[fromBank:FROM]->(institute:FinancialInstitute)\nWHERE transfer.transactionDate >= date({year: 2023, month: 9, day: 1}) AND account.balance < 0\nRETURN transfer, toAccount, account, fromBank, institute, transfer.amount, transfer.transactionDate, account.balance, institute.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can we pinpoint the transactions associated with financial institutions that have outstanding balances from the previous month?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "List the transaction dates for money transfers that were sent to bank accounts registered before '2022-12-31'.",
+        "Cypher": "MATCH (transfer:MoneyTransfer)-[send_rel:SEND]->(account:BankAccount)\nWHERE account.lastReceived < datetime('2022-12-31T23:59:59')\nRETURN transfer, send_rel, account, transfer.transactionDate",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the dates of transactions for funds transferred to bank accounts that were established before '2022-12-31'."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "For all purchases made using bank cards, which card's limit was reached during the transaction?",
+        "Cypher": "MATCH (purchase:Purchase)-[with_card:WITH_CARD]->(card:BankCard)\nWHERE purchase.amount >= card.limit\nRETURN purchase, with_card, card, card.limit",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which bank card reached its limit during the purchases made with cards?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Identify all delivery addresses linked to purchases that exceeded the limit of the associated credit card.",
+        "Cypher": "MATCH (purchase:Purchase)-[deliveredAt:DELIVERED_AT]->(deliveryAddress:DeliveryAddress),\n      (purchase)-[withCard:WITH_CARD]->(creditCard:CreditCard)\nWHERE purchase.amount > creditCard.limit\nRETURN purchase, deliveredAt, deliveryAddress, withCard, creditCard, deliveryAddress.streetAddress, deliveryAddress.city, deliveryAddress.state, deliveryAddress.zip",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "How many login sessions were involved in purchases from shops located in 'California'?",
+        "Cypher": "MATCH (shop:Shop)-[:FOR_SHOP]->(login:Login)<-[:WITH_LOGIN]-(purchase:Purchase)\nWHERE shop.state = 'California'\nRETURN shop, login, purchase, login.userid, login.startDate",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (shop:Shop)-[relation3:FOR_SHOP]->(login:Login)<-[relation4:WITH_LOGIN]-(purchase:Purchase)\nWHERE shop.state = 'California'\nRETURN relation4, relation3, shop, login, purchase, login.userid, login.startDate",
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many flagged account holders have used a phone number to make transactions over $500 in the last year?",
+        "Cypher": "MATCH (flagged:Flagged)-[has_phone:HAS_PHONENUMBER]->(phone:PhoneNumber)<-[with_phone:WITH]-(transfer:MoneyTransfer)\nWHERE transfer.amount > 500 AND transfer.transactionDate >= date({year: date().year - 1, month: 1, day: 1}) \nRETURN COUNT(DISTINCT flagged)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many account holders marked with flags have conducted transactions exceeding $500 using a phone number in the past year?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the average late payment balance on the credit cards for clients who have made more than 3 purchases in '2023'?",
+        "Cypher": "MATCH (holder:AccountHolder)-[:HAS_CREDITCARD]->(credit_card:CreditCard)\nWITH holder, AVG(credit_card.latePayments) AS averageLatePayments\nMATCH (holder)-[:WITH_LOGIN]->(login:Login)<-[:WITH_LOGIN]-(purchase:Purchase)\nWHERE purchase.date.year = 2023\nWITH holder, averageLatePayments, COUNT(purchase) AS numPurchases\nWHERE numPurchases > 3\nRETURN AVG(averageLatePayments) AS averageLatePaymentBalance",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (holder:AccountHolder)-[relation4:HAS_CREDITCARD]->(credit_card:CreditCard)\nWITH holder, AVG(credit_card.latePayments) AS averageLatePayments\nMATCH (holder)-[relation5:WITH_LOGIN]->(login:Login)<-[relation6:WITH_LOGIN]-(purchase:Purchase)\nWHERE purchase.date.year = 2023\nWITH holder, averageLatePayments, COUNT(purchase) AS numPurchases\nWHERE numPurchases > 3\nRETURN AVG(averageLatePayments) AS averageLatePaymentBalance",
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Can you calculate the total balance of all unsecured loans issued to individuals aged between 30 and 50 years old?",
+        "Cypher": "MATCH (holder:AccountHolder)-[has_loan:HAS_UNSECUREDLOAN]->(loan:UnsecuredLoan)\nWHERE duration.between(date(holder.birthDate), date()).years >= 30 AND duration.between(date(holder.birthDate), date()).years <= 50\nRETURN SUM(loan.balance)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you determine the overall amount of unsecured loans granted to people aged 30 to 50 years?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the maximum money transfer amount received by any bank account in '2023'?",
+        "Cypher": "MATCH (transfer:MoneyTransfer)-[send:SEND]->(account:BankAccount)\nWHERE transfer.transactionDate.year = 2023\nRETURN MAX(transfer.amount)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest amount of money transferred into any bank account in '2023'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Count the number of distinct financial institutes that have processed debit purchase transactions greater than $1000 in '2022'.",
+        "Cypher": "MATCH (purchase:Purchase)-[:WITH_CARD]->(card:BankCard)-[:FROM]->(bankAccount:BankAccount)-[:FROM]->(financialInstitute:FinancialInstitute)\nWHERE purchase.amount > 1000 AND purchase.date.year = 2022\nRETURN COUNT(DISTINCT financialInstitute)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (purchase:Purchase)-[relation4:WITH_CARD]->(card:BankCard)-[relation5:FROM]->(bankAccount:BankAccount)-[relation6:FROM]->(financialInstitute:FinancialInstitute)\nWHERE purchase.amount > 1000 AND purchase.date.year = 2022\nRETURN COUNT(DISTINCT financialInstitute)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate how many different financial institutions have handled debit purchase transactions exceeding $1000 in '2022'."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Compute the sum of all balances of bank accounts linked to account holders with late payments on their unsecured loans.",
+        "Cypher": "MATCH (accountHolder:AccountHolder)-[:HAS_UNSECUREDLOAN]->(loan:UnsecuredLoan)\nWHERE loan.latePayments > 0\nMATCH (accountHolder)-[:HAS_BANKACCOUNT]->(bankAccount:BankAccount)\nRETURN SUM(bankAccount.balance)",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (accountHolder:AccountHolder)-[relation3:HAS_UNSECUREDLOAN]->(loan:UnsecuredLoan)\nWHERE loan.latePayments > 0\nMATCH (accountHolder)-[relation4:HAS_BANKACCOUNT]->(bankAccount:BankAccount)\nRETURN SUM(bankAccount.balance)",
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    }
+]

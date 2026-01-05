@@ -1,0 +1,146 @@
+[
+    {
+        "Type": "Node",
+        "Label": "Student",
+        "Attributes": {
+            "student_id": "Integer",
+            "first_name": "String",
+            "last_name": "String",
+            "email": "String",
+            "date_of_birth": "Date",
+            "gender": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Professor",
+        "Attributes": {
+            "professor_id": "Integer",
+            "first_name": "String",
+            "last_name": "String",
+            "email": "String",
+            "office": "String",
+            "specialization": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Course",
+        "Attributes": {
+            "course_id": "Integer",
+            "name": "String",
+            "description": "String",
+            "credits": "Integer",
+            "level": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Department",
+        "Attributes": {
+            "department_id": "Integer",
+            "name": "String",
+            "building": "String",
+            "budget": "Float"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Event",
+        "Attributes": {
+            "event_id": "Integer",
+            "title": "String",
+            "description": "String",
+            "date": "Date"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Classroom",
+        "Attributes": {
+            "classroom_id": "Integer",
+            "building": "String",
+            "room_number": "String",
+            "capacity": "Integer"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "ENROLLED_IN",
+        "From": "Student",
+        "To": "Course",
+        "Attributes": {
+            "enrollment_date": "Date",
+            "grade": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "TEACHES",
+        "From": "Professor",
+        "To": "Course",
+        "Attributes": {
+            "semester": "String",
+            "year": "Integer"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "BELONGS_TO",
+        "From": "Student",
+        "To": "Department",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "MANAGES",
+        "From": "Professor",
+        "To": "Department",
+        "Attributes": {
+            "start_date": "Date",
+            "end_date": "Date"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "OFFERS",
+        "From": "Department",
+        "To": "Course",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "HELD_IN",
+        "From": "Event",
+        "To": "Classroom",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "ATTENDS",
+        "From": "Student",
+        "To": "Event",
+        "Attributes": {
+            "attendance_date": "Date"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "LECTURES_IN",
+        "From": "Professor",
+        "To": "Classroom",
+        "Attributes": {
+            "scheduled_time": "DateTime"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "ADVISES",
+        "From": "Professor",
+        "To": "Student",
+        "Attributes": {
+            "start_date": "Date",
+            "end_date": "Date"
+        }
+    }
+]

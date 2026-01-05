@@ -1,0 +1,122 @@
+[
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Can you tell me the nationality of the passenger with passport number 'A12345678'?",
+        "Cypher": "MATCH (passenger:Passenger)\nWHERE passenger.passportNumber=\"A12345678\"\nRETURN passenger, passenger.nationality",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you inform me of the nationality of the traveler bearing passport number 'A12345678'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the distance covered by flight ID 'FL9803'?",
+        "Cypher": "MATCH (flight:Flight)\nWHERE flight.flightId=\"FL9803\"\nRETURN flight, flight.distance",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "How far did flight ID 'FL9803' travel?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the headquarter location for the airline named 'SkyFlight'?",
+        "Cypher": "MATCH (airline:Airline)\nWHERE airline.name=\"SkyFlight\"\nRETURN airline, airline.headquarters",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Where is the main office of the airline 'SkyFlight' located?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What type of aircraft is used for flight number 'AA303'?",
+        "Cypher": "MATCH (flight:Flight)\nWHERE flight.number=\"AA303\"\nRETURN flight, flight.aircraftType",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What model of airplane operates on flight 'AA303'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the birthdate of the passenger who has the passport number 'B98765432'?",
+        "Cypher": "MATCH (passenger:Passenger)\nWHERE passenger.passportNumber=\"B98765432\"\nRETURN passenger, passenger.birthdate",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "When was the person born whose passport number is 'B98765432'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Could you provide the timezone for the airport located in the city of 'Denver'?",
+        "Cypher": "MATCH (airport:Airport)\nWHERE airport.city=\"Denver\"\nRETURN airport, airport.timezone",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you tell me the timezone of the airport situated in 'Denver'?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the average price of all tickets?",
+        "Cypher": "MATCH (ticket:Ticket)\nRETURN AVG(ticket.price) AS averageTicketPrice",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the mean cost of all tickets?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Can you calculate the maximum distance covered by any flight in the database?",
+        "Cypher": "MATCH (flight:Flight)\nRETURN MAX(flight.distance) AS MaximumDistance",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you determine the longest distance any flight has traveled according to the database?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the total number of airports listed in the country 'USA'?",
+        "Cypher": "MATCH (airport:Airport {country:\"USA\"})\nRETURN COUNT(airport)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many airports are there in the country 'USA'?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many flights have a duration longer than 5 hours?",
+        "Cypher": "MATCH (flight:Flight)\nWHERE flight.duration > 5\nRETURN COUNT(flight)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the number of flights that last more than 5 hours?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the minimum and maximum baggage allowance across all flights?",
+        "Cypher": "MATCH (ticket:Ticket)-[forFlight:TICKET_FOR_FLIGHT]->(flight:Flight)\nRETURN MIN(forFlight.baggageAllowance) AS MinBaggageAllowance, MAX(forFlight.baggageAllowance) AS MaxBaggageAllowance",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the smallest and largest baggage allowance available on all flights?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Could you tell me the count of gates per terminal at 'JFK Airport'?",
+        "Cypher": "MATCH (airport:Airport {name: \"JFK Airport\"})-[:HAS_TERMINAL]->(gate:Gate)\nRETURN gate.terminalName AS Terminal, COUNT(gate) AS NumberOfGates\nGROUP BY gate.terminalName",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (airport:Airport {name: \"JFK Airport\"})-[relation2:HAS_TERMINAL]->(gate:Gate)\nRETURN gate.terminalName AS Terminal, COUNT(gate) AS NumberOfGates\nGROUP BY gate.terminalName",
+        "num-hop": 1,
+        "Grammatical-Validation": false
+    }
+]

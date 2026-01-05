@@ -1,0 +1,592 @@
+[
+    {
+        "Type": "Node",
+        "Label": "OS",
+        "Attributes": {
+            "name": "String",
+            "versions": "StringArray",
+            "startTime": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Zone",
+        "Attributes": {
+            "ip": "String",
+            "size": "Long",
+            "zone": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Port",
+        "Attributes": {
+            "port": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Router",
+        "Attributes": {
+            "name": "String",
+            "zone": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Service",
+        "Attributes": {
+            "name": "String",
+            "versions": "StringArray",
+            "ports": "LongArray",
+            "dependencies": "StringArray",
+            "startTime": "Long",
+            "pid": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Egress",
+        "Attributes": {
+            "name": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Process",
+        "Attributes": {
+            "name": "String",
+            "startTime": "Long",
+            "pid": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Machine",
+        "Attributes": {
+            "name": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Rack",
+        "Attributes": {
+            "name": "String",
+            "zone": "Long",
+            "rack": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Type",
+        "Attributes": {
+            "name": "String",
+            "disk": "Long",
+            "cpu": "Long",
+            "id": "Long",
+            "type": "String",
+            "ram": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "DataCenter",
+        "Attributes": {
+            "name": "String",
+            "location": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Switch",
+        "Attributes": {
+            "ip": "String",
+            "rack": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Version",
+        "Attributes": {
+            "name": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Network",
+        "Attributes": {
+            "ip": "String",
+            "size": "Long",
+            "zone": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Software",
+        "Attributes": {
+            "name": "String",
+            "versions": "StringArray",
+            "ports": "LongArray",
+            "dependencies": "StringArray"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Application",
+        "Attributes": {
+            "name": "String",
+            "startTime": "Long",
+            "pid": "Long",
+            "ports": "LongArray",
+            "dependencies": "StringArray"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Interface",
+        "Attributes": {
+            "ip": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "ROUTES",
+        "Attributes": {},
+        "From": "Zone",
+        "To": "Interface"
+    },
+    {
+        "Type": "Relation",
+        "Label": "ROUTES",
+        "Attributes": {},
+        "From": "Network",
+        "To": "Interface"
+    },
+    {
+        "Type": "Relation",
+        "Label": "ROUTES",
+        "Attributes": {},
+        "From": "Egress",
+        "To": "Interface"
+    },
+    {
+        "Type": "Relation",
+        "Label": "ROUTES",
+        "Attributes": {},
+        "From": "Switch",
+        "To": "Interface"
+    },
+    {
+        "Type": "Relation",
+        "Label": "ROUTES",
+        "Attributes": {},
+        "From": "Machine",
+        "To": "Interface"
+    },
+    {
+        "Type": "Relation",
+        "Label": "ROUTES",
+        "Attributes": {},
+        "From": "Router",
+        "To": "Interface"
+    },
+    {
+        "Type": "Relation",
+        "Label": "VERSION",
+        "Attributes": {},
+        "From": "Software",
+        "To": "Version"
+    },
+    {
+        "Type": "Relation",
+        "Label": "VERSION",
+        "Attributes": {},
+        "From": "Service",
+        "To": "Version"
+    },
+    {
+        "Type": "Relation",
+        "Label": "VERSION",
+        "Attributes": {},
+        "From": "OS",
+        "To": "Version"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Application",
+        "To": "Application"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Process",
+        "To": "Software"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Process",
+        "To": "Service"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Software",
+        "To": "Software"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Software",
+        "To": "Version"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Process",
+        "To": "Version"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Service",
+        "To": "Service"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Software",
+        "To": "Application"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Process",
+        "To": "Process"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Process",
+        "To": "Application"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Application",
+        "To": "Service"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Service",
+        "To": "Software"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Service",
+        "To": "Version"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Software",
+        "To": "Process"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Service",
+        "To": "Application"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Application",
+        "To": "Software"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Application",
+        "To": "Version"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Application",
+        "To": "Process"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Software",
+        "To": "Service"
+    },
+    {
+        "Type": "Relation",
+        "Label": "DEPENDS_ON",
+        "Attributes": {},
+        "From": "Service",
+        "To": "Process"
+    },
+    {
+        "Type": "Relation",
+        "Label": "LISTENS",
+        "Attributes": {},
+        "From": "Application",
+        "To": "Port"
+    },
+    {
+        "Type": "Relation",
+        "Label": "LISTENS",
+        "Attributes": {},
+        "From": "Process",
+        "To": "Port"
+    },
+    {
+        "Type": "Relation",
+        "Label": "LISTENS",
+        "Attributes": {},
+        "From": "Service",
+        "To": "Port"
+    },
+    {
+        "Type": "Relation",
+        "Label": "CONNECTS",
+        "Attributes": {},
+        "From": "Interface",
+        "To": "Zone"
+    },
+    {
+        "Type": "Relation",
+        "Label": "CONNECTS",
+        "Attributes": {},
+        "From": "Interface",
+        "To": "Network"
+    },
+    {
+        "Type": "Relation",
+        "Label": "CONNECTS",
+        "Attributes": {},
+        "From": "Interface",
+        "To": "Interface"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "OS",
+        "To": "Service"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "Application",
+        "To": "Application"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "Process",
+        "To": "Service"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "Process",
+        "To": "Application"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "Application",
+        "To": "Service"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "OS",
+        "To": "Version"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "Process",
+        "To": "Version"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "Service",
+        "To": "Application"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "Service",
+        "To": "Service"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "Application",
+        "To": "Version"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "Service",
+        "To": "Software"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "Process",
+        "To": "Software"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "Service",
+        "To": "Version"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "OS",
+        "To": "Software"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "OS",
+        "To": "Application"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INSTANCE",
+        "Attributes": {},
+        "From": "Application",
+        "To": "Software"
+    },
+    {
+        "Type": "Relation",
+        "Label": "EXPOSES",
+        "Attributes": {},
+        "From": "Interface",
+        "To": "Port"
+    },
+    {
+        "Type": "Relation",
+        "Label": "CONTAINS",
+        "Attributes": {},
+        "From": "DataCenter",
+        "To": "Egress"
+    },
+    {
+        "Type": "Relation",
+        "Label": "CONTAINS",
+        "Attributes": {},
+        "From": "DataCenter",
+        "To": "Rack"
+    },
+    {
+        "Type": "Relation",
+        "Label": "CONTAINS",
+        "Attributes": {},
+        "From": "DataCenter",
+        "To": "Router"
+    },
+    {
+        "Type": "Relation",
+        "Label": "TYPE",
+        "Attributes": {},
+        "From": "Machine",
+        "To": "Type"
+    },
+    {
+        "Type": "Relation",
+        "Label": "PREVIOUS",
+        "Attributes": {},
+        "From": "Version",
+        "To": "Version"
+    },
+    {
+        "Type": "Relation",
+        "Label": "RUNS",
+        "Attributes": {},
+        "From": "Machine",
+        "To": "Service"
+    },
+    {
+        "Type": "Relation",
+        "Label": "RUNS",
+        "Attributes": {},
+        "From": "Machine",
+        "To": "OS"
+    },
+    {
+        "Type": "Relation",
+        "Label": "RUNS",
+        "Attributes": {},
+        "From": "Machine",
+        "To": "Application"
+    },
+    {
+        "Type": "Relation",
+        "Label": "RUNS",
+        "Attributes": {},
+        "From": "Machine",
+        "To": "Process"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HOLDS",
+        "Attributes": {},
+        "From": "Rack",
+        "To": "Switch"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HOLDS",
+        "Attributes": {},
+        "From": "Rack",
+        "To": "Machine"
+    }
+]

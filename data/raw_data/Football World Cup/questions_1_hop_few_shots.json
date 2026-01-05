@@ -1,0 +1,192 @@
+[
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the names of all players who were part of the Brazilian squad in the 2014 World Cup?",
+        "Cypher": "MATCH (team:Team {name:\"Brazil\"})-[:PARTICIPATED_IN]->(tournament:Tournament {year:2014}),\n      (player:Person)-[:IN_SQUAD]->(squad:Squad)-[:FOR]->(tournament),\n      (team)-[:NAMED]->(squad)\nRETURN player, team, squad, tournament, player.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (team:Team {name:\"Brazil\"})-[relation4:PARTICIPATED_IN]->(tournament:Tournament {year:2014}),\n      (player:Person)-[relation5:IN_SQUAD]->(squad:Squad)-[relation6:FOR]->(tournament),\n      (team)-[relation7:NAMED]->(squad)\nRETURN relation7, relation6, relation5, relation4, player, team, squad, tournament, player.name",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you list all the players who were included in the Brazilian team for the 2014 World Cup?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What is the date of birth of each player who scored in the final of the 2018 World Cup?",
+        "Cypher": "MATCH (player:Person)-[scored:SCORED_GOAL]->(match:Match), \n      (match)-[in_tournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.year=2018 AND match.stage=\"final\"\nRETURN player, scored, match, in_tournament, tournament, player.dob",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "For each player who scored during the 2018 World Cup final, what are their dates of birth?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Which teams played in the semi-finals of the 2002 World Cup?",
+        "Cypher": "MATCH (team:Team)-[played_in:PLAYED_IN]->(match:Match)-[in_tournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.year=2002 AND match.stage=\"semi-finals\"\nRETURN team, played_in, match, in_tournament, tournament, team.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which teams were the semi-finalists in the 2002 World Cup?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the match stages and dates for matches where Germany scored more than 3 goals?",
+        "Cypher": "MATCH (team:Team {name:\"Germany\"})-[played_in:PLAYED_IN]-(match:Match)-[in_tournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE played_in.score > 3\nRETURN team, played_in, match, in_tournament, tournament, match.stage, match.date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the stages and dates of the games in which Germany scored over 3 goals?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "List all tournaments where 'Lionel Messi' has participated.",
+        "Cypher": "MATCH (player:Person {name:\"Lionel Messi\"})-[:REPRESENTS]->(team:Team)-[participated:PARTICIPATED_IN]->(tournament:Tournament)\nRETURN player, team, participated, tournament, tournament.name, tournament.shortName, tournament.year",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (player:Person {name:\"Lionel Messi\"})-[relation3:REPRESENTS]->(team:Team)-[participated:PARTICIPATED_IN]->(tournament:Tournament)\nRETURN relation3, player, team, participated, tournament, tournament.name, tournament.shortName, tournament.year",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide a list of all tournaments in which 'Lionel Messi' has competed."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Which players from the England team participated in both the 2010 and 2014 World Cups?",
+        "Cypher": "MATCH (team:Team {name:\"England\"})-[:REPRESENTS]-(player:Person)-[:PLAYED_IN]-(match2010:Match)-[:IN_TOURNAMENT]-(tournament2010:Tournament {year: 2010}),\n      (player)-[:PLAYED_IN]-(match2014:Match)-[:IN_TOURNAMENT]-(tournament2014:Tournament {year: 2014})\nRETURN player, team, match2010, match2014, tournament2010, tournament2014, player.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (team:Team {name:\"England\"})-[relation6:REPRESENTS]-(player:Person)-[relation7:PLAYED_IN]-(match2010:Match)-[relation8:IN_TOURNAMENT]-(tournament2010:Tournament {year: 2010}),\n      (player)-[relation9:PLAYED_IN]-(match2014:Match)-[relation10:IN_TOURNAMENT]-(tournament2014:Tournament {year: 2014})\nRETURN relation10, relation9, relation8, relation7, relation6, player, team, match2010, match2014, tournament2010, tournament2014, player.name",
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which members of the England squad took part in both the 2010 and 2014 World Cups?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What minute did 'Eden Hazard' score his goal during the Belgium vs. Mexico match in 2018?",
+        "Cypher": "MATCH (player:Person {name:\"Eden Hazard\"})-[scored_goal:SCORED_GOAL]->(match:Match),\n      (team1:Team {name:\"Belgium\"})-[:PARTICIPATED_IN]->(tournament:Tournament {year:2018}),\n      (team2:Team {name:\"Mexico\"})-[:PARTICIPATED_IN]->(tournament),\n      (match)-[:IN_TOURNAMENT]->(tournament),\n      (team1)-[played_in:PLAYED_IN]->(match),\n      (team2)-[:PLAYED_IN]->(match)\nRETURN player, scored_goal, match, team1, team2, tournament, played_in, scored_goal.minute",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (player:Person {name:\"Eden Hazard\"})-[scored_goal:SCORED_GOAL]->(match:Match),\n      (team1:Team {name:\"Belgium\"})-[relation6:PARTICIPATED_IN]->(tournament:Tournament {year:2018}),\n      (team2:Team {name:\"Mexico\"})-[relation7:PARTICIPATED_IN]->(tournament),\n      (match)-[relation8:IN_TOURNAMENT]->(tournament),\n      (team1)-[played_in:PLAYED_IN]->(match),\n      (team2)-[relation10:PLAYED_IN]->(match)\nRETURN relation10, relation8, relation7, relation6, player, scored_goal, match, team1, team2, tournament, played_in, scored_goal.minute",
+        "num-hop": 6,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "What were the minutes in which Eden Hazard scored goals during the matches between Belgium and Mexico in the 2018 tournament?",
+        "Max-Semantic-Score": 0.9527580142021179,
+        "Avg-Semantic-Score": 0.8984124422073364,
+        "Rewrite": "During the 2018 Belgium vs. Mexico match, at what time did 'Eden Hazard' score his goal?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Which coaches were named for squads that played in at least two consecutive World Cups?",
+        "Cypher": "MATCH (coach:Person)-[:COACH_FOR]->(squad:Squad)-[:FOR]->(tournament1:Tournament),\n      (squad)-[:FOR]->(tournament2:Tournament)\nWHERE tournament1.year = tournament2.year - 4\nRETURN coach, squad, tournament1, tournament2, coach.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (coach:Person)-[relation4:COACH_FOR]->(squad:Squad)-[relation5:FOR]->(tournament1:Tournament),\n      (squad)-[relation6:FOR]->(tournament2:Tournament)\nWHERE tournament1.year = tournament2.year - 4\nRETURN relation6, relation5, relation4, coach, squad, tournament1, tournament2, coach.name",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which coaches were appointed for teams that participated in at least two successive World Cups?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What type of goal (penalty, normal) did 'Harry Kane' score in the quarter-finals of the 2018 World Cup?",
+        "Cypher": "MATCH (player:Person {name: \"Harry Kane\"})-[scored_goal:SCORED_GOAL]->(match:Match)-[in_tournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE match.stage=\"quarter-finals\" AND tournament.year=2018\nRETURN player, scored_goal, match, in_tournament, tournament, scored_goal.type",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "How many matches involving 'France' were played in the 'Group Stage' of the 2014 World Cup?",
+        "Cypher": "MATCH (team:Team {name:\"France\"})-[played_in:PLAYED_IN]->(match:Match)-[in_tournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE match.stage=\"Group Stage\" AND tournament.year=2014\nRETURN team, played_in, match, in_tournament, tournament, count(match)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many games did 'France' play in the 'Group Stage' of the 2014 World Cup?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Which type of match (knockout or group) did 'Spain' play when they faced 'Italy' in 2012?",
+        "Cypher": "MATCH (teamSpain:Team {name:\"Spain\"})-[playedInSpain:PLAYED_IN]->(match:Match)<-[playedInItaly:PLAYED_IN]-(teamItaly:Team {name:\"Italy\"}),\n      (match)-[inTournament:IN_TOURNAMENT]->(tournament:Tournament {year:2012})\nRETURN teamSpain, playedInSpain, match, playedInItaly, teamItaly, inTournament, tournament, match.stage",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "In 2012, when 'Spain' competed against 'Italy', was it a knockout or group stage match?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What were the scores attributed to 'Neymar' in all his World Cup matches?",
+        "Cypher": "MATCH (player:Person {name:\"Neymar\"})-[played_in:PLAYED_IN]->(match:Match)\nRETURN player, played_in, match, played_in.score",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What were the ratings given to 'Neymar' in each of his World Cup games?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many different tournaments has 'Cristiano Ronaldo' scored in?",
+        "Cypher": "MATCH (player:Person)-[scored:SCORED_GOAL]->(match:Match)-[inTournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE player.name=\"Cristiano Ronaldo\"\nRETURN COUNT(DISTINCT tournament)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "In how many distinct tournaments has 'Cristiano Ronaldo' made a goal?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the average number of goals per match for 'Germany' in World Cup tournaments?",
+        "Cypher": "MATCH (team:Team)-[:PARTICIPATED_IN]->(tournament:Tournament),\n      (player:Person)-[:REPRESENTS]->(team),\n      (player)-[scored:SCORED_GOAL]->(match:Match)-[:IN_TOURNAMENT]->(tournament)\nWHERE team.name=\"Germany\" AND tournament.name CONTAINS \"World Cup\"\nRETURN AVG(scored.minute) AS averageGoalsPerMatch",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (team:Team)-[relation4:PARTICIPATED_IN]->(tournament:Tournament),\n      (player:Person)-[relation5:REPRESENTS]->(team),\n      (player)-[scored:SCORED_GOAL]->(match:Match)-[relation7:IN_TOURNAMENT]->(tournament)\nWHERE team.name=\"Germany\" AND tournament.name CONTAINS \"World Cup\"\nRETURN AVG(scored.minute) AS averageGoalsPerMatch",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the mean count of goals per game for 'Germany' in World Cup competitions?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the maximum number of goals scored by a single player in the quarter-final stage throughout all World Cups?",
+        "Cypher": "MATCH (player:Person)-[scored:SCORED_GOAL]->(match:Match)\nWHERE match.stage=\"quarter-final\"\nRETURN player.name, COUNT(scored) AS goals\nORDER BY goals DESC\nLIMIT 1",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What's the highest goal count by an individual player during the quarter-finals in all World Cup tournaments?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Count the number of assists made by players from 'Argentina' in the 2018 tournament.",
+        "Cypher": "MATCH (player:Person)-[represents:REPRESENTS]->(team:Team)\nWHERE team.name=\"Argentina\"\nMATCH (player)-[:SCORED_GOAL]->(match:Match)-[:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.year=2018\nRETURN COUNT(DISTINCT match)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (player:Person)-[represents:REPRESENTS]->(team:Team)\nWHERE team.name=\"Argentina\"\nMATCH (player)-[relation5:SCORED_GOAL]->(match:Match)-[relation6:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.year=2018\nRETURN COUNT(DISTINCT match)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate how many assists were delivered by 'Argentina' players during the 2018 tournament."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the total number of players who have played in both the 2010 and 2014 World Cups?",
+        "Cypher": "MATCH (player:Person)-[:PLAYED_IN]->(:Match)-[:IN_TOURNAMENT]->(tournament2010:Tournament)\nWHERE tournament2010.year = 2010\nWITH player\nMATCH (player)-[:PLAYED_IN]->(:Match)-[:IN_TOURNAMENT]->(tournament2014:Tournament)\nWHERE tournament2014.year = 2014\nRETURN COUNT(DISTINCT player)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (player:Person)-[relation5:PLAYED_IN]->(node1:Match)-[relation8:IN_TOURNAMENT]->(tournament2010:Tournament)\nWHERE tournament2010.year = 2010\nWITH player\nMATCH (player)-[relation6:PLAYED_IN]->(node3:Match)-[:IN_TOURNAMENT]->(tournament2014:Tournament)\nWHERE tournament2014.year = 2014\nRETURN COUNT(DISTINCT player)",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many players participated in both the 2010 and 2014 World Cups?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many teams have won the World Cup more than once?",
+        "Cypher": "MATCH (team:Team)-[participated:PARTICIPATED_IN]->(tournament:Tournament)\nWHERE tournament.shortName CONTAINS \"World Cup\"\nWITH team, COUNT(DISTINCT tournament) AS wins\nWHERE wins > 1\nRETURN COUNT(DISTINCT team)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many teams have claimed the World Cup title multiple times?"
+    }
+]

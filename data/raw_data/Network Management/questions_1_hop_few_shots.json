@@ -1,0 +1,188 @@
+[
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the versions of the OS running on a machine named 'Server-A'?",
+        "Cypher": "MATCH (machine:Machine {name:\"Server-A\"})-[runs:RUNS]->(operating_system:OS)-[version_relation:VERSION]->(version:Version)\nRETURN machine, runs, operating_system, version_relation, version, version.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What versions of the operating system are installed on the machine called 'Server-A'?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Can you list the dependencies of the service hosted on a machine with ip '192.168.1.10'?",
+        "Cypher": "MATCH (machine:Machine)-[:RUNS]->(service:Service)-[dependency:DEPENDS_ON]->(dependentService:Service)\nWHERE machine.ip = '192.168.1.10'\nRETURN machine, service, dependency, dependentService",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (machine:Machine)-[relation3:RUNS]->(service:Service)-[dependency:DEPENDS_ON]->(dependentService:Service)\nWHERE machine.ip = '192.168.1.10'\nRETURN relation3, machine, service, dependency, dependentService",
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What is the disk capacity of the type of machine which has the name 'Compute-1'? ",
+        "Cypher": "MATCH (machine:Machine {name:\"Compute-1\"})-[machine_type:TYPE]->(type:Type)\nRETURN machine, machine_type, type, type.disk",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the storage size of the device named 'Compute-1'?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What versions of software are currently deployed on the machines in DataCenter named 'DataCenter-West'?",
+        "Cypher": "MATCH (data_center:DataCenter {name:\"DataCenter-West\"})-[:CONTAINS]->(machine:Machine)-[:RUNS]->(software:Software)-[:VERSION]->(version:Version)\nRETURN data_center, machine, software, version, version.name",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (data_center:DataCenter {name:\"DataCenter-West\"})-[relation4:CONTAINS]->(machine:Machine)-[relation5:RUNS]->(software:Software)-[relation6:VERSION]->(version:Version)\nRETURN relation6, relation5, relation4, data_center, machine, software, version, version.name",
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What is the name of the router being used in the network zone '5' and what are its interface IP addresses?",
+        "Cypher": "MATCH (router:Router)-[routing:ROUTES]->(interface:Interface)\nWHERE router.zone=5\nRETURN router, routing, interface, router.name, interface.ip",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the router's name in network zone '5' and what IP addresses are assigned to its interfaces?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Which IP and port are being listened to by the application named 'AppService1' in zone '3'?",
+        "Cypher": "MATCH (application:Application {name:\"AppService1\"})-[listens:LISTENS]->(port:Port)<-[:EXPOSES]-(interface:Interface)-[:CONNECTS]->(zone:Zone {zone:3})\nRETURN application, listens, port, interface, zone, interface.ip, port.port",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (application:Application {name:\"AppService1\"})-[listens:LISTENS]->(port:Port)<-[relation5:EXPOSES]-(interface:Interface)-[relation6:CONNECTS]->(zone:Zone {zone:3})\nRETURN relation6, relation5, application, listens, port, interface, zone, interface.ip, port.port",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What IP and port is the application 'AppService1' in zone '3' monitoring?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Does the application named 'EmailClient' depend on any specific version of a service?",
+        "Cypher": "MATCH (application:Application {name:\"EmailClient\"})-[dependency:DEPENDS_ON]->(service:Service)-[version_dependency:DEPENDS_ON]->(version:Version)\nRETURN application, dependency, service, version_dependency, version, version.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Does the 'EmailClient' application require a particular version of a service?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What type of software does the version named 'v2.0.1' belong to and who depends on this software?",
+        "Cypher": "MATCH (version:Version {name: \"v2.0.1\"})<-[version_relation:VERSION]-(software:Software)-[depends_on:DEPENDS_ON]->(dependent)\nRETURN version, version_relation, software, depends_on, dependent, software.name, dependent.name",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What applications are dependent on the 'AnalyticsService' and are hosted within the same data center?",
+        "Cypher": "MATCH (analytics_service:Service {name:\"AnalyticsService\"})<-[dep:DEPENDS_ON]-(application:Application)-[runs:RUNS]->(machine:Machine)-[:HOLDS]->(rack:Rack)-[:CONTAINS]->(data_center:DataCenter)\nRETURN analytics_service, dep, application, runs, machine, rack, data_center, application.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (analytics_service:Service {name:\"AnalyticsService\"})<-[dep:DEPENDS_ON]-(application:Application)-[runs:RUNS]-(machine:Machine)-[relation7:HOLDS]-(rack:Rack)-[relation8:CONTAINS]-(data_center:DataCenter)\nRETURN relation8, relation7, analytics_service, dep, application, runs, machine, rack, data_center, application.name",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which applications rely on 'AnalyticsService' and are located in the same data center?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Is there any connection between the network interface with IP '10.10.10.1' and Zones in the subnet of '255.255.255.0'?",
+        "Cypher": "MATCH (interface:Interface {ip: \"10.10.10.1\"})-[connection:CONNECTS]->(zone:Zone)\nWHERE zone.ip STARTS WITH \"255.255.255.\"\nRETURN interface, connection, zone",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (interface:Interface {ip: \"10.10.10.1\"})-[relation3:CONNECTS]->(zone:Zone)-[relation4:ROUTES]->(network:Network {ip: \"255.255.255.0\"})\nRETURN relation4, relation3, interface, zone, network",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Is there a relationship between the network interface assigned the IP '10.10.10.1' and Zones within the subnet mask of '255.255.255.0'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Which versions are associated with the OS installed on machines running process 'Process123'?",
+        "Cypher": "MATCH (machine:Machine)-[:RUNS]->(process:Process {name:'Process123'})-[:INSTANCE]->(os:OS)-[:VERSION]->(version:Version)\nRETURN machine, process, os, version, version.name",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (machine:Machine)-[relation4:RUNS]->(process:Process {name:'Process123'})-[relation5:INSTANCE]->(os:OS)-[relation6:VERSION]->(version:Version)\nRETURN relation6, relation5, relation4, machine, process, os, version, version.name",
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What is the relationship between the software named 'Database' and the processes run on 'Server-XYZ'?",
+        "Cypher": "MATCH (software:Software {name:\"Database\"})-[software_process_relation:DEPENDS_ON]->(process:Process)<-[machine_process_relation:RUNS]-(machine:Machine {name:\"Server-XYZ\"})\nRETURN software, software_process_relation, process, machine_process_relation, machine",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "How does the 'Database' software interact with the operations executed on 'Server-XYZ'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many distinct versions of services are running across the machines in zone '12'?",
+        "Cypher": "MATCH (machine:Machine)-[:RUNS]->(service:Service)-[:VERSION]->(version:Version)\nWHERE machine.zone = 12\nRETURN COUNT(DISTINCT version.name)",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (machine:Machine)-[relation3:RUNS]->(service:Service)-[relation4:VERSION]->(version:Version)\nWHERE machine.zone = 12\nRETURN COUNT(DISTINCT version.name)",
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the average size of networks connected by the interface with IP '192.168.2.15'?",
+        "Cypher": "MATCH (interface:Interface {ip: '192.168.2.15'})-[:CONNECTS]->(network:Network)\nRETURN AVG(network.size)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (interface:Interface {ip: '192.168.2.15'})-[relation2:CONNECTS]->(network:Network)\nRETURN AVG(network.size)",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical size of networks linked through the interface using the IP address '192.168.2.15'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Across all the routers, how many unique Interface IPs are being used for routing in the network of size '500' or more?",
+        "Cypher": "MATCH (router:Router)-[routerRoute:ROUTES]->(interface:Interface)<-[networkRoute:ROUTES]-(network:Network)\nWHERE network.size >= 500\nRETURN COUNT(DISTINCT interface.ip)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many distinct Interface IPs are employed across all routers for routing in networks with a size of '500' or greater?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Count the number of applications that depend on services which have dependencies on software version labelled 'ver.3.4.1'.",
+        "Cypher": "MATCH (application:Application)-[app_depends:DEPENDS_ON]->(service:Service)-[service_depends:DEPENDS_ON]->(software:Software)-[software_version:VERSION]->(version:Version)\nWHERE version.name=\"ver.3.4.1\"\nRETURN COUNT(DISTINCT application)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (application:Application)-[app_depends:DEPENDS_ON]->(service:Service)-[service_depends:DEPENDS_ON]->(software:Software)\nMATCH (version:Version {name: \"ver.3.4.1\"})\nWHERE (software)-[relation6:VERSION]->(version)\nRETURN COUNT(DISTINCT application)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate how many applications rely on services that require version 'ver.3.4.1' of the software."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the minimum start time of services connected directly to any machine within the 'tech-rack-8'?",
+        "Cypher": "MATCH (rack:Rack {name: \"tech-rack-8\"})-[:HOLDS]->(machine:Machine)-[:RUNS]->(service:Service)\nRETURN MIN(service.startTime)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (rack:Rack {name: \"tech-rack-8\"})-[relation3:HOLDS]->(machine:Machine)-[relation4:RUNS]->(service:Service)\nRETURN MIN(service.startTime)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the earliest start time for services directly linked to any device in 'tech-rack-8'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many different types of software does the version 'v1.2' directly depend on across all applications?",
+        "Cypher": "MATCH (version:Version {name: \"v1.2\"})<-[dep:DEPENDS_ON]-(software:Software)-[:INSTANCE]->(app:Application)\nRETURN COUNT(DISTINCT software)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (version:Version {name: \"v1.2\"})<-[dep:DEPENDS_ON]-(software:Software)-[relation4:INSTANCE]-(app:Application)\nRETURN COUNT(DISTINCT software)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Across all applications, how many distinct software varieties does version 'v1.2' directly rely on?"
+    }
+]

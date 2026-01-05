@@ -1,0 +1,186 @@
+[
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the model and capacity of the train that has the earliest departure time from station \"Central Station\" on route \"R101\"?",
+        "Cypher": "MATCH (station:Station {name:\"Central Station\"})<-[stopsAt:STOPS_AT]-(route:Route {name:\"R101\"})<-[operates:OPERATES]-(train:Train)\nRETURN station, stopsAt, route, operates, train, train.model, train.capacity\nORDER BY operates.departure_time ASC\nLIMIT 1",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the type and capacity of the earliest train departing from \"Central Station\" on route \"R101\"?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What is the capacity and location of the station located in the city with a population greater than 500,000?",
+        "Cypher": "MATCH (station:Station)-[located_in:LOCATED_IN]->(city:City)\nWHERE city.population > 500000\nRETURN station, located_in, city, station.capacity, station.location",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the capacity and location of the station situated in a city where the population exceeds 500,000?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Can you provide the name and operator of the train that arrives last at the station named \"Downtown\"?",
+        "Cypher": "MATCH (station:Station {name:\"Downtown\"})<-[stop:STOPS_AT]-(route:Route)<-[operate:OPERATES]-(train:Train)\nWITH station, stop, route, operate, train, stop.arrival_time AS last_arrival\nORDER BY last_arrival DESC\nLIMIT 1\nRETURN station, stop, route, operate, train, train.name, train.operator",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What is the length and name of the route that includes station \"Gateway\" serving cities with populations over 1,000,000?",
+        "Cypher": "MATCH (station:Station {name: \"Gateway\"})-[serves:SERVES]->(city:City)\nWHERE city.population > 1000000\nMATCH (route:Route)-[stopsAt:STOPS_AT]->(station)\nRETURN station, serves, city, route, stopsAt, route.name, route.length",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the name and length of the route that passes through station \"Gateway\" and serves cities with populations exceeding 1,000,000?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Which employee with a role of 'Conductor' has a salary exceeding 70,000 and works at \"West Side\" station?",
+        "Cypher": "MATCH (employee:Employee {role: \"Conductor\"})-[employment:EMPLOYS]->(station:Station {name: \"West Side\"})\nWHERE employee.salary > 70000\nRETURN employee, employment, station, employee.name, employee.salary",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (employee:Employee {role: \"Conductor\"})-[employment:EMPLOYS]-(station:Station {name: \"West Side\"})\nWHERE employee.salary > 70000\nRETURN employee, employment, station, employee.name, employee.salary",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which 'Conductor' earns over 70,000 and is employed at the \"West Side\" station?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Provide the name and role of any employee who started working at the \"City Terminal\" station after January 1st, 2022.",
+        "Cypher": "MATCH (employee:Employee)-[employment:EMPLOYS]->(station:Station {name:\"City Terminal\"})\nWHERE employment.employment_date > date(\"2022-01-01\")\nRETURN employee, employment, station, employee.name, employee.role",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (employee:Employee)-[employment:EMPLOYS]-(station:Station {name:\"City Terminal\"})\nWHERE employment.employment_date > date(\"2022-01-01\")\nRETURN employee, employment, station, employee.name, employee.role",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the name and position of each employee who began their tenure at the \"City Terminal\" station post-January 1st, 2022."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What are the operating days and the total travel time for the train route operated by train \"Express 2000\" between \"North Station\" and \"South Station\"?",
+        "Cypher": "MATCH (train:Train {model:\"Express 2000\"})-[operation:OPERATES]->(route:Route)-[stop:STOPS_AT]->(station:Station)\nWHERE station.name IN [\"North Station\", \"South Station\"]\nRETURN train, operation, route, stop, station, operation.operating_days, operation.departure_time, operation.arrival_time, duration.inSeconds(operation.departure_time, operation.arrival_time).minutes AS total_travel_time",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the days of operation and the total duration of the journey for the \"Express 2000\" train traveling from \"North Station\" to \"South Station\"?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "How far is the station \"Mountain View\" from the city center it serves, and what is the shortest distance among them?",
+        "Cypher": "MATCH (station:Station {name:\"Mountain View\"})-[service:SERVES]->(city:City)\nRETURN station, service, city, service.distance_to_city_center",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the distance from \"Mountain View\" station to its serving city center, and what is the minimum distance between the two?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What are the arrival and departure delays for the station \"Greenfield\" on route \"R402\" during the weekdays?",
+        "Cypher": "MATCH (station:Station {name: \"Greenfield\"})-[stopAt:STOPS_AT]->(route:Route {name: \"R402\"})<-[operates:OPERATES]-(train:Train)\nWHERE operates.operating_days CONTAINS 'Weekday'\nRETURN station, stopAt, route, operates, train, stopAt.arrival_delay, stopAt.departure_delay",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (station:Station {name: \"Greenfield\"})-[stopAt:STOPS_AT]-(route:Route {name: \"R402\"})<-[operates:OPERATES]-(train:Train)\nWHERE operates.operating_days CONTAINS 'Weekday'\nRETURN station, stopAt, route, operates, train, stopAt.arrival_delay, stopAt.departure_delay",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the weekday arrival and departure delays at the \"Greenfield\" station on route \"R402\"?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Identify the shift and employment date of the employee working at \"Old Town\" station who is from the 'Security' department.",
+        "Cypher": "MATCH (station:Station {name:\"Old Town\"})-[employs:EMPLOYS]->(employee:Employee {role:\"Security\"})\nRETURN station, employs, employee, employs.shift, employs.employment_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the work shift and the date of employment for the 'Security' department employee at the \"Old Town\" station."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What are the assignment start and end dates for employees managing the route \"Coastline Express\"?",
+        "Cypher": "MATCH (employee:Employee)-[manages:MANAGES]->(route:Route {name:\"Coastline Express\"})\nRETURN employee, manages, route, manages.assignment_start_date, manages.assignment_end_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the start and end dates for the assignment of employees who manage the \"Coastline Express\" route?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "For the station \"Highland\", list all the departure times of trains on Fridays.",
+        "Cypher": "MATCH (station:Station {name:\"Highland\"})<-[stop:STOPS_AT]-(route:Route)<-[operate:OPERATES]-(train:Train)\nWHERE operate.operating_days CONTAINS \"Friday\"\nRETURN station, stop, route, operate, train, operate.departure_time",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "List all train departure times from the station \"Highland\" on Fridays."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many routes stop at the station named \"Central Hub\"?",
+        "Cypher": "MATCH (station:Station {name: \"Central Hub\"})<-[stopsAt:STOPS_AT]-(route:Route)\nRETURN COUNT(DISTINCT route)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many lines have a stop at the station called \"Central Hub\"?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the average distance to city center for stations serving cities with a population over 200,000?",
+        "Cypher": "MATCH (station:Station)-[serves:SERVES]->(city:City)\nWHERE city.population > 200000\nRETURN AVG(serves.distance_to_city_center)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical distance from the city center for stations located in cities with populations exceeding 200,000?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Can you determine the average capacity of trains that operate on the route \"Northern Line\"?",
+        "Cypher": "MATCH (train:Train)-[operates:OPERATES]->(route:Route {name: \"Northern Line\"})\nRETURN AVG(train.capacity) AS AverageCapacity",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you calculate the mean capacity of trains running on the \"Northern Line\" route?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the total number of employees working at stations located in cities with more than 1 million inhabitants?",
+        "Cypher": "MATCH (station:Station)-[:LOCATED_IN]->(city:City)\nWHERE city.population > 1000000\nMATCH (station)-[:EMPLOYS]->(employee:Employee)\nRETURN COUNT(DISTINCT employee)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (station:Station)-[relation3:LOCATED_IN]->(city:City)\nWHERE city.population > 1000000\nMATCH (station)-[relation4:EMPLOYS]->(employee:Employee)\nRETURN COUNT(DISTINCT employee)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many employees are there at stations situated in cities that have a population exceeding 1 million?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the maximum salary of employees stationed at \"Gateway Eastern\" as compared to \"Gateway Western\"?",
+        "Cypher": "MATCH (stationEast:Station {name:\"Gateway Eastern\"})-[:EMPLOYS]->(employeeEast:Employee)\nMATCH (stationWest:Station {name:\"Gateway Western\"})-[:EMPLOYS]->(employeeWest:Employee)\nRETURN MAX(employeeEast.salary) AS MaxSalaryEast, MAX(employeeWest.salary) AS MaxSalaryWest",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (stationEast:Station {name:\"Gateway Eastern\"})-[relation4:EMPLOYS]->(employeeEast:Employee)\nMATCH (stationWest:Station {name:\"Gateway Western\"})-[relation5:EMPLOYS]->(employeeWest:Employee)\nRETURN MAX(employeeEast.salary) AS MaxSalaryEast, MAX(employeeWest.salary) AS MaxSalaryWest",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest salary of employees located at \"Gateway Eastern\" in comparison to those at \"Gateway Western\"?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Calculate the sum of all arrival delays for trains arriving at \"Metro Central\" during peak hours.",
+        "Cypher": "MATCH (station:Station {name: \"Metro Central\"})<-[arrival:STOPS_AT]-(route:Route)-[:OPERATES]->(train:Train)\nWHERE time(arrival.departure_time) >= time(\"07:00:00\") AND time(arrival.departure_time) <= time(\"09:00:00\")\nRETURN SUM(arrival.arrival_delay)",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (station:Station {name: \"Metro Central\"})<-[arrival:STOPS_AT]-(route:Route)-[relation4:OPERATES]->(train:Train)\nWHERE time(arrival.departure_time) >= time(\"07:00:00\") AND time(arrival.departure_time) <= time(\"09:00:00\")\nRETURN SUM(arrival.arrival_delay)",
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    }
+]

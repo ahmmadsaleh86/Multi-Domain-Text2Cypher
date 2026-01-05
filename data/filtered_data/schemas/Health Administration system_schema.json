@@ -1,0 +1,207 @@
+[
+    {
+        "Type": "Node",
+        "Label": "Patient",
+        "Attributes": {
+            "patient_id": "String",
+            "first_name": "String",
+            "last_name": "String",
+            "date_of_birth": "Date",
+            "gender": "String",
+            "phone_number": "String",
+            "email": "String",
+            "address": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Doctor",
+        "Attributes": {
+            "doctor_id": "String",
+            "first_name": "String",
+            "last_name": "String",
+            "specialization": "String",
+            "phone_number": "String",
+            "email": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Appointment",
+        "Attributes": {
+            "appointment_id": "String",
+            "date": "DateTime",
+            "status": "String",
+            "type": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "MedicalRecord",
+        "Attributes": {
+            "record_id": "String",
+            "diagnosis": "String",
+            "treatment": "String",
+            "date_recorded": "DateTime"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Hospital",
+        "Attributes": {
+            "hospital_id": "String",
+            "name": "String",
+            "address": "String",
+            "phone_number": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Department",
+        "Attributes": {
+            "department_id": "String",
+            "name": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Medication",
+        "Attributes": {
+            "medication_id": "String",
+            "name": "String",
+            "description": "String",
+            "side_effects": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Payment",
+        "Attributes": {
+            "payment_id": "String",
+            "amount": "Float",
+            "date": "Date",
+            "status": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "InsuranceCompany",
+        "Attributes": {
+            "company_id": "String",
+            "name": "String",
+            "phone_number": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "InsurancePlan",
+        "Attributes": {
+            "plan_id": "String",
+            "coverage_details": "String",
+            "premium": "Float"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "VISITS",
+        "From": "Patient",
+        "To": "Hospital",
+        "Attributes": {
+            "visit_date": "DateTime",
+            "purpose": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "WORKS_AT",
+        "From": "Doctor",
+        "To": "Hospital",
+        "Attributes": {
+            "start_date": "Date",
+            "position": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "IS_IN",
+        "From": "Doctor",
+        "To": "Department",
+        "Attributes": {
+            "join_date": "Date"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_APPOINTMENT",
+        "From": "Patient",
+        "To": "Appointment",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "CONSULTS",
+        "From": "Doctor",
+        "To": "Appointment",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "RECORDS",
+        "From": "Doctor",
+        "To": "MedicalRecord",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "OWNS",
+        "From": "Patient",
+        "To": "MedicalRecord",
+        "Attributes": {}
+    },
+    {
+        "Type": "Relation",
+        "Label": "PRESCRIBES",
+        "From": "Doctor",
+        "To": "Medication",
+        "Attributes": {
+            "start_date": "Date",
+            "end_date": "Date",
+            "dosage": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "TAKES",
+        "From": "Patient",
+        "To": "Medication",
+        "Attributes": {
+            "prescription_date": "Date",
+            "dose": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "MAKES_PAYMENT",
+        "From": "Patient",
+        "To": "Payment",
+        "Attributes": {
+            "payment_method": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "COVERED_BY",
+        "From": "Patient",
+        "To": "InsurancePlan",
+        "Attributes": {
+            "enrollment_date": "Date"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "OFFERS",
+        "From": "InsuranceCompany",
+        "To": "InsurancePlan",
+        "Attributes": {}
+    }
+]

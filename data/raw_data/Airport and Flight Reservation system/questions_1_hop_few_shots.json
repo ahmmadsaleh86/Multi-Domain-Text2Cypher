@@ -1,0 +1,186 @@
+[
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the names and cities of the Airports where flights operated by 'Delta Airlines' with a duration longer than 5 hours arrive?",
+        "Cypher": "MATCH (airline:Airline)-[operates:OPERATES]->(flight:Flight)-[arrives_at:ARRIVES_AT]->(airport:Airport)\nWHERE airline.name=\"Delta Airlines\" AND flight.duration > 5\nRETURN airline, operates, flight, arrives_at, airport, airport.name, airport.city",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the names and locations of the airports receiving flights over five hours in duration operated by 'Delta Airlines'?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Identify the first and last names of Passengers who have booked a first-class ticket but whose nationality is not American.",
+        "Cypher": "MATCH (passenger:Passenger)-[booked:BOOKED_ON]->(reservation:Reservation)-[contains:CONTAINS_TICKET]->(ticket:Ticket)-[ticketFor:TICKET_FOR_FLIGHT]->(flight:Flight)\nWHERE ticket.class=\"First\" AND passenger.nationality <> \"American\"\nRETURN passenger, booked, reservation, contains, ticket, ticketFor, flight, passenger.firstName, passenger.lastName",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the first and last names of Passengers who have reserved a first-class seat and are not of American nationality."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "List the flight numbers and the aircraft types for flights that are longer than 3000 miles but shorter than 5000 miles.",
+        "Cypher": "MATCH (flight:Flight)\nWHERE flight.distance > 3000 AND flight.distance < 5000\nRETURN flight, flight.number, flight.aircraftType",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the flight numbers and aircraft types for flights exceeding 3000 miles in distance but not surpassing 5000 miles."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Can you provide the headquarters and logo URLs of airlines that operate more than 50 flights?",
+        "Cypher": "MATCH (airline:Airline)-[operates:OPERATES]->(flight:Flight)\nWITH airline, operates, flight, count(flight) AS TotalFlights\nWHERE TotalFlights > 50\nRETURN airline, operates, flight, airline.headquarters, airline.logoUrl",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (airline:Airline)-[operates:OPERATES]->(flight:Flight)\nWITH airline, operates, COUNT(flight) AS flightsCount\nWHERE flightsCount > 50\nRETURN flight, airline, operates, airline.headquarters, airline.logoUrl",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the head offices and logo links for airlines operating over 50 flights?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Display the name and country of the airport with airport ID 'JFK'.",
+        "Cypher": "MATCH (airport:Airport)\nWHERE airport.airportId=\"JFK\"\nRETURN airport, airport.name, airport.country",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Show the name and country of the airport identified by the airport ID 'JFK'."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Show the class and seat number of tickets that cost more than $1000 and less than $2000.",
+        "Cypher": "MATCH (ticket:Ticket)-[contains:CONTAINS_TICKET]->(reservation:Reservation)\nWHERE ticket.price > 1000 AND ticket.price < 2000\nRETURN ticket, contains, reservation, ticket.class, ticket.seatNumber",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (ticket:Ticket)-[contains:CONTAINS_TICKET]-(reservation:Reservation)\nWHERE ticket.price > 1000 AND ticket.price < 2000\nRETURN ticket, contains, reservation, ticket.class, ticket.seatNumber",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Display the class and seat number for tickets priced between $1000 and $2000."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "When is the scheduled departure time for flight number 'AA101' from 'Los Angeles International Airport'?",
+        "Cypher": "MATCH (flight:Flight)-[departure:DEPARTS_FROM]->(airport:Airport)\nWHERE flight.number=\"AA101\" AND airport.name=\"Los Angeles International Airport\"\nRETURN flight, departure, airport, departure.scheduledDeparture",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the departure time for flight 'AA101' from 'Los Angeles International Airport'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What is the booking agent's name for passengers whose reservations have a ticket for flight 'LH456'?",
+        "Cypher": "MATCH (passenger:Passenger)-[book:BOOKED_ON]->(reservation:Reservation)-[contains:CONTAINS_TICKET]->(ticket:Ticket)-[ticketFor:TICKET_FOR_FLIGHT]->(flight:Flight)\nWHERE flight.flightId=\"LH456\"\nRETURN passenger, book, reservation, ticket, ticketFor, flight, book.bookingAgent",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (passenger:Passenger)-[book:BOOKED_ON]->(reservation:Reservation)-[contains:CONTAINS_TICKET]->(ticket:Ticket)-[ticketFor:TICKET_FOR_FLIGHT]->(flight:Flight)\nWHERE flight.flightId=\"LH456\"\nRETURN contains, passenger, book, reservation, ticket, ticketFor, flight, book.bookingAgent",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the name of the booking agent for passengers with a ticket on flight 'LH456'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What is the actual arrival time for the flight arriving at 'Heathrow Airport' under flight ID 'BA282'?",
+        "Cypher": "MATCH (flight:Flight)-[arrives:ARRIVES_AT]->(airport:Airport)\nWHERE flight.flightId=\"BA282\" AND airport.name=\"Heathrow Airport\"\nRETURN flight, arrives, airport, arrives.actualArrival",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the exact arrival time at 'Heathrow Airport' for the flight identified as 'BA282'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Can you find the terminal names at 'Dubai Airport' used by flights that departed more than 30 minutes late?",
+        "Cypher": "MATCH (airport:Airport {name:\"Dubai Airport\"})<-[has:HAS_TERMINAL]-(terminal:Gate)<-[uses:USES_GATE]-(flight:Flight)-[departs:DEPARTS_FROM]->(departureAirport:Airport)\nWHERE (departs.actualDeparture - departs.scheduledDeparture) > duration('PT30M')\nRETURN airport, has, terminal, uses, flight, departs, departureAirport, has.terminalName",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (airport:Airport {name:\"Dubai Airport\"})-[has:HAS_TERMINAL]-(terminal:Gate)<-[uses:USES_GATE]-(flight:Flight)-[departs:DEPARTS_FROM]->(departureAirport:Airport)\nWHERE (departs.actualDeparture - departs.scheduledDeparture) > duration('PT30M')\nRETURN airport, has, terminal, uses, flight, departs, departureAirport, has.terminalName",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you identify the terminal names at 'Dubai Airport' for flights that left over 30 minutes behind schedule?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Get the baggage allowance for tickets on flight 'QF22' and compare it with what's offered on 'QF23'.",
+        "Cypher": "MATCH (ticketQF22:Ticket)-[ticketForFlightQF22:TICKET_FOR_FLIGHT]->(flightQF22:Flight {number:\"QF22\"}),\n      (ticketQF23:Ticket)-[ticketForFlightQF23:TICKET_FOR_FLIGHT]->(flightQF23:Flight {number:\"QF23\"})\nRETURN ticketQF22, ticketForFlightQF22, flightQF22, ticketQF23, ticketForFlightQF23, flightQF23, ticketForFlightQF22.baggageAllowance, ticketForFlightQF23.baggageAllowance",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Check the luggage allowance for 'QF22' flight tickets and compare it to the allowance on 'QF23'."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Identify the gate number and terminal where Flight 'SQ325' is supposed to land.",
+        "Cypher": "MATCH (flight:Flight)-[usesGate:USES_GATE]->(gate:Gate)<-[hasTerminal:HAS_TERMINAL]-(airport:Airport)\nWHERE flight.number=\"SQ325\"\nRETURN flight, usesGate, gate, hasTerminal, airport, gate.number, hasTerminal.terminalName",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the terminal and gate number for the arrival of Flight 'SQ325'."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many airlines have their headquarters in 'Atlanta, USA'?",
+        "Cypher": "MATCH (airline:Airline {headquarters:\"Atlanta, USA\"})\nRETURN COUNT(airline)",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the average flight duration for all flights departing from 'Tokyo International Airport'?",
+        "Cypher": "MATCH (airport:Airport {name:\"Tokyo International Airport\"})<-[departs:DEPARTS_FROM]-(flight:Flight)\nRETURN AVG(flight.duration) AS averageDuration",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical length of flights leaving from 'Tokyo International Airport'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Count the total number of seats booked under the 'economy' class for flights between 'New York' and 'London'.",
+        "Cypher": "MATCH (departureAirport:Airport {city: \"New York\"}), (arrivalAirport:Airport {city: \"London\"})\nMATCH (flight:Flight)-[departs:DEPARTS_FROM]->(departureAirport)\nMATCH (flight)-[arrives:ARRIVES_AT]->(arrivalAirport)\nMATCH (ticket:Ticket {class: \"economy\"})-[ticketFor:TICKET_FOR_FLIGHT]->(flight)\nRETURN COUNT(ticket) AS totalEconomySeatsBooked",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the total seats reserved in the 'economy' class on flights from 'New York' to 'London'."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Calculate the sum of distances for all flights operated by 'United Airlines'.",
+        "Cypher": "MATCH (airline:Airline {name:\"United Airlines\"})-[operates:OPERATES]->(flight:Flight)\nRETURN SUM(flight.distance)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Compute the total distance covered by all flights operated by 'United Airlines'."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the minimum price of a ticket booked on flights that arrive at 'Charles de Gaulle Airport'?",
+        "Cypher": "MATCH (flight:Flight)-[arrivesAt:ARRIVES_AT]->(airport:Airport {name: \"Charles de Gaulle Airport\"})\nMATCH (ticket:Ticket)-[ticketForFlight:TICKET_FOR_FLIGHT]->(flight)\nRETURN MIN(ticket.price)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the lowest cost of a ticket for flights landing at 'Charles de Gaulle Airport'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What's the maximum number of passengers that have booked the same flight on 'January 1, 2023'?",
+        "Cypher": "MATCH (passenger:Passenger)-[:BOOKED_ON]->(reservation:Reservation)-[:CONTAINS_TICKET]->(ticket:Ticket)-[:TICKET_FOR_FLIGHT]->(flight:Flight)\nWHERE date(reservation.bookingTime) = date(\"2023-01-01\")\nWITH flight, COUNT(passenger) AS passengerCount\nRETURN MAX(passengerCount)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (passenger:Passenger)-[relation4:BOOKED_ON]->(reservation:Reservation)-[relation5:CONTAINS_TICKET]->(ticket:Ticket)-[relation6:TICKET_FOR_FLIGHT]->(flight:Flight)\nWHERE date(reservation.bookingTime) = date(\"2023-01-01\")\nWITH flight, COUNT(passenger) AS passengerCount\nRETURN MAX(passengerCount)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest number of passengers that have made reservations for the same flight on 'January 1, 2023'?"
+    }
+]

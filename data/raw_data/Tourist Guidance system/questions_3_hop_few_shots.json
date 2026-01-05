@@ -1,0 +1,181 @@
+[
+    {
+        "Category": "3-hop Node Level",
+        "Question": "What are the names of the restaurants offering \"Italian\" cuisine that have a rating of more than \"4.0\", located less than \"2km\" from the city center of \"Rome\", and visited by at least \"3\" different tourists from \"France\" in \"2023\"?",
+        "Cypher": "MATCH (restaurant:Restaurant {cuisine:\"Italian\"})-[located:LOCATED_IN]->(city:City {name:\"Rome\"})\nWHERE restaurant.rating > 4.0 AND located.distance_km < 2\nMATCH (tourist:Tourist {nationality:\"France\"})-[dined:DINED_AT]->(restaurant)\nWHERE dined.date.year = 2023\nWITH restaurant, COUNT(DISTINCT tourist) AS uniqueTourists\nWHERE uniqueTourists >= 3\nRETURN restaurant, located, city, dined, tourist, restaurant.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "List the names of cities that have more than \"1000000\" population, hosting attractions rated above \"4.5\" and which are within \"5km\" distance from hotels having a minimum of \"4\" stars.",
+        "Cypher": "MATCH (city:City)-[locatedAttraction:LOCATED_IN]->(attraction:Attraction)\nMATCH (hotel:Hotel)-[locatedHotel:LOCATED_IN]->(city)\nWHERE city.population > 1000000 AND attraction.rating > 4.5 AND locatedHotel.distance_km < 5 AND hotel.stars >= 4\nRETURN city, locatedAttraction, attraction, hotel, locatedHotel, city.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (city:City)-[locatedAttraction:LOCATED_IN]-(attraction:Attraction)\nMATCH (hotel:Hotel)-[locatedHotel:LOCATED_IN]->(city)\nWHERE city.population > 1000000 AND attraction.rating > 4.5 AND locatedHotel.distance_km < 5 AND hotel.stars >= 4\nRETURN city, locatedAttraction, attraction, hotel, locatedHotel, city.name",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the names of cities with a population exceeding \"1000000\", containing attractions with a rating over \"4.5\", and located within \"5km\" of hotels rated at least \"4\" stars."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Identify the names and types of attractions in \"Barcelona\" with a rating of at least \"4.2\", that are situated less than \"3km\" from the city center and have been recommended with comments mentioning \"beautiful view\".",
+        "Cypher": "MATCH (attraction:Attraction)-[locatedIn:LOCATED_IN]->(city:City {name:\"Barcelona\"})\nMATCH (tourist:Tourist)-[recommend:RECOMMENDS]->(attraction)\nWHERE attraction.rating >= 4.2 AND locatedIn.distance_km < 3 AND recommend.comment CONTAINS \"beautiful view\"\nRETURN attraction, locatedIn, city, tourist, recommend, attraction.name, attraction.type",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Find attractions in \"Barcelona\" that have a minimum rating of \"4.2\", are located within \"3km\" of the city center, and are praised for their \"beautiful view\", along with identifying their names and categories."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Provide the names of tourists from \"Japan\" who have visited at least \"3\" different cities, staying in hotels rated above \"3.5 stars\", and have dined at restaurants serving \"sushi\" during their visits in \"2021\".",
+        "Cypher": "MATCH (tourist:Tourist {nationality:\"Japan\"})-[:VISITED]->(attraction:Attraction)-[:LOCATED_IN]->(city:City),\n      (tourist)-[stayed:STAYED_AT]->(hotel:Hotel)-[:LOCATED_IN]->(city),\n      (tourist)-[dine:DINED_AT]->(restaurant:Restaurant)-[:LOCATED_IN]->(city)\nWHERE hotel.stars > 3.5 AND restaurant.cuisine = \"sushi\" AND dine.date.year = 2021\nWITH tourist, COUNT(DISTINCT city) AS cities_visited\nWHERE cities_visited >= 3\nRETURN tourist, attraction, city, stayed, hotel, dine, restaurant, dine.date, tourist.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (tourist:Tourist {nationality:\"Japan\"})-[relation5:VISITED]->(attraction:Attraction)-[relation10:LOCATED_IN]->(city:City),\n      (tourist)-[stayed:STAYED_AT]->(hotel:Hotel)-[:LOCATED_IN]->(city),\n      (tourist)-[dine:DINED_AT]->(restaurant:Restaurant)-[:LOCATED_IN]->(city)\nWHERE hotel.stars > 3.5 AND restaurant.cuisine = \"sushi\" AND dine.date.year = 2021\nWITH tourist, COUNT(DISTINCT city) AS cities_visited\nWHERE cities_visited >= 3\nRETURN relation10, relation5, tourist, attraction, city, stayed, hotel, dine, restaurant, dine.date, tourist.name",
+        "num-hop": 4,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Can you list hotels with a \"5-star\" rating in \"Paris\" that are located within \"1km\" of any top-rated attraction (rating strictly greater than \"4.6\") and also have reviews from tourists mentioning \"exquisite service\" in \"2020\"?",
+        "Cypher": "MATCH (hotel:Hotel {stars:5})-[:LOCATED_IN {distance_km:1}]->(city:City {name:\"Paris\"})\nMATCH (hotel)-[recommendHotel:RECOMMENDS]->(tourist:Tourist)\nMATCH (attraction:Attraction {rating:4.6})-[:LOCATED_IN]->(city)\nWHERE recommendHotel.comment CONTAINS \"exquisite service\" AND recommendHotel.rating.year=2020\nRETURN hotel, city, attraction, recommendHotel, tourist, hotel.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Corrected-Cypher": "MATCH (hotel:Hotel {stars:5})-[relation4:LOCATED_IN {distance_km:1}]->(city:City {name:\"Paris\"})\nMATCH (hotel)-[recommendHotel:RECOMMENDS]-(tourist:Tourist)\nMATCH (attraction:Attraction {rating:4.6})-[relation6:LOCATED_IN]->(city)\nWHERE recommendHotel.comment CONTAINS \"exquisite service\" AND recommendHotel.rating.year=2020\nRETURN relation6, relation4, hotel, city, attraction, recommendHotel, tourist, hotel.name",
+        "Rewrite": "Could you provide a list of \"5-star\" hotels in \"Paris\" situated less than \"1km\" away from a highly-rated attraction (with a rating over \"4.6\") that also received tourist reviews in \"2020\" highlighting \"exquisite service\"?"
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "What are the details of \"Chinese\" restaurants in \"New York City\" that are rated over \"4.3\", located no more than \"1.5km\" from any city landmark, and have been visited by tourists staying at the \"Ritz Carlton\" in \"2022\"?",
+        "Cypher": "MATCH (restaurant:Restaurant)-[locatedIn:LOCATED_IN]->(city:City {name:\"New York City\"})\nMATCH (restaurant)<-[recommendRestaurant:RECOMMENDS]-(tourist:Tourist)-[stayedAt:STAYED_AT]->(hotel:Hotel {name:\"Ritz Carlton\"})\nWHERE restaurant.cuisine = \"Chinese\" AND restaurant.rating > 4.3 AND locatedIn.distance_km <= 1.5 AND stayedAt.check_in.year = 2022\nRETURN restaurant, locatedIn, city, recommendRestaurant, tourist, stayedAt, hotel, restaurant.name, restaurant.cuisine, restaurant.rating",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide information on \"Chinese\" restaurants in \"New York City\" with ratings above \"4.3\", situated within \"1.5km\" of a city landmark, and visited by tourists from the \"Ritz Carlton\" in \"2022\"?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "What is the average duration in minutes of visits to historical attractions by tourists who have stayed in hotels located less than \"1km\" from these attractions in \"London\" during \"2021\"?",
+        "Cypher": "MATCH (hotel:Hotel)-[hotelLoc:LOCATED_IN]->(city:City {name:\"London\"})\nMATCH (attraction:Attraction {type:\"historical\"})-[attractionLoc:LOCATED_IN]->(city)\nMATCH (tourist:Tourist)-[visited:VISITED]->(attraction)\nMATCH (tourist)-[stayed:STAYED_AT]->(hotel)\nWHERE hotelLoc.distance_km < 1 AND stayed.check_in.year = 2021\nRETURN tourist, hotel, city, attraction, hotelLoc, attractionLoc, visited, stayed, avg(visited.duration_minutes)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "How long, on average, do tourists spend visiting historical sites in \"London\" when they lodge in hotels situated within \"1km\" of these attractions, specifically during \"2021\"?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "How long, on average, do tourists from \"Italy\" spend dining at restaurants which serve \"Mediterranean\" cuisine and are situated within \"2km\" distance from their hotels in \"Athens\"?",
+        "Cypher": "MATCH (tourist:Tourist {nationality:\"Italy\"})-[dine:DINED_AT]->(restaurant:Restaurant {cuisine:\"Mediterranean\"})\nMATCH (restaurant)<-[restaurantLocated:LOCATED_IN]-(city:City {name:\"Athens\"})\nMATCH (tourist)-[stay:STAYED_AT]->(hotel:Hotel)-[hotelLocated:LOCATED_IN]->(city)\nWHERE restaurantLocated.distance_km <= 2\nRETURN tourist, dine, restaurant, restaurantLocated, city, stay, hotel, hotelLocated, avg(dine.duration_minutes)",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "What are the common factors found in comments made by tourists who gave a \"5-star\" recommendation to luxury hotels in \"Dubai\" that are within \"1 km\" from famous malls and have dined in high-rated local cuisine restaurants?",
+        "Cypher": "MATCH (hotel:Hotel {stars:5})-[:LOCATED_IN {distance_km:1}]->(city:City {name:\"Dubai\"}),\n      (mall:Attraction {type:\"mall\"})-[:LOCATED_IN {distance_km:1}]->(city),\n      (restaurant:Restaurant)-[:LOCATED_IN]->(city),\n      (tourist:Tourist)-[hotelRecommend:RECOMMENDS]->(hotel),\n      (tourist)-[dine:DINED_AT]->(restaurant)\nWHERE hotelRecommend.rating = 5 AND restaurant.cuisine = \"local\" AND restaurant.rating >= 4.5\nRETURN tourist, hotelRecommend, hotel, city, mall, restaurant, dine, hotelRecommend.comment",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (hotel:Hotel {stars:5})-[relation5:LOCATED_IN {distance_km:1}]->(city:City {name:\"Dubai\"}),\n      (mall:Attraction {type:\"mall\"})-[relation6:LOCATED_IN {distance_km:1}]->(city),\n      (restaurant:Restaurant)-[relation7:LOCATED_IN]->(city),\n      (tourist:Tourist)-[hotelRecommend:RECOMMENDS]->(hotel),\n      (tourist)-[dine:DINED_AT]->(restaurant)\nWHERE hotelRecommend.rating = 5 AND restaurant.cuisine = \"local\" AND restaurant.rating >= 4.5\nRETURN relation7, relation6, relation5, tourist, hotelRecommend, hotel, city, mall, restaurant, dine, hotelRecommend.comment",
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "What common elements are noted in feedback from tourists who rated luxury hotels in \"Dubai\" with \"5 stars,\" located less than \"1 km\" from well-known shopping centers, and who have eaten at top-rated local restaurants?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Compare the average tourist rating for attractions located under \"1km\" from their visiting city's center versus those further away, particularly for cities with over \"2 million\" population.",
+        "Cypher": "MATCH (attraction:Attraction)-[locatedNear:LOCATED_IN]->(city:City)\nWHERE city.population > 2000000\nWITH city, attraction, locatedNear,\n     CASE\n       WHEN locatedNear.distance_km < 1 THEN 'Under 1km'\n       ELSE 'Over 1km'\n     END AS distanceCategory\nMATCH (tourist:Tourist)-[recommend:RECOMMENDS]->(attraction)\nRETURN city, attraction, locatedNear, tourist, recommend, distanceCategory, avg(recommend.rating) AS avgRating\nGROUP BY distanceCategory, city",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (attraction:Attraction)-[locatedNear:LOCATED_IN]->(city:City)\nWHERE city.population > 2000000\nWITH city, attraction, locatedNear,\n     CASE\n       WHEN locatedNear.distance_km < 1 THEN 'Under 1km'\n       ELSE 'Over 1km'\n     END AS distanceCategory\nMATCH (tourist:Tourist)-[recommend:RECOMMENDS]->(attraction)\nRETURN city, attraction, locatedNear, tourist, recommend, distanceCategory, avg(recommend.rating) AS avgRating\nGROUP BY distanceCategory",
+        "num-hop": 2,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Can you determine the typical check-out times for tourists who checked into beachfront hotels and visited nearby seaside restaurants during their stay in \"Miami\" in the summer of \"2022\"?",
+        "Cypher": "MATCH (hotel:Hotel)<-[stayed:STAYED_AT]-(tourist:Tourist)-[visited:VISITED]->(restaurant:Restaurant)-[restaurantLocated:LOCATED_IN]->(city:City {name:\"Miami\"})\nMATCH (hotel)-[hotelLocated:LOCATED_IN]->(city)\nWHERE hotel.stars = 5 AND hotelLocated.distance_km <= 1 AND restaurantLocated.distance_km <= 1 AND restaurant.cuisine CONTAINS \"seafood\"\nAND stayed.check_in.year=2022 AND stayed.check_in.month>=6 AND stayed.check_in.month<=8\nRETURN tourist, stayed, hotel, visited, restaurant, hotelLocated, restaurantLocated, city, stayed.check_out",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "What are the frequency and types of meals preferred by tourists who stay at luxury hotels (above \"4 stars\") and dine at nearby restaurants within \"500 meters\" in \"Las Vegas\"?",
+        "Cypher": "MATCH (hotel:Hotel)-[hotelLocated:LOCATED_IN]->(city:City {name:\"Las Vegas\"})\nWHERE hotel.stars > 4\nMATCH (tourist:Tourist)-[stayed:STAYED_AT]->(hotel)\nMATCH (tourist)-[dined:DINED_AT]->(restaurant:Restaurant)-[restaurantLocated:LOCATED_IN]->(city)\nWHERE restaurantLocated.distance_km <= 0.5\nRETURN tourist, stayed, hotel, hotelLocated, city, dined, restaurant, restaurantLocated, dined.meal, COUNT(dined.meal)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "What types and frequency of meals do tourists who stay in luxury hotels (over \"4 stars\") and eat at adjoining restaurants within \"500 meters\" in \"Las Vegas\" prefer?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Calculate the average distance between hotels and attractions in cities with more than \"500,000\" population, where the attractions have a rating of \"3.5\" or higher.",
+        "Cypher": "MATCH (hotel:Hotel)-[hotelLocation:LOCATED_IN]->(city:City)<-[attractionLocation:LOCATED_IN]-(attraction:Attraction)\nWHERE city.population > 500000 AND attraction.rating >= 3.5\nRETURN AVG(hotelLocation.distance_km + attractionLocation.distance_km) AS averageDistance",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the mean distance between hotels and attractions in cities where the population exceeds 500,000, and the attractions are rated 3.5 or above."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the average number of restaurants with a rating of at least \"4\" within \"2km\" of city centers for cities that are capitals in Europe?",
+        "Cypher": "MATCH (restaurant:Restaurant)-[locatedIn:LOCATED_IN]->(city:City)\nWHERE city.country = \"Europe\" AND city.capital = true AND restaurant.rating >= 4.0 AND locatedIn.distance_km <= 2\nRETURN city.name AS CapitalCity, AVG(count(restaurant)) AS AvgRestaurantsNearby",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Compute the mean number of tourist visits to attractions that are rated above \"4\" and are located in cities on seaside locations.",
+        "Cypher": "MATCH (attraction:Attraction {type: \"seaside\"})-[locatedIn:LOCATED_IN]->(city:City),\n      (tourist:Tourist)-[visited:VISITED]->(attraction)\nWHERE attraction.rating > 4\nRETURN AVG(visited.duration_minutes)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the average number of tourist visits to attractions rated over \"4\" situated in coastal cities."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the maximum rating received by any hotel in \"Tokyo\" that is connected via recommendations to attractions rated lower than \"3.5\"?",
+        "Cypher": "MATCH (hotel:Hotel)-[hotelLocated:LOCATED_IN]->(city:City {name:\"Tokyo\"}),\n      (tourist:Tourist)-[recommendsHotel:RECOMMENDS]->(hotel),\n      (tourist)-[recommendsAttraction:RECOMMENDS]->(attraction:Attraction)\nWHERE attraction.rating < 3.5\nRETURN MAX(recommendsHotel.rating)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest rating achieved by any hotel in \"Tokyo\" that is linked through recommendations to attractions with ratings below \"3.5\"?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Calculate the minimum rating of restaurants located no more than \"1km\" away from top-rated (above \"4.5\") hotels in any major North American cities.",
+        "Cypher": "MATCH (restaurant:Restaurant)-[restaurantLocation:LOCATED_IN]->(city:City)\nWHERE city.country IN [\"Canada\", \"United States\", \"Mexico\"] AND city.population >= 1000000\nWITH restaurant, restaurantLocation\nMATCH (hotel:Hotel)-[hotelLocation:LOCATED_IN]->(city)\nWHERE hotel.rating > 4.5 AND hotelLocation.distance_km <= 1\nRETURN MIN(restaurant.rating)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the lowest rating of eateries situated within \"1km\" of highly-rated (over \"4.5\") hotels in any principal cities of North America."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the sum of distances in kilometers that tourists travelled to visit attractions from their respective hotels in \"Venice\" during the annual Carnival seasons of the past \"5 years\"?",
+        "Cypher": "MATCH (hotel:Hotel)-[hotelLocated:LOCATED_IN]->(city:City {name: \"Venice\"}),\n      (tourist:Tourist)-[stayed:STAYED_AT]->(hotel),\n      (tourist)-[visited:VISITED]->(attraction:Attraction)-[attractionLocated:LOCATED_IN]->(city)\nWHERE date(visited.date).year >= date().year - 5 AND date(visited.date).month = 2 // Assuming Carnival is in February\nRETURN SUM(attractionLocated.distance_km)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the total distance in kilometers that tourists covered to reach attractions from their hotels in \"Venice\" over the last \"5 years\" during the annual Carnival periods?"
+    }
+]

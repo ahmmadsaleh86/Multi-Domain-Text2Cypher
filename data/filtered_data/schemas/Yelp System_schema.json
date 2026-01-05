@@ -1,0 +1,136 @@
+[
+    {
+        "Type": "Node",
+        "Label": "Category",
+        "Attributes": {
+            "name": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "User",
+        "Attributes": {
+            "id": "String",
+            "name": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Label",
+        "Attributes": {
+            "id": "String",
+            "description": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Photo",
+        "Attributes": {
+            "id": "String",
+            "embedding": "DoubleArray",
+            "caption": "String",
+            "label": "String",
+            "partition": "Integer"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Review",
+        "Attributes": {
+            "id": "String",
+            "text": "String",
+            "stars": "Integer",
+            "date": "Date"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "City",
+        "Attributes": {
+            "name": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Business",
+        "Attributes": {
+            "id": "String",
+            "name": "String",
+            "address": "String",
+            "city": "String",
+            "state": "String",
+            "location": "Point"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "REVIEWS",
+        "Attributes": {},
+        "From": "Review",
+        "To": "Business"
+    },
+    {
+        "Type": "Relation",
+        "Label": "FRIENDS",
+        "Attributes": {},
+        "From": "User",
+        "To": "User"
+    },
+    {
+        "Type": "Relation",
+        "Label": "WROTE",
+        "Attributes": {},
+        "From": "User",
+        "To": "Review"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_LABEL",
+        "Attributes": {
+            "score": "Double"
+        },
+        "From": "Photo",
+        "To": "Label"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_PHOTO",
+        "Attributes": {},
+        "From": "Business",
+        "To": "Photo"
+    },
+    {
+        "Type": "Relation",
+        "Label": "IN_CATEGORY",
+        "Attributes": {},
+        "From": "Business",
+        "To": "Category"
+    },
+    {
+        "Type": "Relation",
+        "Label": "SIMILAR",
+        "Attributes": {
+            "score": "Double"
+        },
+        "From": "User",
+        "To": "User"
+    },
+    {
+        "Type": "Relation",
+        "Label": "IN_CITY",
+        "Attributes": {},
+        "From": "Business",
+        "To": "City"
+    },
+    {
+        "Type": "Relation",
+        "Label": "WROTE_TIP",
+        "Attributes": {
+            "text": "String",
+            "date": "Date",
+            "likes": "Integer"
+        },
+        "From": "User",
+        "To": "Business"
+    }
+]

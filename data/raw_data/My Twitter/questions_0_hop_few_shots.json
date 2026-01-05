@@ -1,0 +1,125 @@
+[
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What is the profile image URL of the user with the screen name 'tech_guru'?",
+        "Cypher": "MATCH (user:User)\nWHERE user.screen_name = \"tech_guru\"\nRETURN user, user.profile_image_url",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the URL of the profile picture for the user known as 'tech_guru'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Could you retrieve the location and follower count for the user who has posted a tweet with the hashtag '#machinelearning' more than 50 times?",
+        "Cypher": "MATCH (user:User)-[posts:POSTS]->(tweet:Tweet)-[tags:TAGS]->(hashtag:Hashtag)\nWHERE hashtag.name = \"#machinelearning\"\nWITH user, COUNT(tweet) AS tweetsCount\nWHERE tweetsCount > 50\nRETURN user, posts, tweet, tags, hashtag, user.location, user.followers",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Please provide the URLs contained in the tweets that have been retweeted over 1000 times.",
+        "Cypher": "MATCH (originalTweet:Tweet)-[:RETWEETS]->(retweetedTweet:Tweet)-[:CONTAINS]->(link:Link)\nWHERE retweetedTweet.favorites > 1000\nRETURN originalTweet, retweetedTweet, link, link.url",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (originalTweet:Tweet)-[relation3:RETWEETS]->(retweetedTweet:Tweet)-[relation4:CONTAINS]->(link:Link)\nWHERE retweetedTweet.favorites > 1000\nRETURN relation4, relation3, originalTweet, retweetedTweet, link, link.url",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Please supply the URLs found in tweets that were retweeted more than 1000 times."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What are the names of the sources from which tweets were imported using the 'API' method, where each of these tweets has at least 500 favorites?",
+        "Cypher": "MATCH (tweet:Tweet)-[usingRel:USING]->(source:Source)\nWHERE tweet.favorites >= 500 AND tweet.import_method = \"API\"\nRETURN tweet, usingRel, source, source.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which sources supplied tweets that were imported via the 'API' method and have at least 500 favorites each?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Can I get the text of tweets posted by the user named 'Jane_Doe' that contain a mention to 'John_Smith'?",
+        "Cypher": "MATCH (poster:User)-[:POSTS]->(tweet:Tweet)-[:MENTIONS]->(mentionedUser:User)\nWHERE poster.screen_name = 'Jane_Doe' AND mentionedUser.screen_name = 'John_Smith'\nRETURN poster, tweet, mentionedUser, tweet.text",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (poster:User)-[relation3:POSTS]->(tweet:Tweet)-[relation4:MENTIONS]->(mentionedUser:User)\nWHERE poster.screen_name = 'Jane_Doe' AND mentionedUser.screen_name = 'John_Smith'\nRETURN relation4, relation3, poster, tweet, mentionedUser, tweet.text",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide the content of the tweets from the user 'Jane_Doe' that include a reference to 'John_Smith'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What hashtags have been used by users located in 'New York City' in tweets that received more than 200 favorites?",
+        "Cypher": "MATCH (user:User)-[:POSTS]->(tweet:Tweet)-[:TAGS]->(hashtag:Hashtag)\nWHERE user.location = \"New York City\" AND tweet.favorites > 200\nRETURN user, tweet, hashtag, hashtag.name",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User)-[relation3:POSTS]->(tweet:Tweet)-[relation4:TAGS]->(hashtag:Hashtag)\nWHERE user.location = \"New York City\" AND tweet.favorites > 200\nRETURN relation4, relation3, user, tweet, hashtag, hashtag.name",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which hashtags did New York City users employ in tweets that garnered over 200 favorites?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many users from 'San Francisco' have more than 10000 followers?",
+        "Cypher": "MATCH (user:User)\nWHERE user.location = \"San Francisco\" AND user.followers > 10000\nRETURN count(user)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the number of users in 'San Francisco' with over 10000 followers?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the average number of followers for users who follow more than 1000 people and have tweeted at least 500 tweets?",
+        "Cypher": "MATCH (user:User)-[posts:POSTS]->(tweet:Tweet)\nWHERE user.following > 1000 AND user.statuses >= 500\nRETURN AVG(user.followers)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical follower count for users who follow over 1000 individuals and have posted a minimum of 500 tweets?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Can you count the number of hashtags that have been used in more than 1000 tweets?",
+        "Cypher": "MATCH (hashtag:Hashtag)<-[tag:TAGS]-(tweet:Tweet)\nWITH hashtag, COUNT(tweet) AS tweetCount\nWHERE tweetCount > 1000\nRETURN COUNT(hashtag)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you tally how many hashtags appear in over 1000 tweets?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the maximum favorites a tweet has received among tweets containing the hashtag '#holiday' during December 2022?",
+        "Cypher": "MATCH (tweet:Tweet)-[tag:TAGS]->(hashtag:Hashtag)\nWHERE hashtag.name=\"#holiday\" AND tweet.created_at.year=2022 AND tweet.created_at.month=12\nRETURN MAX(tweet.favorites)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest number of favorites for any tweet with the '#holiday' hashtag in December 2022?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What are the total and average retweets received by tweets from users with a follower count exceeding 5000?",
+        "Cypher": "MATCH (user:User)-[:POSTS]->(tweet:Tweet)<-[:RETWEETS]-(retweet:Tweet)\nWHERE user.followers > 5000\nRETURN SUM(retweet.favorites) AS totalRetweets, AVG(retweet.favorites) AS averageRetweets",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Corrected-Cypher": "MATCH (user:User)-[relation3:POSTS]->(tweet:Tweet)<-[relation4:RETWEETS]-(retweet:Tweet)\nWHERE user.followers > 5000\nRETURN SUM(retweet.favorites) AS totalRetweets, AVG(retweet.favorites) AS averageRetweets",
+        "Rewrite": "What is the sum and mean number of retweets for tweets by users who have more than 5000 followers?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many tweets link to URLs that include 'news' in their domain, and what is the average number of favorites these tweets have received?",
+        "Cypher": "MATCH (tweet:Tweet)-[contains:CONTAINS]->(link:Link)\nWHERE link.url CONTAINS \"news\"\nRETURN count(tweet) AS NumberOfTweets, AVG(tweet.favorites) AS AverageFavorites",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many tweets contain links to URLs with 'news' in their domain, and what is the average number of likes these tweets have garnered?"
+    }
+]

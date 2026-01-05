@@ -1,0 +1,194 @@
+[
+    {
+        "Category": "3-hop Node Level",
+        "Question": "What are the names and dates of birth of the players who were part of the 'Germany 2014' squad, played in matches located in Rio de Janeiro, and scored at least four goals throughout the tournament?",
+        "Cypher": "MATCH (team:Team {name:\"Germany\"})-[participates:PARTICIPATED_IN]->(tournament:Tournament {name:\"Germany 2014\"})\nMATCH (squad:Squad)<-[named:NAMED]-(team)\nMATCH (player:Person)-[in_squad:IN_SQUAD]->(squad)\nMATCH (player)-[played:PLAYED_IN]->(match:Match)\nMATCH (match)-[in_tour:IN_TOURNAMENT]->(tournament)\nMATCH (player)-[scored:SCORED_GOAL]->(match)\nWITH player, COUNT(scored) AS goals\nWHERE goals >= 4\nRETURN player, in_squad, squad, named, team, participates, tournament, in_tour, match, played, scored, player.name, player.dob",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 6,
+        "Grammatical-Validation": false,
+        "Semantic-EQL-Question": "Who were the players from Germany who scored at least four goals in a match during the \"Germany 2014\" tournament, and what are their names and dates of birth?",
+        "Max-Semantic-Score": 0.8552895784378052,
+        "Avg-Semantic-Score": 0.8103734254837036
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Identify the years and names of all tournaments in which players born after 1985, who played in the 'England' team and scored during penalty shootouts, have participated.",
+        "Cypher": "MATCH (team:Team {name:\"England\"})<-[represents:REPRESENTS]-(player:Person)-[played:PLAYED_IN]->(match:Match)\nMATCH (player)-[in_squad:IN_SQUAD]->(squad:Squad)\nMATCH (squad)-[for_tourn:FOR]->(tournament:Tournament)\nWHERE player.dob > date(\"1985-12-31\") AND played.type = \"penalty\" AND played.score > 0\nRETURN team, represents, player, played, match, in_squad, squad, for_tourn, tournament, tournament.year, tournament.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (team:Team {name: \"England\"})<-[represents:REPRESENTS]-(player:Person)-[scored:SCORED_GOAL]->(match:Match)\nMATCH (player)-[born_after:DOB]->(dob:Date)\nMATCH (match)-[in_match:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE dob.year > 1985 AND scored.type = \"penalty\"\nRETURN represents, team, match, scored, player, born_after, dob, in_match, tournament, tournament.year, tournament.name",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "List all tournaments, including their names and years, where players who were born post-1985 and scored in penalty shootouts while playing for the 'England' team have participated."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Provide the names and squad IDs for squads that participated in the 'France 1998' tournament, included players who scored goals in both group stages and knockout stages, and represented more than one nationality.",
+        "Cypher": "MATCH (tournament:Tournament {name: \"France 1998\"})<-[in_tournament:IN_TOURNAMENT]-(team:Team)\nMATCH (team)-[participated:PARTICIPATED_IN]->(squad:Squad)\nMATCH (player:Person)-[played:PLAYED_IN]->(match:Match)\nMATCH (match)-[in_tour:IN_TOURNAMENT]->(tournament)\nWHERE match.stage IN ['group stage', 'knockout stage']\nWITH player, squad, COUNT(DISTINCT match.stage) AS stagesCount\nWHERE stagesCount = 2\nMATCH (player)-[represents:REPRESENTS]->(team)\nWITH squad, COUNT(DISTINCT team) AS teamsCount\nWHERE teamsCount > 1\nRETURN squad, squad.id, tournament, in_tournament, team, participated, squad, player, played, match, in_tour, represents, teamsCount, stagesCount, squad.id",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (tournament:Tournament {name: \"France 1998\"})<-[in_tournament:IN_TOURNAMENT]-(team:Team)\nMATCH (team)-[participated:PARTICIPATED_IN]->(squad:Squad)\nMATCH (player:Person)-[played:PLAYED_IN]->(match:Match)\nMATCH (match)-[in_tour:IN_TOURNAMENT]->(tournament)\nWHERE match.stage IN ['group stage', 'knockout stage']\nWITH player, squad, COUNT(DISTINCT match.stage) AS stagesCount\nWHERE stagesCount = 2\nMATCH (player)-[represents:REPRESENTS]->(team)\nWITH squad, COUNT(DISTINCT team) AS teamsCount\nWHERE teamsCount > 1\nRETURN squad, squad.id, tournament, in_tournament, team, participated, player, played, match, in_tour, represents, teamsCount, stagesCount",
+        "num-hop": 5,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "List the match IDs and the respective stages of matches where players over 35 years old scored from the 'Spain' team during the 'EURO 2020' campaign.",
+        "Cypher": "MATCH (team:Team {name:\"Spain\"})<-[represent:REPRESENTS]-(player:Person)\nMATCH (player)-[scored:SCORED_GOAL]->(match:Match)\nMATCH (match)-[in_tournament:IN_TOURNAMENT]->(tournament:Tournament {name:\"EURO 2020\"})\nWHERE player.dob <= date(\"1985-01-01\")\nRETURN team, represent, player, scored, match, in_tournament, tournament, match.id, match.stage",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the identifiers and corresponding stages of games involving the 'Spain' team during the 'EURO 2020' where players aged over 35 scored."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Retrieve the names of head coaches and the corresponding squad IDs for the teams that reached the semi-finals of the 'Brazil 2014' World Cup and had players scoring goals in the quarter-finals.",
+        "Cypher": "MATCH (tournament:Tournament {name: \"Brazil 2014\"})\nMATCH (match:Match)-[in_tournament:IN_TOURNAMENT]->(tournament)\nWHERE match.stage = \"semi-final\"\nMATCH (team:Team)-[played_in:PLAYED_IN]->(match)\nMATCH (team)-[participated:PARTICIPATED_IN]->(tournament)\nMATCH (player:Person)-[scored:SCORED_GOAL]->(quarter_final_match:Match)-[in_quarter_tournament:IN_TOURNAMENT]->(tournament)\nWHERE quarter_final_match.stage = \"quarter-final\"\nMATCH (team)<-[represent:REPRESENTS]-(player)\nMATCH (squad:Squad)<-[named:NAMED]-(team)\nMATCH (coach:Person)-[coach_for:COACH_FOR]->(squad)\nRETURN team, played_in, match, in_tournament, tournament, player, scored, quarter_final_match, in_quarter_tournament, represent, squad, named, coach, coach_for, coach.name, squad.id",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (tournament:Tournament {name: \"Brazil 2014\"})\nMATCH (match:Match)-[in_tournament:IN_TOURNAMENT]->(tournament)\nWHERE match.stage = \"semi-final\"\nMATCH (team:Team)-[played_in:PLAYED_IN]->(match)\nMATCH (team)-[participated:PARTICIPATED_IN]->(tournament)\nMATCH (player:Person)-[scored:SCORED_GOAL]->(quarter_final_match:Match)-[in_quarter_tournament:IN_TOURNAMENT]->(tournament)\nWHERE quarter_final_match.stage = \"quarter-final\"\nMATCH (team)<-[represent:REPRESENTS]-(player)\nMATCH (squad:Squad)<-[named:NAMED]-(team)\nMATCH (coach:Person)-[coach_for:COACH_FOR]->(squad)\nRETURN participated, team, played_in, match, in_tournament, tournament, player, scored, quarter_final_match, in_quarter_tournament, represent, squad, named, coach, coach_for, coach.name, squad.id",
+        "num-hop": 8,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "Can you identify the squads and their corresponding coaches involved in the \"Brazil 2014\" tournament during the quarter-final and semi-final stages?",
+        "Max-Semantic-Score": 0.8228272795677185,
+        "Avg-Semantic-Score": 0.772166657447815,
+        "Rewrite": "Fetch the names of head coaches along with the squad IDs for teams that made it to the semi-finals of the 'Brazil 2014' World Cup and had players who scored in the quarter-finals."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Can you display the tournament names and the birthdates of players who represented 'Argentina', had a squad ID of 'ARG-20', and participated in matches held in Buenos Aires?",
+        "Cypher": "MATCH (team:Team {name: \"Argentina\"})<-[represents:REPRESENTS]-(player:Person)-[in_squad:IN_SQUAD]->(squad:Squad {id: \"ARG-20\"})\nMATCH (player)-[played_in:PLAYED_IN]->(match:Match)\nMATCH (match)-[in_tour:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE match.location = \"Buenos Aires\"\nRETURN team, represents, player, in_squad, squad, played_in, match, in_tour, tournament, tournament.name, player.dob",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "In what minutes did players from the 'Italy' squad score during the group match against 'Brazil' and the quarter-final against 'Germany' in the 'Italy 1990' World Cup?",
+        "Cypher": "MATCH (italy_team:Team {name:\"Italy\"})<-[represent_italy_players:REPRESENTS]-(player:Person), \n      (player)-[scored_goal:SCORED_GOAL]->(match:Match), \n      (match)-[match_in_tournament:IN_TOURNAMENT]->(world_cup:Tournament {name:\"Italy 1990\"})\nMATCH (opponent_team:Team)-[opponent_played:PLAYED_IN]->(match)\nWHERE (opponent_team.name=\"Brazil\" AND match.stage=\"group match\") OR (opponent_team.name=\"Germany\" AND match.stage=\"quarter-final\")\nRETURN italy_team, represent_italy_players, player, scored_goal, match, match_in_tournament, world_cup, opponent_team, opponent_played, scored_goal.minute",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (italy_team:Team {name: \"Italy\"})-[:REPRESENTS]->(player:Person)\nMATCH (player)-[scored:SCORED_GOAL]->(match:Match)\nMATCH (match)-[InTour:IN_TOURNAMENT]->(world_cup:Tournament {name: \"Italy 1990\"})\nWHERE (match.stage=\"group\" AND EXISTS((match)<-[:PLAYED_IN]-(opponent:Team {name: \"Brazil\"}))) \n   OR (match.stage=\"quarter-final\" AND EXISTS((match)<-[:PLAYED_IN]-(opponent:Team {name: \"Germany\"})))\nRETURN relation9, relation6, italy_team, player, scored, match, InTour, world_cup, opponent, scored.minute",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "During which minutes did 'Italy' team members score in the group stage match against 'Brazil' and in the quarter-final versus 'Germany' during the 'Italy 1990' World Cup?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Detail the minute and type of playing (starter or substitute) for goals scored by 'France' team members in matches that went to extra time during the 'South Africa 2010' World Cup.",
+        "Cypher": "MATCH (team:Team {name:\"France\"})-[represent:REPRESENTS]->(player:Person)\nMATCH (player)-[scored:SCORED_GOAL]->(match:Match)\nMATCH (match)-[in_tournament:IN_TOURNAMENT]->(tournament:Tournament {name:\"South Africa 2010\"})\nMATCH (player)-[played_in:PLAYED_IN]->(match)\nWHERE match.stage = \"extra time\"\nRETURN team, represent, player, scored, match, in_tournament, tournament, played_in, scored.minute, played_in.type",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (team:Team {name:\"France\"})-[represent:REPRESENTS]-(player:Person)\nMATCH (player)-[scored:SCORED_GOAL]->(match:Match)\nMATCH (match)-[in_tournament:IN_TOURNAMENT]->(tournament:Tournament {name:\"South Africa 2010\"})\nMATCH (player)-[played_in:PLAYED_IN]->(match)\nWHERE match.stage = \"extra time\"\nRETURN team, represent, player, scored, match, in_tournament, tournament, played_in, scored.minute, played_in.type",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the exact minutes and player roles (starting or coming off the bench) for goals scored by 'France' team players during extra time in matches of the 'South Africa 2010' World Cup."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Which minutes saw goals scored by defenders playing for 'Netherlands' in the 'Euro 2008', during games that were decided by a margin of more than two goals?",
+        "Cypher": "MATCH (team:Team {name:\"Netherlands\"})<-[represents:REPRESENTS]-(player:Person)-[scored:SCORED_GOAL]->(match:Match)\nMATCH (match)-[played:PLAYED_IN {type:\"defender\"}]->(team)\nMATCH (match)-[in_tournament:IN_TOURNAMENT]->(tournament:Tournament {name:\"Euro 2008\"})\nWHERE abs(played.score - played.penaltyScore) > 2\nRETURN team, represents, player, scored, match, played, in_tournament, tournament, scored.minute",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Corrected-Cypher": "MATCH (team:Team {name:\"Netherlands\"})<-[represents:REPRESENTS]-(player:Person)-[scored:SCORED_GOAL]->(match:Match)\nMATCH (match)-[played:PLAYED_IN {type:\"defender\"}]-(team)\nMATCH (match)-[in_tournament:IN_TOURNAMENT]->(tournament:Tournament {name:\"Euro 2008\"})\nWHERE abs(played.score - played.penaltyScore) > 2\nRETURN team, represents, player, scored, match, played, in_tournament, tournament, scored.minute",
+        "Rewrite": "During which minutes did defenders from the 'Netherlands' score goals in 'Euro 2008' matches that were won by more than two goals?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "How did the relationship between players scoring in the first half and their teams' progression to the next round manifest in the 'USA 1994' World Cup?",
+        "Cypher": "MATCH (tournament:Tournament {name: \"USA 1994\"})\nMATCH (match:Match)-[in_tournament:IN_TOURNAMENT]->(tournament)\nMATCH (player:Person)-[scored_goal:SCORED_GOAL]->(match)\nWHERE toInteger(scored_goal.minute) <= 45\nMATCH (player)-[represents:REPRESENTS]->(team:Team)\nMATCH (team)-[participated:PARTICIPATED_IN]->(tournament)\nMATCH (team)-[played_in_team:PLAYED_IN]->(next_match:Match)-[in_next_tournament:IN_TOURNAMENT]->(tournament)\nWHERE next_match.date > match.date\nRETURN tournament, in_tournament, match, next_match, in_next_tournament, player, scored_goal, represents, team, participated, played_in_team, scored_goal.minute",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 6,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "Which players managed to score within the first half and appeared in later games of the 1994 USA World Cup?",
+        "Max-Semantic-Score": 0.8173356056213379,
+        "Avg-Semantic-Score": 0.7624654650688172,
+        "Rewrite": "How was the correlation between players who scored in the first half and their teams advancing to the next round demonstrated during the 'USA 1994' World Cup?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Report the minute on and score details for goals that led to a team comeback in the second half during the knockout stages of 'Euro 2012'.",
+        "Cypher": "MATCH (match:Match)-[played_in:PLAYED_IN]->(team:Team)\nMATCH (player:Person)-[scored_goal:SCORED_GOAL]->(match)\nMATCH (team)-[participated_in:PARTICIPATED_IN]->(tournament:Tournament {name: \"Euro 2012\"})\nWHERE match.stage CONTAINS \"knockout\" AND toInteger(scored_goal.minute) >= 45 AND (played_in.score <> 0 OR played_in.penaltyScore <> 0)\nRETURN match, played_in, team, player, scored_goal, participated_in, tournament, scored_goal.minute, played_in.score, played_in.penaltyScore",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Corrected-Cypher": "MATCH (match:Match)-[played_in:PLAYED_IN]-(team:Team)\nMATCH (player:Person)-[scored_goal:SCORED_GOAL]->(match)\nMATCH (team)-[participated_in:PARTICIPATED_IN]->(tournament:Tournament {name: \"Euro 2012\"})\nWHERE match.stage CONTAINS \"knockout\" AND toInteger(scored_goal.minute) >= 45 AND (played_in.score <> 0 OR played_in.penaltyScore <> 0)\nRETURN match, played_in, team, player, scored_goal, participated_in, tournament, scored_goal.minute, played_in.score, played_in.penaltyScore",
+        "Rewrite": "Provide information on the timing and scoring of goals that facilitated a team's comeback in the second half of the knockout rounds of 'Euro 2012'."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "What are the penalty score situations and players involved for matches in the 'Germany 2006' World Cup that had winning goals scored in the final 5 minutes of regular time?",
+        "Cypher": "MATCH (tournament:Tournament {name: \"Germany 2006\"})\nMATCH (match:Match)-[in_tournament:IN_TOURNAMENT]->(tournament)\nMATCH (player:Person)-[scored:SCORED_GOAL]->(match)\nMATCH (player)-[played_in:PLAYED_IN]->(match)\nMATCH (team:Team)<-[represents:REPRESENTS]-(player)\nWHERE scored.minute >= \"85\"\nRETURN match, in_tournament, tournament, player, scored, played_in, team, represents, played_in.score, played_in.penaltyScore",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the circumstances and players associated with penalty scores during the 'Germany 2006' World Cup for matches where the winning goals were made in the last 5 minutes of regular play?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Compute the average minute of goals scored by forwards in the 'Final' matches from the last three FIFA World Cups.",
+        "Cypher": "MATCH (tournament:Tournament)\nWHERE tournament.name CONTAINS \"FIFA World Cup\" AND tournament.year >= (date().year - 12)\nWITH collect(tournament) AS recentTournaments\nMATCH (player:Person)-[scored:SCORED_GOAL]->(match:Match)-[:IN_TOURNAMENT]->(recentTournament)\nWHERE recentTournament IN recentTournaments AND match.stage=\"Final\" AND scored.type=\"Forward\"\nRETURN AVG(toInteger(scored.minute))",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the total number of goals scored in matches where at least one player from 'Mexico' was sent off with a red card during the tournament?",
+        "Cypher": "MATCH (player:Person)-[represent:REPRESENTS]->(team:Team)\nMATCH (player)-[played_in:PLAYED_IN]->(match:Match)-[in_tournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE team.name = \"Mexico\" AND played_in.type = \"Red Card\"\nMATCH (scorer:Person)-[scored:SCORED_GOAL]->(match)\nRETURN SUM(scored) AS total_goals",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "How many players, who have scored more than three goals in 'World Cup 2018', were aged 30 or older at the time of the tournament?",
+        "Cypher": "MATCH (player:Person)-[scored:SCORED_GOAL]->(match:Match)-[in:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.name=\"World Cup 2018\" AND tournament.year=2018\nWITH player, COUNT(scored) AS goals\nWHERE goals > 3\nMATCH (player)-[:REPRESENTS]->(team:Team)\nWITH player, goals, duration.between(player.dob, date({year: 2018, month: 6, day: 14})).years AS ageAtTournament\nWHERE ageAtTournament >= 30\nRETURN COUNT(DISTINCT player)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (player:Person)-[scored:SCORED_GOAL]->(match:Match)-[in:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.name=\"World Cup 2018\" AND tournament.year=2018\nWITH player, COUNT(scored) AS goals\nWHERE goals > 3\nMATCH (player)-[relation6:REPRESENTS]->(team:Team)\nWITH player, goals, duration.between(player.dob, date({year: 2018, month: 6, day: 14})).years AS ageAtTournament\nWHERE ageAtTournament >= 30\nRETURN COUNT(DISTINCT player)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many participants in 'World Cup 2018' were 30 years or older and scored more than three goals during the tournament?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Calculate the minimum and maximum penalty scores achieved by teams in semi-final matches, from World Cups held between 2002 and 2014.",
+        "Cypher": "MATCH (team:Team)-[playedIn:PLAYED_IN]->(match:Match)-[inTournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.year >= 2002 AND tournament.year <= 2014 AND match.stage = \"Semi-final\"\nRETURN MIN(playedIn.penaltyScore) AS MinPenaltyScore, MAX(playedIn.penaltyScore) AS MaxPenaltyScore",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the lowest and highest penalty scores recorded by teams during semi-final games in World Cups between 2002 and 2014."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Identify the number of times teams trailing at halftime went on to win the match during 'Euro 2004'.",
+        "Cypher": "MATCH (team:Team)-[firstHalf:PLAYED_IN]->(match:Match)-[inTournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.name = 'Euro 2004' AND firstHalf.type = 'First Half' AND firstHalf.score < 0\nWITH match, team\nMATCH (team)-[secondHalf:PLAYED_IN]->(match)\nWHERE secondHalf.type = 'Second Half' AND secondHalf.score > 0\nRETURN COUNT(DISTINCT match)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine how often teams that were behind at halftime managed to win the game in 'Euro 2004'."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the sum of scores from matches that went into extra time during the 'France 1998' FIFA World Cup?",
+        "Cypher": "MATCH (team:Team)-[playedIn:PLAYED_IN]->(match:Match)-[inTournament:IN_TOURNAMENT]->(tournament:Tournament)\nWHERE tournament.name=\"France 1998\" AND match.stage=\"Extra Time\"\nRETURN SUM(playedIn.score)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the total of scores from games that extended into extra time in the 'France 1998' FIFA World Cup?"
+    }
+]

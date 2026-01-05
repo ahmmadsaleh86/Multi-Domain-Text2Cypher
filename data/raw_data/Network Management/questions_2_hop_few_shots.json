@@ -1,0 +1,189 @@
+[
+    {
+        "Category": "2-hop Node Level",
+        "Question": "What are the attributes of the Version node for the Software named 'Apache' which depends on a Service that runs on OS version 'Linux/5.4'?",
+        "Cypher": "MATCH (software:Software {name:\"Apache\"})-[dependsOnService:DEPENDS_ON]->(service:Service)\nMATCH (service)-[runsOnOS:RUNS]->(os:OS)-[osVersionRel:VERSION]->(version:Version {name: \"Linux/5.4\"})\nMATCH (software)-[softwareVersionRel:VERSION]->(versionSoftware:Version)\nRETURN software, dependsOnService, service, runsOnOS, os, osVersionRel, version, softwareVersionRel, versionSoftware, versionSoftware.name",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "For a Router in Zone 55, list the Interface attributes that connect to a Network with an IP '192.168.1.1'.",
+        "Cypher": "MATCH (router:Router {zone:55})-[routes_to_interface:ROUTES]->(interface:Interface)\nMATCH (interface)-[connects:CONNECTS]->(network:Network {ip:\"192.168.1.1\"})\nRETURN router, routes_to_interface, interface, connects, network, interface.ip",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the attributes of the Interface for a Router in Zone 55 that connects to a Network with the IP '192.168.1.1'."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Identify and list the attributes of all Processes that run on a Machine in DataCenter 'DC-West' which contains Router 'Router-09'.",
+        "Cypher": "MATCH (data_center:DataCenter {name:\"DC-West\"})-[:CONTAINS]->(router:Router {name:\"Router-09\"})\nMATCH (data_center)-[:CONTAINS]->(rack:Rack)-[:HOLDS]->(machine:Machine)-[:RUNS]->(process:Process)\nRETURN data_center, router, rack, machine, process, process.name, process.startTime, process.pid",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (data_center:DataCenter {name:\"DC-West\"})-[relation5:CONTAINS]->(router:Router {name:\"Router-09\"})\nMATCH (data_center)-[relation6:CONTAINS]->(rack:Rack)-[relation7:HOLDS]->(machine:Machine)-[relation8:RUNS]->(process:Process)\nRETURN relation8, relation7, relation6, relation5, data_center, router, rack, machine, process, process.name, process.startTime, process.pid",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Enumerate the characteristics of every Process operating on a Machine located in DataCenter 'DC-West' that includes Router 'Router-09'."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Provide details for all Versions that are instances of OS 'Ubuntu 20.04' that runs Applications having dependencies on Process 'Proc9001'.",
+        "Cypher": "MATCH (os:OS {name:\"Ubuntu 20.04\"})-[os_instance:INSTANCE]->(version:Version)\nMATCH (machine:Machine)-[machine_runs_os:RUNS]->(os)\nMATCH (machine)-[machine_runs_app:RUNS]->(application:Application)-[app_instance:INSTANCE]->(version)\nMATCH (application)-[app_dependency:DEPENDS_ON]->(process:Process {name:\"Proc9001\"})\nRETURN os, os_instance, version, machine, machine_runs_os, machine_runs_app, application, app_instance, app_dependency, process",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (operating_system:OS {name:\"Ubuntu 20.04\"})-[instance_relation:INSTANCE]->(version:Version)\nMATCH (operating_system)-[relation5:RUNS]->(application:Application)-[relation6:DEPENDS_ON]->(process:Process {name:\"Proc9001\"})\nRETURN relation6, relation5, operating_system, instance_relation, version, application, process",
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "Supply information for every Version that is an instance of OS 'Ubuntu 20.04' and operates Applications that rely on Process 'Proc9001'."
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Show details of the Type node linked to Machines, which run an OS having a dependency on an Application named 'NginxServer'.",
+        "Cypher": "MATCH (application:Application {name:\"NginxServer\"})<-[application_dependency:DEPENDS_ON]-(os:OS)-[os_runs:RUNS]->(machine:Machine)-[machine_type:TYPE]->(type:Type)\nRETURN os, application_dependency, application, os_runs, machine, machine_type, type, type.name, type.disk, type.cpu, type.id, type.type, type.ram",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Node Level",
+        "Question": "Retrieve properties of Ports that are exposed by Interfaces in the same Network zone as Zone 'Z102' which also route to Egress 'Eg101'.",
+        "Cypher": "MATCH (selectedZone:Zone {zone: 'Z102'})-[:ROUTES]->(interface:Interface)-[:EXPOSES]->(port:Port)\nMATCH (egress:Egress {name: 'Eg101'})-[:ROUTES]->(interface)-[:CONNECTS]->(network:Network)\nWHERE network.zone = selectedZone.zone\nRETURN selectedZone, interface, port, egress, network, port.port",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (selectedZone:Zone {zone: 'Z102'})-[relation5:ROUTES]->(interface:Interface)-[relation6:EXPOSES]->(port:Port)\nMATCH (egress:Egress {name: 'Eg101'})-[relation7:ROUTES]->(interface)-[relation8:CONNECTS]->(network:Network)\nWHERE network.zone = selectedZone.zone\nRETURN relation8, relation7, relation6, relation5, selectedZone, interface, port, egress, network, port.port",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Obtain attributes of Ports exposed by Interfaces within the same Network zone as Zone 'Z102' and which route to Egress 'Eg101'."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the attributes of the relations between 'Router' nodes and 'Interface' nodes where the Router's zone is '10' and it connects via ROUTES relation to Interfaces having IP '10.1.1.1'?",
+        "Cypher": "MATCH (router:Router {zone:10})-[routesRelation:ROUTES]->(interface:Interface {ip:\"10.1.1.1\"})\nRETURN router, routesRelation, interface",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What characteristics define the connections between 'Router' nodes and 'Interface' nodes when the Router's zone equals '10' and it links through a ROUTES relation to Interfaces with an IP of '10.1.1.1'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "List all relation attributes for VERSION relations from Services named 'WebServer' which also have an INSTANCE relation with Applications named 'WebPortal'.",
+        "Cypher": "MATCH (service:Service {name:\"WebServer\"})-[version_relation:VERSION]->(version:Version)\nMATCH (service)-[:INSTANCE]->(application:Application {name:\"WebPortal\"})\nRETURN service, version_relation, version, application",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (service:Service {name:\"WebServer\"})-[version_relation:VERSION]->(version:Version)\nMATCH (service)-[relation4:INSTANCE]->(application:Application {name:\"WebPortal\"})\nRETURN relation4, service, version_relation, version, application",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Retrieve all attribute details of VERSION relations for Services called 'WebServer' that additionally possess an INSTANCE relation with Applications called 'WebPortal'."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Can you provide details of 'DEPENDS_ON' relations for Software 'DatabaseServer' connected to Versions depended on by Applications used by Process 'Proc2002'?",
+        "Cypher": "MATCH (software:Software {name:\"DatabaseServer\"})-[softwareDepends:DEPENDS_ON]->(version:Version)\nMATCH (application:Application)-[appDepends:DEPENDS_ON]->(version)\nMATCH (process:Process {name:\"Proc2002\"})-[procDepends:DEPENDS_ON]->(application)\nRETURN software, softwareDepends, version, appDepends, application, procDepends, process",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you supply information about the 'DEPENDS_ON' relationships for the Software 'DatabaseServer' linked to Versions that Applications rely on, which are utilized by the Process 'Proc2002'?"
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Expose the relations connected from Egress 'Eg45' to Interfaces, and further to Port '4045' through the EXPOSES relation.",
+        "Cypher": "MATCH (egress:Egress {name:\"Eg45\"})-[routesTo:ROUTES]->(interface:Interface)-[exposesTo:EXPOSES]->(port:Port {port:4045})\nRETURN egress, routesTo, interface, exposesTo, port",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Reveal the connections from Egress 'Eg45' to Interfaces, and onward to Port '4045' via the EXPOSES relation."
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "Provide all details of the RUNS relations affecting Machines in DataCenter 'MainStorage' running Services with PID '30001'.",
+        "Cypher": "MATCH (dataCenter:DataCenter {name:\"MainStorage\"})-[:CONTAINS]->(machine:Machine)-[runsRelation:RUNS]->(service:Service {pid:30001})\nRETURN machine, runsRelation, service, service.name, service.versions, service.ports, service.dependencies, service.startTime, service.pid",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (dataCenter:DataCenter {name:\"MainStorage\"})-[relation3:CONTAINS]->(machine:Machine)-[runsRelation:RUNS]->(service:Service {pid:30001})\nRETURN relation3, dataCenter, machine, runsRelation, service, service.name, service.versions, service.ports, service.dependencies, service.startTime, service.pid",
+        "num-hop": 2,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Relation Level",
+        "Question": "What are the relations between Applications named 'DataAnalytics' via INSTANCE to Services, and the latter's INSTANCES to Versions?",
+        "Cypher": "MATCH (application:Application {name:\"DataAnalytics\"})-[instanceAppToService:INSTANCE]->(service:Service)-[instanceServiceToVersion:INSTANCE]->(version:Version)\nRETURN application, instanceAppToService, service, instanceServiceToVersion, version, application.name, service.name, version.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the connections between 'DataAnalytics' Applications through INSTANCE to Services, and the connections of these Services' INSTANCES to Versions?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the average 'disk' size of the Type nodes for the Machines that run Services named 'HTTPServer'?",
+        "Cypher": "MATCH (machine:Machine)-[:RUNS]->(service:Service {name: \"HTTPServer\"})\nMATCH (machine)-[:TYPE]->(type:Type)\nRETURN AVG(type.disk) AS averageDiskSize",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (machine:Machine)-[relation3:RUNS]->(service:Service {name: \"HTTPServer\"})\nMATCH (machine)-[relation4:TYPE]->(type:Type)\nRETURN AVG(type.disk) AS averageDiskSize",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical size of the 'disk' for Type nodes in Machines operating Services called 'HTTPServer'?"
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Calculate the average start time of all Processes that depend on Software named 'SQLServer' which in turn depends on Applications named 'DataWarehousing'.",
+        "Cypher": "MATCH (process:Process)-[:DEPENDS_ON]->(software:Software)-[:DEPENDS_ON]->(application:Application)\nWHERE software.name = 'SQLServer' AND application.name = 'DataWarehousing'\nRETURN AVG(process.startTime) AS averageStartTime",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (process:Process)-[relation3:DEPENDS_ON]->(software:Software)-[relation4:DEPENDS_ON]->(application:Application)\nWHERE software.name = 'SQLServer' AND application.name = 'DataWarehousing'\nRETURN AVG(process.startTime) AS averageStartTime",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the mean start time of all Processes reliant on a Software called 'SQLServer', itself dependent on Applications known as 'DataWarehousing'."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Count the total number of Ports that are listened by Services with a dependency on Software named 'Firewall'. The said Services must also have versions including '1.2.0'.",
+        "Cypher": "MATCH (service:Service)-[:LISTENS]->(port:Port),\n      (service)-[:DEPENDS_ON]->(software:Software),\n      (service)-[:VERSION]->(version:Version)\nWHERE software.name = \"Firewall\" AND \"1.2.0\" IN service.versions\nRETURN COUNT(DISTINCT port)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (service:Service)-[relation4:LISTENS]->(port:Port),\n      (service)-[relation5:DEPENDS_ON]->(software:Software),\n      (service)-[relation6:VERSION]->(version:Version)\nWHERE software.name = \"Firewall\" AND \"1.2.0\" IN service.versions\nRETURN COUNT(DISTINCT port)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the total number of Ports that are being listened to by Services dependent on Software called 'Firewall' and also include versions '1.2.0'."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Find the maximum ram size from Types where the Machines host an OS that runs Processes depending on an Application called 'FileServer'.",
+        "Cypher": "MATCH (machine:Machine)-[:RUNS]->(os:OS)-[:RUNS]->(process:Process)-[:DEPENDS_ON]->(application:Application {name: \"FileServer\"})\nMATCH (machine)-[:TYPE]->(type:Type)\nRETURN MAX(type.ram) AS maxRam",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (machine:Machine)-[relation5:RUNS]->(os:OS)-[relation6:RUNS]->(process:Process)-[relation7:DEPENDS_ON]->(application:Application {name: \"FileServer\"})\nMATCH (machine)-[relation8:TYPE]->(type:Type)\nRETURN MAX(type.ram) AS maxRam",
+        "num-hop": 4,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "Determine the minimum PID in Processes that are 'INSTANCE' of Applications running under OS 'Ubuntu 18.04' in Machines held on Rack 'R10'.",
+        "Cypher": "MATCH (rack:Rack {name: \"R10\"})-[:HOLDS]->(machine:Machine)-[:RUNS]->(os:OS {name: \"Ubuntu 18.04\"}),\n      (machine)-[:RUNS]->(application:Application)-[:INSTANCE]->(process:Process)\nRETURN MIN(process.pid) AS MinPID",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (rack:Rack {name: \"R10\"})-[relation5:HOLDS]->(machine:Machine)-[relation6:RUNS]->(os:OS {name: \"Ubuntu 18.04\"}),\n      (machine)-[relation7:RUNS]->(application:Application)-[relation8:INSTANCE]-(process:Process)\nRETURN MIN(process.pid) AS MinPID",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Find the smallest PID among Processes that are 'INSTANCE' of Applications operating on OS 'Ubuntu 18.04' within Machines located in Rack 'R10'."
+    },
+    {
+        "Category": "2-hop Statistical Level",
+        "Question": "What is the total number of Interfaces that route to Zones where Router 'Rt55' is connected and Machine 'Mach77' runs?",
+        "Cypher": "MATCH (router:Router {name: \"Rt55\"})-[:ROUTES]->(interface:Interface)<-[:ROUTES]-(zone:Zone),\n      (machine:Machine {name: \"Mach77\"})-[:ROUTES]->(interface)\nRETURN COUNT(DISTINCT interface) AS totalInterfaces",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (router:Router {name: \"Rt55\"})-[relation4:ROUTES]->(interface:Interface)<-[relation5:ROUTES]-(zone:Zone),\n      (machine:Machine {name: \"Mach77\"})-[relation6:ROUTES]->(interface)\nRETURN COUNT(DISTINCT interface) AS totalInterfaces",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many Interfaces lead to Zones connected to Router 'Rt55' and host Machine 'Mach77'?"
+    }
+]

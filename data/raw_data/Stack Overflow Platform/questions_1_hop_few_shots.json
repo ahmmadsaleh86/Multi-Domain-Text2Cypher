@@ -1,0 +1,184 @@
+[
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Can you list the display names of users who have asked questions tagged 'JavaScript' since January 1, 2023?",
+        "Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question)-[tagged:TAGGED]->(tag:Tag {name:\"JavaScript\"})\nWHERE question.creation_date >= date(\"2023-01-01\")\nRETURN user, asked, question, tagged, tag, user.display_name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide the display names of users who have posted questions with the 'JavaScript' tag since January 1, 2023?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the titles and view counts of questions asked by the user with the display name 'JohnDoe' that have more than two tags?",
+        "Cypher": "MATCH (user:User {display_name:\"JohnDoe\"})-[ask:ASKED]->(question:Question)\nWHERE size((question)-[:TAGGED]->(:Tag)) > 2\nRETURN user, ask, question, question.title, question.view_count",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User {display_name:\"JohnDoe\"})-[ask:ASKED]->(question:Question)\nWHERE size((question)-[:TAGGED]->(node2:Tag)) > 2\nRETURN relation4, node2, user, ask, question, question.title, question.view_count",
+        "num-hop": 2,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Could you provide the titles and scores of the top 5 highest scoring answers provided by a user whose display name starts with 'Alice'?",
+        "Cypher": "MATCH (user:User {display_name:\"Alice\"})-[provided:PROVIDED]->(answer:Answer)\nRETURN user, provided, answer, answer.title, answer.score\nORDER BY answer.score DESC\nLIMIT 5",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Please list the titles and scores of the top 5 answers with the highest scores submitted by a user with a display name beginning with 'Alice'."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the links and titles of all the questions commented on by the user with UUID '12345' within the last year?",
+        "Cypher": "MATCH (user:User {uuid:12345})-[commented:COMMENTED]->(comment:Comment)-[commentedOn:COMMENTED_ON]->(question:Question)\nWHERE question.creation_date >= date({year:2022})\nRETURN user, commented, comment, commentedOn, question, question.link, question.title",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the URLs and names of all questions that received comments from the user with the UUID '12345' in the past year?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Please show me all questions with the tag 'Python' that have an accepted answer, including their link and answer count.",
+        "Cypher": "MATCH (question:Question)-[tagged:TAGGED]->(tag:Tag {name:\"Python\"})\nWHERE question.accepted_answer_id IS NOT NULL\nRETURN question, tagged, tag, question.link, question.answer_count",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Display all questions tagged 'Python' that include an accepted answer, along with their links and the number of answers."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "List the titles and creation dates of all questions authored by users who have also provided an answer with a score greater than 50.",
+        "Cypher": "MATCH (user:User)-[provided:PROVIDED]->(answer:Answer {score: 51})\nMATCH (user)-[asked:ASKED]->(question:Question)\nRETURN user, provided, answer, asked, question, question.title, question.creation_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the names and dates of questions created by users who have also written an answer with a score above 50."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What type of relationships exist between users named 'Sarah' and the questions they have tagged?",
+        "Cypher": "MATCH (user:User {display_name:\"Sarah\"})-[ask:ASKED]->(question:Question)-[tagged:TAGGED]->(tag:Tag)\nRETURN user, ask, question, tagged, tag",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What kind of connections are there between users called 'Sarah' and the questions they have marked with tags?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Could I see the relationships between comments that have a score above 10 and the questions they are linked with?",
+        "Cypher": "MATCH (comment:Comment)-[commentedOn:COMMENTED_ON]->(question:Question)\nWHERE comment.score > 10\nRETURN comment, commentedOn, question, comment.link, question.title",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Is it possible for me to view the connections between comments with a score exceeding 10 and the associated questions?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Which relationships connect answers having a score more than 100 to their corresponding questions?",
+        "Cypher": "MATCH (highScoringAnswer:Answer)-[answeredRelation:ANSWERED]->(relatedQuestion:Question)\nWHERE highScoringAnswer.score > 100\nRETURN highScoringAnswer, answeredRelation, relatedQuestion",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which links exist between answers with a score over 100 and their respective questions?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Display the types of relations between all users with a UUID ending in '990' and the questions they have asked.",
+        "Cypher": "MATCH (user:User)-[askedRelation:ASKED]->(userQuestion:Question)\nWHERE user.uuid % 1000 = 990\nRETURN user, askedRelation, userQuestion, user.uuid, userQuestion.uuid",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Show the kinds of relationships between all users whose UUID ends in '990' and the questions they posed."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Can you identify the type of relations between the comments and the questions that have linked back to comments scored higher than 15?",
+        "Cypher": "MATCH (comment:Comment)-[commented_on:COMMENTED_ON]->(question:Question)\nWHERE comment.score > 15\nRETURN comment, commented_on, question, comment.link, question.link",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you determine the kind of relationships between the comments and questions that link back to comments with scores over 15?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What kind of relation connects answers provided by the user with UUID '200202' and the questions that have more than 10000 views?",
+        "Cypher": "MATCH (user:User {uuid:200202})-[provided:PROVIDED]->(answer:Answer)-[answered:ANSWERED]->(question:Question)\nWHERE question.view_count > 10000\nRETURN user, provided, answer, answered, question",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What type of connection exists between responses given by the user with UUID '200202' and questions that receive over 10,000 views?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the average score of answers provided to the questions tagged with 'Java'?",
+        "Cypher": "MATCH (answer:Answer)-[provided:ANSWERED]->(question:Question)-[tagged:TAGGED]->(tag:Tag)\nWHERE tag.name=\"Java\"\nRETURN AVG(answer.score)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the mean score of responses to questions labeled 'Java'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Could you calculate the total number of views for questions asked by users who have a display name starting with 'Deb'?",
+        "Cypher": "MATCH (user:User)-[asked:ASKED]->(question:Question)\nWHERE user.display_name STARTS WITH 'Deb'\nRETURN SUM(question.view_count)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you determine the total views for questions posted by users whose display name begins with 'Deb'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the maximum score among all comments made on questions created in the first half of 2023?",
+        "Cypher": "MATCH (comment:Comment)-[:COMMENTED_ON]->(question:Question)\nWHERE question.creation_date >= date('2023-01-01') AND question.creation_date <= date('2023-06-30')\nRETURN MAX(comment.score)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (comment:Comment)-[relation2:COMMENTED_ON]->(question:Question)\nWHERE question.creation_date >= date('2023-01-01') AND question.creation_date <= date('2023-06-30')\nRETURN MAX(comment.score)",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest score from comments on questions posted during the initial six months of 2023?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Can you find the total number of users who have commented on more than 3 questions last year?",
+        "Cypher": "MATCH (user:User)-[commented:COMMENTED]->(comment:Comment)-[commentedOn:COMMENTED_ON]->(question:Question)\nWHERE question.creation_date >= date({year:2022, month:1, day:1}) AND question.creation_date < date({year:2023, month:1, day:1})\nWITH user, COUNT(DISTINCT question) AS numQuestions\nWHERE numQuestions > 3\nRETURN COUNT(DISTINCT user) AS TotalUsersCommentedOnMoreThan3Questions",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you determine how many users commented on over three questions in the previous year?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the average count of tags attached to questions that have more than 5000 views?",
+        "Cypher": "MATCH (question:Question)-[tagged:TAGGED]->(tag:Tag)\nWHERE question.view_count > 5000\nWITH question, COUNT(tag) AS tagCount\nRETURN AVG(tagCount) AS averageTagCount",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical number of tags associated with questions receiving over 5000 views?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Calculate the sum of all scores of the answers linked to questions with more than 5 answers.",
+        "Cypher": "MATCH (question:Question)-[received:ANSWERED]->(answer:Answer)\nWHERE question.answer_count > 5\nRETURN SUM(answer.score)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (question:Question)-[received:ANSWERED]-(answer:Answer)\nWHERE question.answer_count > 5\nRETURN SUM(answer.score)",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Compute the total of all scores for answers associated with questions that have over 5 responses."
+    }
+]

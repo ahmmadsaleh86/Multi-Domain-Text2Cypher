@@ -1,0 +1,222 @@
+[
+    {
+        "Type": "Node",
+        "Label": "Vehicle",
+        "Attributes": {
+            "make": "String",
+            "model": "String",
+            "year": "Integer",
+            "reg": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Area",
+        "Attributes": {
+            "areaCode": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Email",
+        "Attributes": {
+            "email_address": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Phone",
+        "Attributes": {
+            "phoneNo": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Crime",
+        "Attributes": {
+            "id": "String",
+            "date": "Date",
+            "type": "String",
+            "last_outcome": "String",
+            "charge": "String",
+            "note": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "PhoneCall",
+        "Attributes": {
+            "call_date": "Date",
+            "call_type": "String",
+            "call_duration": "Double",
+            "call_time": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Object",
+        "Attributes": {
+            "id": "String",
+            "type": "String",
+            "description": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "PostCode",
+        "Attributes": {
+            "code": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Person",
+        "Attributes": {
+            "nhs_no": "String",
+            "name": "String",
+            "surname": "String",
+            "age": "Integer"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Location",
+        "Attributes": {
+            "address": "String",
+            "postcode": "String",
+            "longitude": "Double",
+            "latitude": "Double"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Officer",
+        "Attributes": {
+            "name": "String",
+            "surname": "String",
+            "badge_no": "String",
+            "rank": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "INVOLVED_IN",
+        "Attributes": {},
+        "From": "Vehicle",
+        "To": "Crime"
+    },
+    {
+        "Type": "Relation",
+        "Label": "CALLER",
+        "Attributes": {},
+        "From": "PhoneCall",
+        "To": "Phone"
+    },
+    {
+        "Type": "Relation",
+        "Label": "KNOWS_PHONE",
+        "Attributes": {},
+        "From": "Person",
+        "To": "Person"
+    },
+    {
+        "Type": "Relation",
+        "Label": "FAMILY_REL",
+        "Attributes": {
+            "rel_type": "String"
+        },
+        "From": "Person",
+        "To": "Person"
+    },
+    {
+        "Type": "Relation",
+        "Label": "INVESTIGATED_BY",
+        "Attributes": {},
+        "From": "Crime",
+        "To": "Officer"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_EMAIL",
+        "Attributes": {},
+        "From": "Person",
+        "To": "Email"
+    },
+    {
+        "Type": "Relation",
+        "Label": "KNOWS_SN",
+        "Attributes": {},
+        "From": "Person",
+        "To": "Person"
+    },
+    {
+        "Type": "Relation",
+        "Label": "KNOWS",
+        "Attributes": {},
+        "From": "Person",
+        "To": "Person"
+    },
+    {
+        "Type": "Relation",
+        "Label": "CALLED",
+        "Attributes": {},
+        "From": "PhoneCall",
+        "To": "Phone"
+    },
+    {
+        "Type": "Relation",
+        "Label": "POSTCODE_IN_AREA",
+        "Attributes": {},
+        "From": "PostCode",
+        "To": "Area"
+    },
+    {
+        "Type": "Relation",
+        "Label": "CURRENT_ADDRESS",
+        "Attributes": {},
+        "From": "Person",
+        "To": "Location"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_POSTCODE",
+        "Attributes": {},
+        "From": "Location",
+        "To": "PostCode"
+    },
+    {
+        "Type": "Relation",
+        "Label": "OCCURRED_AT",
+        "Attributes": {},
+        "From": "Crime",
+        "To": "Location"
+    },
+    {
+        "Type": "Relation",
+        "Label": "KNOWS_LW",
+        "Attributes": {},
+        "From": "Person",
+        "To": "Person"
+    },
+    {
+        "Type": "Relation",
+        "Label": "LOCATION_IN_AREA",
+        "Attributes": {},
+        "From": "Location",
+        "To": "Area"
+    },
+    {
+        "Type": "Relation",
+        "Label": "PARTY_TO",
+        "Attributes": {},
+        "From": "Person",
+        "To": "Crime"
+    },
+    {
+        "Type": "Relation",
+        "Label": "HAS_PHONE",
+        "Attributes": {},
+        "From": "Person",
+        "To": "Phone"
+    }
+]

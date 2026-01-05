@@ -1,0 +1,122 @@
+[
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What are the full details of the vehicle with vehicle_id 'VH12345'?",
+        "Cypher": "MATCH  (vehicle:Vehicle)\nWHERE vehicle.vehicle_id=\"VH12345\"\nRETURN vehicle, vehicle.make, vehicle.model, vehicle.year",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide complete information for the vehicle with the vehicle_id 'VH12345'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Can you provide the attributes for the employee identified by employee_id 'EMP002'?",
+        "Cypher": "MATCH (employee:Employee)\nWHERE employee.employee_id=\"EMP002\"\nRETURN employee, employee.title, employee.start_date, employee.end_date, employee.email, employee.phone_number",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the characteristics of the worker specified by employee_id 'EMP002'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Show all information held on the 'Public Health' department.",
+        "Cypher": "MATCH (department:Department)\nWHERE department.name=\"Public Health\"\nRETURN department, department.department_id, department.name, department.phone, department.email",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Display all data related to the 'Public Health' department."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "I'd like to know the description and name for the service with service_id 'SERV-1001'.",
+        "Cypher": "MATCH  (requestedService:Service)\nWHERE requestedService.service_id = 'SERV-1001'\nRETURN requestedService, requestedService.description, requestedService.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Please provide the name and description of the service identified by service_id 'SERV-1001'."
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "What details do you have on file for the document with document_id 'DOC809'?",
+        "Cypher": "MATCH (document:Document)\nWHERE document.document_id=\"DOC809\"\nRETURN document, document.type, document.issue_date, document.expiration_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the information you have on record for the document identified by document_id 'DOC809'?"
+    },
+    {
+        "Category": "0-hop Node Level",
+        "Question": "Provide the attribute values for the payment entry labeled by payment_id 'PAY777'.",
+        "Cypher": "MATCH (payment:Payment)\nWHERE payment.payment_id = 'PAY777'\nRETURN payment, payment.amount, payment.payment_date, payment.method",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Supply the attribute values for the payment entry identified by payment_id 'PAY777'."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many people are recorded in the database?",
+        "Cypher": "MATCH (person:Person)\nRETURN COUNT(person)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the number of individuals listed in the database?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Can you count the number of active employees whose start_date is before '2020-01-01' and who don't have an end_date?",
+        "Cypher": "MATCH (employee:Employee)\nWHERE employee.start_date < date('2020-01-01') AND employee.end_date IS NULL\nRETURN COUNT(employee)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you tally the total number of current employees who began their employment prior to '2020-01-01' and have no end_date listed?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the average amount of payments made in the year 2022?",
+        "Cypher": "MATCH (person:Person)-[made:MADE]->(payment:Payment)\nWHERE payment.payment_date.year = 2022\nRETURN AVG(payment.amount)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the mean value of payments processed in the year 2022?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "Find the maximum and minimum 'year' attributes for all vehicles registered in the system.",
+        "Cypher": "MATCH (vehicle:Vehicle)\nRETURN MAX(vehicle.year) AS MaximumYear, MIN(vehicle.year) AS MinimumYear",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the highest and lowest 'year' attributes for every vehicle recorded in the system."
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "How many applications were submitted in the last 30 days?",
+        "Cypher": "MATCH (application:Application)\nWHERE application.submission_date >= date()-duration({days: 30})\nRETURN COUNT(application) AS TotalApplicationsSubmittedLast30Days",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many applications have been submitted over the past 30 days?"
+    },
+    {
+        "Category": "0-hop Statistical Level",
+        "Question": "What is the total number of services provided by the E-Government system, excluding those with a description longer than 50 words?",
+        "Cypher": "MATCH (service:Service)\nWHERE size(split(service.description, ' ')) <= 50\nRETURN COUNT(DISTINCT service)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 0,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many services does the E-Government system offer if we exclude any that have descriptions exceeding 50 words in length?"
+    }
+]

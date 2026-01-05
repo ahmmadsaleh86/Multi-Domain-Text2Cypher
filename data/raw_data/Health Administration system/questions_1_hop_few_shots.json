@@ -1,0 +1,174 @@
+[
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What is the address and phone number of the hospital where patient 'John Doe' visited on '01-Jan-2023'?",
+        "Cypher": "MATCH (patient:Patient {first_name:\"John\", last_name:\"Doe\"})-[visit:VISITS]->(hospital:Hospital)\nWHERE visit.visit_date = date(\"2023-01-01\")\nRETURN patient, visit, hospital, hospital.address, hospital.phone_number",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the address and contact number for the hospital that 'John Doe' went to on '01-Jan-2023'?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Provide the email and specialization of Dr. 'Alice Johnson' who has an appointment scheduled on '15-Mar-2023'.",
+        "Cypher": "MATCH (doctor:Doctor {first_name:\"Alice\", last_name:\"Johnson\"})-[consults:CONSULTS]->(appointment:Appointment {date: datetime('2023-03-15')})\nRETURN doctor, consults, appointment, doctor.email, doctor.specialization",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Please give the email and field of expertise for Dr. 'Alice Johnson', who is booked for an appointment on '15-Mar-2023'."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Retrieve the diagnosis and treatment details from the medical record owned by patient 'Emma Stone' recorded on '20-Feb-2023'.",
+        "Cypher": "MATCH (patient:Patient {first_name:\"Emma\", last_name:\"Stone\"})-[own:OWNS]->(record:MedicalRecord {date_recorded: date(\"2023-02-20\")})\nRETURN patient, own, record, record.diagnosis, record.treatment",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Extract the details of diagnosis and treatment from the medical record of patient 'Emma Stone' dated '20-Feb-2023'."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the names and descriptions of the medications prescribed by Dr. 'Robert Smith' starting from '01-Jan-2023' to '31-Jan-2023'?",
+        "Cypher": "MATCH (doctor:Doctor)-[prescribe:PRESCRIBES]->(medication:Medication)\nWHERE doctor.first_name=\"Robert\" AND doctor.last_name=\"Smith\" AND prescribe.start_date >= date('2023-01-01') AND prescribe.start_date <= date('2023-01-31')\nRETURN doctor, prescribe, medication, medication.name, medication.description",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide a list of medications along with their descriptions that Dr. 'Robert Smith' prescribed between '01-Jan-2023' and '31-Jan-2023'?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "List the first name, last name, and email of all patients who are covered by the insurance plan with a premium greater than $500.",
+        "Cypher": "MATCH (patient:Patient)-[covered:COVERED_BY]->(plan:InsurancePlan)\nWHERE plan.premium > 500\nRETURN patient, covered, plan, patient.first_name, patient.last_name, patient.email",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the first name, last name, and email for every patient under an insurance plan where the premium exceeds $500."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Can you provide the full name and phone number of the doctors who work in the 'Oncology' department that joined before '2020'?",
+        "Cypher": "MATCH (doctor:Doctor)-[worksAt:WORKS_AT]->(hospital:Hospital), (doctor)-[isIn:IS_IN]->(department:Department {name: \"Oncology\"})\nWHERE isIn.join_date < date('2020-01-01')\nRETURN doctor, worksAt, hospital, isIn, department, doctor.first_name, doctor.last_name, doctor.phone_number",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the complete names and contact numbers of the doctors from the 'Oncology' department who were employed prior to '2020'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What was the purpose and visit date of 'Lucas Green's' last visit to any hospital?",
+        "Cypher": "MATCH (patient:Patient {first_name:\"Lucas\", last_name:\"Green\"})-[visit:VISITS]->(hospital:Hospital)\nRETURN patient, visit, hospital, visit.purpose, visit.visit_date\nORDER BY visit.visit_date DESC\nLIMIT 1",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What was the reason and date of 'Lucas Green's' most recent hospital visit?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "For the appointment dated '23-Apr-2023', what were the statuses of all the appointments consulted by Dr. 'Emily White'?",
+        "Cypher": "MATCH (doctor:Doctor {first_name:\"Emily\", last_name:\"White\"})-[consult:CONSULTS]->(appointment:Appointment {date: datetime('2023-04-23')})\nRETURN doctor, consult, appointment, appointment.status",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "On the date '23-Apr-2023', what were the conditions of all the appointments handled by Dr. 'Emily White'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What are the dosage instructions and period of prescription for the medications Dr. 'Henry Lee' prescribed to his patients in March 2023?",
+        "Cypher": "MATCH (doctor:Doctor {first_name:\"Henry\", last_name:\"Lee\"})-[prescribes:PRESCRIBES]->(medication:Medication)<-[takes:TAKES]-(patient:Patient)\nWHERE prescribes.start_date >= date(\"2023-03-01\") AND prescribes.end_date <= date(\"2023-03-31\")\nRETURN doctor, prescribes, medication, patient, takes, medication.name, prescribes.dosage, prescribes.start_date, prescribes.end_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the instructions for dosage and the duration of the prescription for the medications prescribed by Dr. 'Henry Lee' to his patients in March 2023?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Identify the date and dosage of medication 'Paracetamol' taken by patient 'Sophia Brown' throughout January 2023.",
+        "Cypher": "MATCH (patient:Patient {first_name:\"Sophia\", last_name:\"Brown\"})-[takes:TAKES]->(medication:Medication {name:\"Paracetamol\"})\nWHERE date(takes.prescription_date) >= date(\"2023-01-01\") AND date(takes.prescription_date) <= date(\"2023-01-31\")\nRETURN patient, takes, medication, takes.prescription_date, takes.dose",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the dosage and dates on which the patient 'Sophia Brown' took the medication 'Paracetamol' during January 2023."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What payment methods were used by 'Michael Davis' for his transactions in 'Q1 2023'?",
+        "Cypher": "MATCH (patient:Patient)-[makesPayment:MAKES_PAYMENT]->(payment:Payment)\nWHERE patient.first_name=\"Michael\" AND patient.last_name=\"Davis\" AND payment.date >= date('2023-01-01') AND payment.date <= date('2023-03-31')\nRETURN patient, makesPayment, payment, makesPayment.payment_method",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What forms of payment did 'Michael Davis' utilize for his transactions during 'Q1 2023'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "When did 'Sarah Wilson' enroll in the insurance plan that has a premium of over $400 and is offered by 'XYZ Insurance Company'?",
+        "Cypher": "MATCH (patient:Patient {first_name: \"Sarah\", last_name: \"Wilson\"})-[enrollment:COVERED_BY]->(insurancePlan:InsurancePlan)-[offer:OFFERS]->(insuranceCompany:InsuranceCompany {name: \"XYZ Insurance Company\"})\nWHERE insurancePlan.premium > 400\nRETURN patient, enrollment, insurancePlan, offer, insuranceCompany, enrollment.enrollment_date",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (patient:Patient {first_name: \"Sarah\", last_name: \"Wilson\"})-[enrollment:COVERED_BY]->(insurancePlan:InsurancePlan)-[offer:OFFERS]-(insuranceCompany:InsuranceCompany {name: \"XYZ Insurance Company\"})\nWHERE insurancePlan.premium > 400\nRETURN patient, enrollment, insurancePlan, offer, insuranceCompany, enrollment.enrollment_date",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What was the enrollment date for 'Sarah Wilson' in the insurance plan from 'XYZ Insurance Company' with a premium exceeding $400?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the average amount of payments made by patients in '2023' for treatments related to 'Dermatology'?",
+        "Cypher": "MATCH (patient:Patient)-[paymentRelation:MAKES_PAYMENT]->(payment:Payment)\nMATCH (appointment:Appointment)<-[appointmentRelation:HAS_APPOINTMENT]-(patient)\nMATCH (doctor:Doctor)-[consultRelation:CONSULTS]->(appointment)\nMATCH (doctor)-[worksAtRelation:WORKS_AT]->(hospital:Hospital)\nMATCH (department:Department)<-[:IS_IN]-(doctor)\nWHERE payment.date.year = 2023 AND department.name = \"Dermatology\"\nRETURN AVG(payment.amount)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (patient:Patient)-[paymentRelation:MAKES_PAYMENT]->(payment:Payment)\nMATCH (appointment:Appointment)<-[appointmentRelation:HAS_APPOINTMENT]-(patient)\nMATCH (doctor:Doctor)-[consultRelation:CONSULTS]->(appointment)\nMATCH (doctor)-[worksAtRelation:WORKS_AT]->(hospital:Hospital)\nMATCH (department:Department)<-[relation10:IS_IN]-(doctor)\nWHERE payment.date.year = 2023 AND department.name = \"Dermatology\"\nRETURN AVG(payment.amount)",
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical payment amount by patients for 'Dermatology' treatments in '2023'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many times did patients visit 'General Hospital' for 'check-up' purposes in the last quarter of 2023?",
+        "Cypher": "MATCH (patient:Patient)-[visit:VISITS]->(hospital:Hospital)\nWHERE hospital.name = \"General Hospital\" AND visit.purpose = \"check-up\" \nAND visit.visit_date >= datetime('2023-10-01T00:00:00') AND visit.visit_date < datetime('2024-01-01T00:00:00')\nRETURN COUNT(visit)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "In the final quarter of 2023, how frequently did patients attend 'General Hospital' for 'check-up' reasons?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Count the number of appointments handled by Dr. 'Anna Lee' where the status was either 'Completed' or 'Cancelled' in '2022'.",
+        "Cypher": "MATCH (doctor:Doctor)-[consults:CONSULTS]->(appointment:Appointment)\nWHERE doctor.first_name = \"Anna\" AND doctor.last_name = \"Lee\" \n  AND appointment.status IN [\"Completed\", \"Cancelled\"]\n  AND appointment.date.year = 2022\nRETURN COUNT(appointment)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Tally the total appointments managed by Dr. 'Anna Lee' in '2022' that were marked as 'Completed' or 'Cancelled'."
+    },
+    {
+        "Category": "1-hop Statistical Count",
+        "Question": "Can you calculate the total number of medications prescribed by any doctor to patients aged over 65 as of '2023'?",
+        "Cypher": "MATCH (patient:Patient)-[takes:TAKES]->(medication:Medication)<-[prescribes:PRESCRIBES]-(doctor:Doctor)\nWHERE patient.date_of_birth <= date({year: 2023 - 65, month: 1, day: 1})\nRETURN COUNT(DISTINCT medication)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Is it possible for you to determine the aggregate number of prescriptions issued by doctors to patients older than 65 by the year 2023?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Determine the minimum and maximum dosages prescribed for the medication 'Ibuprofen' during the 'COVID-19 pandemic' period.",
+        "Cypher": "MATCH (medication:Medication)<-[prescription:PRESCRIBES]-(doctor:Doctor)\nWHERE medication.name = \"Ibuprofen\" AND prescription.start_date >= date('2020-01-01') AND prescription.end_date <= date('2021-12-31')\nRETURN MIN(prescription.dosage) AS MinDosage, MAX(prescription.dosage) AS MaxDosage",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Identify the lowest and highest dosages of 'Ibuprofen' that were prescribed throughout the 'COVID-19 pandemic'."
+    }
+]

@@ -1,0 +1,182 @@
+[
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What is the email address and office location of the professor teaching the course with ID 102 during the Spring 2023 semester?",
+        "Cypher": "MATCH (prof:Professor)-[teaches:TEACHES]->(course:Course)\nWHERE course.course_id = 102 AND teaches.semester = \"Spring\" AND teaches.year = 2023\nRETURN prof, teaches, course, prof.email, prof.office",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the office location and email address of the professor who teaches course ID 102 in the Spring 2023 semester?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Can you provide the first name, last name, and gender of the student with ID 458 who enrolled in the course titled 'Data Structures'?",
+        "Cypher": "MATCH (student:Student)-[enrollment:ENROLLED_IN]->(course:Course)\nWHERE student.student_id = 458 AND course.name = 'Data Structures'\nRETURN student, enrollment, course, student.first_name, student.last_name, student.gender",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you supply the first name, last name, and gender for the student with ID 458 registered in the 'Data Structures' course?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the name and description of the course offered by the 'Electrical Engineering' department that requires 3 credits?",
+        "Cypher": "MATCH (department:Department)-[offer:OFFERS]->(course:Course)\nWHERE department.name=\"Electrical Engineering\" AND course.credits=3\nRETURN department, offer, course, course.name, course.description",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you provide the name and description of the 3-credit course from the 'Electrical Engineering' department?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Which professor managed the 'Finance' department starting from January 1st, 2018 to December 31st, 2021?",
+        "Cypher": "MATCH (professor:Professor)-[manages:MANAGES]->(department:Department)\nWHERE department.name = \"Finance\" AND manages.start_date >= date(\"2018-01-01\") AND manages.end_date <= date(\"2021-12-31\")\nRETURN professor, manages, department, professor.professor_id, professor.first_name, professor.last_name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "From January 1st, 2018 to December 31st, 2021, which professor was in charge of the 'Finance' department?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Find the maximum capacity and room number of the classroom where the event titled 'Graduation 2023' was held.",
+        "Cypher": "MATCH (event:Event)-[heldInRelation:HELD_IN]->(classroom:Classroom)\nWHERE event.title = 'Graduation 2023'\nRETURN event, heldInRelation, classroom, classroom.capacity, classroom.room_number",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the largest capacity and number of the room that hosted the 'Graduation 2023' event."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Provide the first name and email of all students belonging to the department located in 'Thompson' building.",
+        "Cypher": "MATCH (student:Student)-[belongs:BELONGS_TO]->(department:Department)\nWHERE department.building = 'Thompson'\nRETURN student, belongs, department, student.first_name, student.email",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the first names and emails of all students associated with the department in the 'Thompson' building."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What grade did student John Doe receive in the 'Algorithms' course he enrolled in on September 1st, 2021?",
+        "Cypher": "MATCH (student:Student)-[enrollment:ENROLLED_IN]->(course:Course)\nWHERE student.first_name=\"John\" AND student.last_name=\"Doe\" AND course.name=\"Algorithms\" AND enrollment.enrollment_date = date(\"2021-09-01\")\nRETURN student, enrollment, course, enrollment.grade",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What was the grade awarded to John Doe in the 'Algorithms' course for which he registered on September 1st, 2021?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "For the course 'Introduction to Psychology' taught in Fall 2022, which professor was teaching and what was their specialization?",
+        "Cypher": "MATCH (prof:Professor)-[teaches:TEACHES]->(course:Course)\nWHERE course.name=\"Introduction to Psychology\" AND teaches.semester=\"Fall\" AND teaches.year=2022\nRETURN prof, teaches, course, prof.specialization",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Who taught the 'Introduction to Psychology' course in Fall 2022, and what was their area of expertise?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "When did the professor who started advising student Sarah Miller in 2019 cease their advisory role?",
+        "Cypher": "MATCH (prof:Professor)-[advise:ADVISES]->(student:Student)\nWHERE student.first_name = \"Sarah\" AND student.last_name = \"Miller\" AND advise.start_date.year = 2019\nRETURN prof, advise, student, advise.end_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "When did the professor who began mentoring Sarah Miller in 2019 end their guidance?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What was the attendance date for student Emily Tran for the event titled 'Career Fair 2021'?",
+        "Cypher": "MATCH (student:Student)-[attendance:ATTENDS]->(event:Event)\nWHERE student.first_name=\"Emily\" AND student.last_name=\"Tran\" AND event.title=\"Career Fair 2021\"\nRETURN student, attendance, event, attendance.attendance_date",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "On which date did student Emily Tran attend the event called 'Career Fair 2021'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Which department offers the course with ID 304, and what is its building location?",
+        "Cypher": "MATCH (department:Department)-[offering:OFFERS]->(course:Course)\nWHERE course.course_id = 304\nRETURN department, offering, course, department.name, department.building",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which department provides the course identified by ID 304, and where is the building it's located in?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What semester and year did Professor Smith begin lecturing in the classroom 101B?",
+        "Cypher": "MATCH (prof:Professor)-[lecture:LECTURES_IN]->(classroom:Classroom)\nWHERE prof.last_name = \"Smith\" AND classroom.room_number = \"101B\"\nRETURN prof, lecture, classroom, lecture.semester, lecture.year",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many students are enrolled in each course offered by the 'Mathematics' department?",
+        "Cypher": "MATCH (department:Department)-[:OFFERS]->(course:Course)<-[:ENROLLED_IN]-(student:Student)\nWHERE department.name = \"Mathematics\"\nRETURN course.name, COUNT(student) AS NumberOfStudents",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (department:Department)-[relation3:OFFERS]->(course:Course)<-[relation4:ENROLLED_IN]-(student:Student)\nWHERE department.name = \"Mathematics\"\nRETURN course.name, COUNT(student) AS NumberOfStudents",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "For each course provided by the 'Mathematics' department, what is the number of students enrolled?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the average grade of students enrolled in the 'Organic Chemistry' course?",
+        "Cypher": "MATCH (course:Course)<-[enrolled:ENROLLED_IN]-(student:Student)\nWHERE course.name = \"Organic Chemistry\"\nRETURN AVG(enrolled.grade)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the mean grade for students taking the 'Organic Chemistry' course?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Count the number of students who attended the 'New Year Gala 2022' event held in the 'Main Auditorium'.",
+        "Cypher": "MATCH (event:Event)<-[attends:ATTENDS]-(student:Student)\nMATCH (classroom:Classroom)<-[held_in:HELD_IN]-(event)\nWHERE event.title = \"New Year Gala 2022\" AND classroom.building = \"Main Auditorium\"\nRETURN COUNT(DISTINCT student)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Tally the total students present at the 'New Year Gala 2022' held in the 'Main Auditorium'."
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the minimum and maximum number of credits offered by courses in the 'Biology' department?",
+        "Cypher": "MATCH (department:Department)-[offer:OFFERS]->(course:Course)\nWHERE department.name = \"Biology\"\nRETURN MIN(course.credits) AS MinCredits, MAX(course.credits) AS MaxCredits",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the range of credits available for courses in the 'Biology' department?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many professors have taught the 'Quantum Mechanics' course since 2018?",
+        "Cypher": "MATCH (professor:Professor)-[teaches:TEACHES]->(course:Course)\nWHERE course.name = \"Quantum Mechanics\" AND teaches.year >= 2018\nRETURN COUNT(DISTINCT professor)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Since 2018, how many professors have instructed the 'Quantum Mechanics' course?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the total capacity of all classrooms where events titled 'Orientation Day' were held in 2023?",
+        "Cypher": "MATCH (event:Event)-[held_in:HELD_IN]->(classroom:Classroom)\nWHERE event.title=\"Orientation Day\" AND event.date.year=2023\nRETURN SUM(classroom.capacity)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the combined capacity of classrooms that hosted events called 'Orientation Day' in 2023?"
+    }
+]

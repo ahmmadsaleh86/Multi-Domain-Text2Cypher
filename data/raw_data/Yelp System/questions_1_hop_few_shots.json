@@ -1,0 +1,182 @@
+[
+    {
+        "Category": "1-hop Node Level",
+        "Question": "What are the names of categories linked to the Business 'Taco Bell' located in 'San Diego'?",
+        "Cypher": "MATCH (business:Business {name:\"Taco Bell\", city:\"San Diego\"})-[inCategory:IN_CATEGORY]->(category:Category)\nRETURN business, inCategory, category, category.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the category names associated with the 'Taco Bell' business situated in 'San Diego'?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "List the name and address of the Business which has a review written on '2023-12-31' with exactly '5' stars.",
+        "Cypher": "MATCH (business:Business)<-[reviews:REVIEWS]-(review:Review)\nWHERE review.date = date(\"2023-12-31\") AND review.stars = 5\nRETURN business, reviews, review, business.name, business.address",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the name and address of the Business that received a five-star review on '2023-12-31'."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Can you find the names of users who wrote a review for 'Starbucks' in 'Seattle' with more than '3' stars?",
+        "Cypher": "MATCH (user:User)-[wrote:WROTE]->(review:Review)-[reviews:REVIEWS]->(business:Business {name:\"Starbucks\"}), (business)-[inCity:IN_CITY]->(city:City {name:\"Seattle\"})\nWHERE review.stars > 3\nRETURN user, wrote, review, reviews, business, inCity, city, user.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you identify the users who have written reviews for 'Starbucks' in 'Seattle' that are above '3' stars?"
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Provide the ID and name of businesses in 'Las Vegas' that belong to the category 'Nightlife'.",
+        "Cypher": "MATCH (business:Business)-[inCity:IN_CITY]->(city:City), (business)-[inCategory:IN_CATEGORY]->(category:Category)\nWHERE city.name=\"Las Vegas\" AND category.name=\"Nightlife\"\nRETURN business, inCity, city, inCategory, category, business.id, business.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the ID and name of companies categorized under 'Nightlife' in 'Las Vegas'."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Identify all photo captions associated with the Business 'Walmart' located in 'Austin'.",
+        "Cypher": "MATCH (business:Business {name:\"Walmart\", city:\"Austin\"})-[hasPhoto:HAS_PHOTO]->(photo:Photo)\nRETURN business, hasPhoto, photo, photo.caption",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Find all the picture captions linked to the 'Walmart' business situated in 'Austin'."
+    },
+    {
+        "Category": "1-hop Node Level",
+        "Question": "Retrieve the names of the cities in which the Business named 'McDonalds' exists.",
+        "Cypher": "MATCH (business:Business {name:\"McDonalds\"})-[inCity:IN_CITY]->(city:City)\nRETURN business, inCity, city, city.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "List the names of cities where the business 'McDonalds' is located."
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What is the score of the label assigned to the photo with ID 'P123'?",
+        "Cypher": "MATCH(photo:Photo {id:\"P123\"})-[hasLabel:HAS_LABEL]->(label:Label)\nRETURN photo, hasLabel, label, hasLabel.score",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the rating given to the picture labeled 'P123'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "How is the similarity score calculated between users 'UID1234' and 'UID5678'?",
+        "Cypher": "MATCH (user1:User {id:\"UID1234\"})-[similarity:SIMILAR]->(user2:User {id:\"UID5678\"})\nRETURN user1, similarity, user2, similarity.score",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What method is used to compute the similarity score between users 'UID1234' and 'UID5678'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What attributes are associated with the FRIENDS relation between user 'JohnDoe' and 'JaneSmith'?",
+        "Cypher": "MATCH (userJohnDoe:User {name:\"JohnDoe\"})-[friends:FRIENDS]->(userJaneSmith:User {name:\"JaneSmith\"})\nRETURN userJohnDoe, friends, userJaneSmith",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What properties define the FRIENDS relationship between 'JohnDoe' and 'JaneSmith'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Can you tell me, is there any specific score recorded for the 'HAS_LABEL' relation corresponding to the photo with the caption 'sunset view'?",
+        "Cypher": "MATCH (photo:Photo {caption:\"sunset view\"})-[hasLabelRelation:HAS_LABEL]->(label:Label)\nRETURN photo, hasLabelRelation, label, hasLabelRelation.score",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Is there a particular score noted for the 'HAS_LABEL' relation for the image titled 'sunset view'?"
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "Identify the score for the SIMILAR relation for users residing in the same City, specifically 'New York'.",
+        "Cypher": "MATCH (userA:User)-[:LIVES_IN]->(city:City {name:\"New York\"}),\n      (userB:User)-[:LIVES_IN]->(city),\n      (userA)-[similar:SIMILAR]-(userB)\nRETURN userA, city, userB, similar, similar.score",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (userA:User)-[relation3:LIVES_IN]->(city:City {name:\"New York\"}),\n      (userB:User)-[relation4:LIVES_IN]->(city),\n      (userA)-[similar:SIMILAR]-(userB)\nRETURN relation4, relation3, userA, city, userB, similar, similar.score",
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "1-hop Relation Level",
+        "Question": "What is the score of the similarity relation for users with IDs '45821' and '78214'?",
+        "Cypher": "MATCH (user1:User {id:\"45821\"})-[similarity:SIMILAR]->(user2:User {id:\"78214\"})\nRETURN user1, similarity, user2, similarity.score",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the similarity score for user IDs '45821' and '78214'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "How many photos are associated with the Business 'Starbucks' located in 'Seattle'?",
+        "Cypher": "MATCH (business:Business)-[photoRel:HAS_PHOTO]->(photo:Photo), (business)-[inCity:IN_CITY]->(city:City)\nWHERE business.name=\"Starbucks\" AND city.name=\"Seattle\"\nRETURN COUNT(DISTINCT photo)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many pictures are linked to the Starbucks Business situated in Seattle?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the average stars rating for reviews written by User ID '90123' in the year 2023?",
+        "Cypher": "MATCH (user:User {id:\"90123\"})-[wrote:WROTE]->(review:Review)-[reviews:REVIEWS]->(business:Business)\nWHERE review.date.year = 2023\nRETURN AVG(review.stars)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the mean star rating for reviews authored by User ID '90123' during 2023?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Can you calculate the total number of 'SIMILAR' relations for User ID '67890' with a score greater than '0.8'?",
+        "Cypher": "MATCH (user:User {id:\"67890\"})-[similar:SIMILAR]->(:User)\nWHERE similar.score > 0.8\nRETURN COUNT(similar)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (user:User {id:\"67890\"})-[similar:SIMILAR]->(node1:User)\nWHERE similar.score > 0.8\nRETURN COUNT(similar)",
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you determine the sum of 'SIMILAR' relations where User ID '67890' has a score exceeding '0.8'?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the maximum score among all HAS_LABEL relations for photos under the 'birthday party' label?",
+        "Cypher": "MATCH (label:Label {description: \"birthday party\"})<-[hasLabel:HAS_LABEL]-(photo:Photo)\nRETURN MAX(hasLabel.score)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the highest score recorded for HAS_LABEL relations in photos with the 'birthday party' label?"
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "Count the number of FRIENDS relations a User ID '12345' has that were established before '2022-01-01'.",
+        "Cypher": "MATCH (user:User {id:\"12345\"})-[friend:FRIENDS {since: date}]->(otherUser:User)\nWHERE date < date(\"2022-01-01\")\nRETURN COUNT(friend)",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "1-hop Statistical Level",
+        "Question": "What is the sum of likes for all tips User 'JohnD' wrote in 2023?",
+        "Cypher": "MATCH (user:User {name:\"JohnD\"})-[wroteTip:WROTE_TIP]->(business:Business)\nWHERE wroteTip.date.year = 2023\nRETURN SUM(wroteTip.likes)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "How many total likes did all the tips written by User 'JohnD' in 2023 receive?"
+    }
+]

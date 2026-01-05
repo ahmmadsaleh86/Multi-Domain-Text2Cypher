@@ -1,0 +1,196 @@
+[
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Can you list the full names of passengers who have booked first-class tickets for flights departing from San Francisco airport to London Heathrow in July 2023?",
+        "Cypher": "MATCH (departureAirport:Airport {name: \"San Francisco Airport\"})<-[departs:DEPARTS_FROM]-(flight:Flight)-[arrives:ARRIVES_AT]->(arrivalAirport:Airport {name: \"London Heathrow\"})\nMATCH (flight)-[usesGate:USES_GATE]->(gate:Gate)<-[:HAS_TERMINAL]-(departureAirport)\nMATCH (passenger:Passenger)-[booked:BOOKED_ON]->(reservation:Reservation)-[contains:CONTAINS_TICKET]->(ticket:Ticket)-[ticketForFlight:TICKET_FOR_FLIGHT]->(flight)\nWHERE ticket.class = \"First\" AND departs.scheduledDeparture >= datetime('2023-07-01T00:00:00') AND departs.scheduledDeparture < datetime('2023-08-01T00:00:00')\nRETURN passenger, booked, reservation, contains, ticket, ticketForFlight, flight, usesGate, gate, departs, arrives, departureAirport, arrivalAirport, passenger.firstName + ' ' + passenger.lastName",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (departureAirport:Airport {name: \"San Francisco Airport\"})<-[departs:DEPARTS_FROM]-(flight:Flight)-[arrives:ARRIVES_AT]->(arrivalAirport:Airport {name: \"London Heathrow\"})\nMATCH (flight)-[usesGate:USES_GATE]->(gate:Gate)<-[relation10:HAS_TERMINAL]-(departureAirport)\nMATCH (passenger:Passenger)-[booked:BOOKED_ON]->(reservation:Reservation)-[contains:CONTAINS_TICKET]->(ticket:Ticket)-[ticketForFlight:TICKET_FOR_FLIGHT]->(flight)\nWHERE ticket.class = \"First\" AND departs.scheduledDeparture >= datetime('2023-07-01T00:00:00') AND departs.scheduledDeparture < datetime('2023-08-01T00:00:00')\nRETURN passenger, booked, reservation, contains, ticket, ticketForFlight, flight, usesGate, gate, departs, arrives, departureAirport, arrivalAirport, passenger.firstName + ' ' + passenger.lastName",
+        "num-hop": 7,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "Can you provide a comprehensive list of all first-class passengers, including their names and ticket details, on flights from San Francisco Airport to London Heathrow during July 2023?",
+        "Max-Semantic-Score": 0.9456842541694641,
+        "Avg-Semantic-Score": 0.9084344625473022,
+        "Rewrite": "Could you provide the complete names of passengers who have reserved first-class seats on flights from San Francisco airport to London Heathrow in July 2023?"
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "What are the airport names and countries for the ending points of flights operated by 'SkyHigh Airlines' where the aircraft used is a Boeing 777?",
+        "Cypher": "MATCH (ending_airport:Airport)<-[arrives:ARRIVES_AT]-(flight:Flight)<-[operates:OPERATES]-(airline:Airline)\nWHERE airline.name=\"SkyHigh Airlines\" AND flight.aircraftType=\"Boeing 777\"\nRETURN ending_airport, arrives, flight, operates, airline, ending_airport.name, ending_airport.country",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the names of the airports and their respective countries at the final destinations of flights run by 'SkyHigh Airlines' utilizing Boeing 777 aircraft?"
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Identify the headquarters of airlines that operate flights with a duration of over 10 hours departing from JFK airport.",
+        "Cypher": "MATCH (departure_airport:Airport {name: \"JFK\"})<-[departs_from:DEPARTS_FROM]-(flight:Flight)-[operates:OPERATES]->(airline:Airline)\nWHERE flight.duration > 10\nRETURN departure_airport, departs_from, flight, operates, airline, airline.headquarters",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (departure_airport:Airport {name: \"JFK\"})<-[departs_from:DEPARTS_FROM]-(flight:Flight)-[operates:OPERATES]-(airline:Airline)\nWHERE flight.duration > 10\nRETURN departure_airport, departs_from, flight, operates, airline, airline.headquarters",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the locations of the main offices of airlines running flights longer than 10 hours from JFK airport."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Please provide the names and passport numbers of passengers who have reserved business class seats on flights that use Gate 22 at Dubai International Airport.",
+        "Cypher": "MATCH (departure_airport:Airport {name: \"Dubai International Airport\"})<-[departs:DEPARTS_FROM]-(flight:Flight)-[uses:USES_GATE]->(gate:Gate {number: \"22\"})\nMATCH (ticket:Ticket {class: \"Business\"})-[ticket_for:TICKET_FOR_FLIGHT]->(flight)\nMATCH (passenger:Passenger)-[booked:BOOKED_ON]->(reservation:Reservation)-[contains:CONTAINS_TICKET]->(ticket)\nRETURN departure_airport, departs, flight, uses, gate, ticket, ticket_for, passenger, booked, reservation, contains, passenger.firstName, passenger.lastName, passenger.passportNumber",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "Kindly supply the names and passport numbers of travelers booked in business class on flights assigned to Gate 22 at Dubai International Airport."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Which airlines have flights that depart from Tokyo and arrive at Barcelona using an Airbus A380 aircraft, and what are the gate numbers for these flights?",
+        "Cypher": "MATCH (departure_airport:Airport {city:\"Tokyo\"})<-[departs_from:DEPARTS_FROM]-(flight:Flight {aircraftType:\"Airbus A380\"})-[arrives_at:ARRIVES_AT]->(arrival_airport:Airport {city:\"Barcelona\"})\nMATCH (flight)-[operates:OPERATES]->(airline:Airline)\nMATCH (flight)-[uses_gate:USES_GATE]->(gate:Gate)\nRETURN departure_airport, departs_from, flight, arrives_at, arrival_airport, operates, airline, uses_gate, gate, airline.name, gate.number",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (departure_airport:Airport {city:\"Tokyo\"})<-[departs_from:DEPARTS_FROM]-(flight:Flight {aircraftType:\"Airbus A380\"})-[arrives_at:ARRIVES_AT]->(arrival_airport:Airport {city:\"Barcelona\"})\nMATCH (flight)-[operates:OPERATES]-(airline:Airline)\nMATCH (flight)-[uses_gate:USES_GATE]->(gate:Gate)\nRETURN departure_airport, departs_from, flight, arrives_at, arrival_airport, operates, airline, uses_gate, gate, airline.name, gate.number",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Which carriers operate Airbus A380 flights from Tokyo to Barcelona, and what are the designated gate numbers for these flights?"
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Can you find all the last names of passengers who made a reservation for a flight departing from Berlin in December 2023 and their ticket price was above 500 USD?",
+        "Cypher": "MATCH (passenger:Passenger)-[booked:BOOKED_ON]->(reservation:Reservation)-[contains:CONTAINS_TICKET]->(ticket:Ticket)-[ticketFor:TICKET_FOR_FLIGHT]->(flight:Flight)\nMATCH (flight)-[departs:DEPARTS_FROM]->(departureAirport:Airport {city:\"Berlin\"})\nWHERE departs.scheduledDeparture >= datetime(\"2023-12-01T00:00:00\") AND departs.scheduledDeparture < datetime(\"2024-01-01T00:00:00\")\n      AND ticket.price > 500\nRETURN passenger, booked, reservation, contains, ticket, ticketFor, flight, departs, departureAirport, passenger.lastName",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you locate the surnames of passengers who booked tickets for flights leaving Berlin in December 2023 with ticket prices exceeding 500 USD?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "What is the scheduled and actual departure times of flights operated by 'Pacific Airways' leaving from Seoul to Los Angeles in August 2023?",
+        "Cypher": "MATCH (departure_airport:Airport {city:\"Seoul\"})<-[depart:DEPARTS_FROM]-(flight:Flight)<-[operate:OPERATES]-(airline:Airline {name:\"Pacific Airways\"})\nMATCH (flight)-[arrive:ARRIVES_AT]->(arrival_airport:Airport {city:\"Los Angeles\"})\nWHERE depart.scheduledDeparture >= datetime(\"2023-08-01T00:00:00\") AND depart.scheduledDeparture < datetime(\"2023-09-01T00:00:00\")\nRETURN departure_airport, depart, flight, operate, airline, arrive, arrival_airport, depart.scheduledDeparture, depart.actualDeparture",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "What are the planned and actual departure times for 'Pacific Airways' flights departing from Seoul to Los Angeles in August 2023?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Can you detail the names of the terminals where flights numbered 'BA256' and 'LH432' depart from Heathrow airport, including the scheduled departure time?",
+        "Cypher": "MATCH (departure_airport:Airport {name:\"Heathrow\"})-[departure:DEPARTS_FROM]->(flight:Flight)-[uses:USES_GATE]->(gate:Gate)<-[has:HAS_TERMINAL]-(airport:Airport)\nWHERE flight.number IN [\"BA256\", \"LH432\"]\nRETURN departure_airport, departure, flight, uses, gate, has, airport, has.terminalName, departure.scheduledDeparture",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (departure_airport:Airport {name:\"Heathrow\"})-[departure:DEPARTS_FROM]-(flight:Flight)-[uses:USES_GATE]->(gate:Gate)<-[has:HAS_TERMINAL]-(airport:Airport)\nWHERE flight.number IN [\"BA256\", \"LH432\"]\nRETURN departure_airport, departure, flight, uses, gate, has, airport, has.terminalName, departure.scheduledDeparture",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you provide the terminal names and the scheduled departure times for flights 'BA256' and 'LH432' from Heathrow airport?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Could you provide the baggage allowance for the ticket class 'Economy Plus' on the flight number 'AA101' and its associated passenger's nationality?",
+        "Cypher": "MATCH (ticket:Ticket {class:\"Economy Plus\"})-[ticketForFlight:TICKET_FOR_FLIGHT]->(flight:Flight {number:\"AA101\"})\nMATCH (passenger:Passenger)-[:BOOKED_ON]->(:Reservation)-[:CONTAINS_TICKET]->(ticket)\nRETURN ticket, ticketForFlight, flight, passenger, ticketForFlight.baggageAllowance, passenger.nationality",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (ticket:Ticket {class:\"Economy Plus\"})-[ticketForFlight:TICKET_FOR_FLIGHT]->(flight:Flight {number:\"AA101\"})\nMATCH (passenger:Passenger)-[relation5:BOOKED_ON]->(node3:Reservation)-[relation6:CONTAINS_TICKET]->(ticket)\nRETURN relation6, relation5, node3, ticket, ticketForFlight, flight, passenger, ticketForFlight.baggageAllowance, passenger.nationality",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you inform me about the luggage limits for the 'Economy Plus' ticket class on flight 'AA101' and the nationality of the corresponding passenger?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "List the booking agents who booked flights for passengers named 'John Doe' on flights arriving at Paris Charles de Gaulle in January 2024, specifying each agent's associated airline.",
+        "Cypher": "MATCH (arrivalAirport:Airport {name: \"Paris Charles de Gaulle\"})<-[arrives:ARRIVES_AT]-(flight:Flight)<-[ticketFor: TICKET_FOR_FLIGHT]-(ticket:Ticket)-[inReservation:CONTAINS_TICKET]-(reservation:Reservation)<-[booked:BOOKED_ON]-(passenger:Passenger {firstName: \"John\", lastName: \"Doe\"})\nMATCH (airline:Airline)-[operates:OPERATES]->(flight)\nWHERE arrives.scheduledArrival >= datetime('2024-01-01T00:00:00') AND arrives.scheduledArrival < datetime('2024-02-01T00:00:00')\nRETURN passenger, booked, reservation, inReservation, ticket, ticketFor, flight, arrives, arrivalAirport, operates, airline, booked.bookingAgent, airline.name",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide the names of the booking agents who arranged travel for individuals named 'John Doe' on flights scheduled to land at Paris Charles de Gaulle in January 2024, along with the airlines each agent represents."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "For flights arriving at Singapore Changi Airport in March 2024, could you determine the total delay in actual arrival time as compared to the scheduled arrival time?",
+        "Cypher": "MATCH (arrival_airport:Airport)<-[arrives_at:ARRIVES_AT]-(flight:Flight)\nWHERE arrival_airport.name=\"Singapore Changi Airport\" AND arrives_at.scheduledArrival >= datetime(\"2024-03-01T00:00:00\") AND arrives_at.scheduledArrival < datetime(\"2024-04-01T00:00:00\")\nRETURN arrival_airport, arrives_at, flight, arrives_at.actualArrival - arrives_at.scheduledArrival",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you calculate the overall delay in actual versus scheduled arrival times for flights reaching Singapore Changi Airport in March 2024?"
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "What are the actual and scheduled arrival times, along with the terminal names and gate numbers, for all flights that landed at JFK airport on New Year's Day 2023?",
+        "Cypher": "MATCH (arriving_airport:Airport {name: \"JFK\"})<-[arrives:ARRIVES_AT]-(flight:Flight)-[uses:USES_GATE]->(gate:Gate)\nMATCH (gate)-[has_terminal:HAS_TERMINAL]->(airport:Airport)\nWHERE date(arrives.actualArrival) = date('2023-01-01')\nRETURN arriving_airport, arrives, flight, uses, gate, has_terminal, airport, arrives.actualArrival, arrives.scheduledArrival, has_terminal.terminalName, gate.number",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (arriving_airport:Airport {name: \"JFK\"})<-[arrives:ARRIVES_AT]-(flight:Flight)-[uses:USES_GATE]->(gate:Gate)\nMATCH (gate)-[has_terminal:HAS_TERMINAL]-(airport:Airport)\nWHERE date(arrives.actualArrival) = date('2023-01-01')\nRETURN arriving_airport, arrives, flight, uses, gate, has_terminal, airport, arrives.actualArrival, arrives.scheduledArrival, has_terminal.terminalName, gate.number",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "For all the flights that arrived at JFK airport on New Year's Day 2023, what were the real and planned arrival times, the names of the terminals, and the gate numbers?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the average distance flown by flights originating from Berlin Tegel airport and landing in any airport in the UK within the last year?",
+        "Cypher": "MATCH (originAirport:Airport {city: \"Berlin\", name: \"Berlin Tegel\"}), \n      (destinationAirport:Airport {country: \"UK\"}),\n      (flight:Flight)-[departs:DEPARTS_FROM]->(originAirport),\n      (flight)-[arrives:ARRIVES_AT]->(destinationAirport)\nWHERE departs.scheduledDeparture.year = date().year - 1\nRETURN AVG(flight.distance)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (originAirport:Airport {name: \"Berlin Tegel\"})-[relation3:DEPARTS_FROM]->(flight:Flight)-[relation4:ARRIVES_AT]->(destinationAirport:Airport {country: \"UK\"})\nWHERE flight.scheduledDeparture >= datetime({year: date().year - 1})\nRETURN AVG(flight.distance)",
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical flight distance for journeys starting at Berlin Tegel airport and arriving at any UK airport over the past year?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Can you calculate the sum of all first-class ticket prices booked by passengers holding an American nationality for flights departing in December 2023?",
+        "Cypher": "MATCH (passenger:Passenger {nationality:\"American\"})-[book:BOOKED_ON]->(reservation:Reservation)-[contains:CONTAINS_TICKET]->(ticket:Ticket {class:\"First\"})-[forFlight:TICKET_FOR_FLIGHT]->(flight:Flight)-[departs:DEPARTS_FROM]->(airport:Airport)\nWHERE departs.scheduledDeparture.year = 2023 AND departs.scheduledDeparture.month = 12\nRETURN SUM(ticket.price)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (passenger:Passenger {nationality: \"American\"})-[relation5:BOOKED_ON]->(reservation:Reservation)-[relation6:CONTAINS_TICKET]->(ticket:Ticket {class: \"First\"})-[relation7:TICKET_FOR_FLIGHT]->(flight:Flight)-[relation8:DEPARTS_FROM]->(airport:Airport)\nWHERE flight.scheduledDeparture.year = 2023 AND flight.scheduledDeparture.month = 12\nRETURN SUM(ticket.price)",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Could you compute the total cost of first-class tickets purchased by American passengers for flights leaving in December 2023?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the maximum flight duration among all flights taken by the passengers who have traveled between San Francisco and Tokyo since 2022?",
+        "Cypher": "MATCH (departureAirport:Airport {city: \"San Francisco\"}), (arrivalAirport:Airport {city: \"Tokyo\"})\nMATCH (flight:Flight)-[departs:DEPARTS_FROM]->(departureAirport)\nMATCH (flight)-[arrives:ARRIVES_AT]->(arrivalAirport)\nMATCH (ticket:Ticket)-[ticketFor:TICKET_FOR_FLIGHT]->(flight)\nMATCH (passenger:Passenger)-[:BOOKED_ON]->(:Reservation)-[:CONTAINS_TICKET]->(ticket)\nWHERE departs.scheduledDeparture.year >= 2022\nRETURN MAX(flight.duration)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (departureAirport:Airport {city: \"San Francisco\"}), (arrivalAirport:Airport {city: \"Tokyo\"})\nMATCH (flight:Flight)-[departs:DEPARTS_FROM]->(departureAirport)\nMATCH (flight)-[arrives:ARRIVES_AT]->(arrivalAirport)\nMATCH (ticket:Ticket)-[ticketFor:TICKET_FOR_FLIGHT]->(flight)\nMATCH (passenger:Passenger)-[relation9:BOOKED_ON]->(node5:Reservation)-[relation10:CONTAINS_TICKET]->(ticket)\nWHERE departs.scheduledDeparture.year >= 2022\nRETURN MAX(flight.duration)",
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the longest flight duration for any flight undertaken by passengers traveling between San Francisco and Tokyo starting from 2022?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "How many tickets were booked for flights from Dubai to New York by passengers with Canadian nationality in the second quarter of 2023?",
+        "Cypher": "MATCH (departureAirport:Airport {city: \"Dubai\"}), \n      (arrivalAirport:Airport {city: \"New York\"}),\n      (passenger:Passenger {nationality: \"Canadian\"}),\n      (passenger)-[booked:BOOKED_ON]->(reservation:Reservation)-[contains:CONTAINS_TICKET]->(ticket:Ticket),\n      (ticket)-[ticketFor:TICKET_FOR_FLIGHT]->(flight:Flight),\n      (flight)-[departs:DEPARTS_FROM]->(departureAirport),\n      (flight)-[arrives:ARRIVES_AT]->(arrivalAirport)\nWHERE departs.scheduledDeparture.year = 2023 \n      AND departs.scheduledDeparture.month >= 4 \n      AND departs.scheduledDeparture.month <= 6\nRETURN COUNT(ticket)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 5,
+        "Grammatical-Validation": true,
+        "Rewrite": "In the second quarter of 2023, how many flight tickets were reserved by Canadian nationals for travel from Dubai to New York?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Could you compute the average baggage allowance for all tickets sold under the 'Economy' class for flights from New Delhi to Sydney in 2023?",
+        "Cypher": "MATCH (originAirport:Airport {city:\"New Delhi\"}), (destinationAirport:Airport {city:\"Sydney\"})\nMATCH (flight:Flight)-[departs:DEPARTS_FROM]->(originAirport),\n      (flight)-[arrives:ARRIVES_AT]->(destinationAirport)\nMATCH (ticket:Ticket {class:\"Economy\"})-[ticketFor:TICKET_FOR_FLIGHT]->(flight)\nWHERE departs.scheduledDeparture.year = 2023 AND arrives.scheduledArrival.year = 2023\nRETURN AVG(ticketFor.baggageAllowance)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "Corrected-Cypher": "MATCH (departureAirport:Airport {city: \"New Delhi\"}), (arrivalAirport:Airport {city: \"Sydney\"})\nMATCH (flight:Flight)-[departs:DEPARTS_FROM]->(departureAirport), \n      (flight)-[arrives:ARRIVES_AT]->(arrivalAirport)\nWHERE departs.scheduledDeparture.year = 2023\nMATCH (ticket:Ticket {class: \"Economy\"})-[relation6:TICKET_FOR_FLIGHT]->(flight)\nRETURN AVG(ticket.baggageAllowance)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Can you calculate the mean luggage weight permitted for every ticket issued in the 'Economy' section on 2023 flights departing from New Delhi to Sydney?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Find the count of gates used at London Heathrow airport in July 2023 for flights operated by European airlines.",
+        "Cypher": "MATCH (airport:Airport {name: \"London Heathrow\"})-[:HAS_TERMINAL]->(gate:Gate)<-[:USES_GATE]-(flight:Flight),\n      (flight)<-[:OPERATES]-(airline:Airline {headquarters: \"Europe\"}),\n      (flight)-[departure:DEPARTS_FROM]->(:Airport)\nWHERE departure.scheduledDeparture.year = 2023 AND departure.scheduledDeparture.month = 7\nRETURN COUNT(DISTINCT gate) AS gateCount",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (airport:Airport {name: \"London Heathrow\"})-[relation5:HAS_TERMINAL]->(gate:Gate)<-[relation6:USES_GATE]-(flight:Flight),\n      (flight)<-[relation7:OPERATES]-(airline:Airline {headquarters: \"Europe\"}),\n      (flight)-[departure:DEPARTS_FROM]->(node4:Airport)\nWHERE departure.scheduledDeparture.year = 2023 AND departure.scheduledDeparture.month = 7\nRETURN COUNT(DISTINCT gate) AS gateCount",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine how many gates were utilized at London Heathrow airport in July 2023 for flights conducted by European carriers."
+    }
+]

@@ -1,0 +1,153 @@
+[
+    {
+        "Type": "Node",
+        "Label": "Hashtag",
+        "Attributes": {
+            "name": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "User",
+        "Attributes": {
+            "screen_name": "String",
+            "name": "String",
+            "location": "String",
+            "followers": "Long",
+            "following": "Long",
+            "url": "String",
+            "profile_image_url": "String",
+            "statuses": "Long"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Tweet",
+        "Attributes": {
+            "id": "Long",
+            "created_at": "DateTime",
+            "id_str": "String",
+            "text": "String",
+            "favorites": "Long",
+            "import_method": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Me",
+        "Attributes": {
+            "screen_name": "String",
+            "name": "String",
+            "location": "String",
+            "followers": "Long",
+            "following": "Long",
+            "url": "String",
+            "profile_image_url": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Link",
+        "Attributes": {
+            "url": "String"
+        }
+    },
+    {
+        "Type": "Node",
+        "Label": "Source",
+        "Attributes": {
+            "name": "String"
+        }
+    },
+    {
+        "Type": "Relation",
+        "Label": "USING",
+        "Attributes": {},
+        "From": "Tweet",
+        "To": "Source"
+    },
+    {
+        "Type": "Relation",
+        "Label": "FOLLOWS",
+        "Attributes": {},
+        "From": "Me",
+        "To": "Me"
+    },
+    {
+        "Type": "Relation",
+        "Label": "FOLLOWS",
+        "Attributes": {},
+        "From": "User",
+        "To": "Me"
+    },
+    {
+        "Type": "Relation",
+        "Label": "FOLLOWS",
+        "Attributes": {},
+        "From": "User",
+        "To": "User"
+    },
+    {
+        "Type": "Relation",
+        "Label": "FOLLOWS",
+        "Attributes": {},
+        "From": "Me",
+        "To": "User"
+    },
+    {
+        "Type": "Relation",
+        "Label": "RETWEETS",
+        "Attributes": {},
+        "From": "Tweet",
+        "To": "Tweet"
+    },
+    {
+        "Type": "Relation",
+        "Label": "REPLY_TO",
+        "Attributes": {},
+        "From": "Tweet",
+        "To": "Tweet"
+    },
+    {
+        "Type": "Relation",
+        "Label": "CONTAINS",
+        "Attributes": {},
+        "From": "Tweet",
+        "To": "Link"
+    },
+    {
+        "Type": "Relation",
+        "Label": "MENTIONS",
+        "Attributes": {},
+        "From": "Tweet",
+        "To": "Me"
+    },
+    {
+        "Type": "Relation",
+        "Label": "MENTIONS",
+        "Attributes": {},
+        "From": "Tweet",
+        "To": "User"
+    },
+    {
+        "Type": "Relation",
+        "Label": "TAGS",
+        "Attributes": {},
+        "From": "Tweet",
+        "To": "Hashtag"
+    },
+    {
+        "Type": "Relation",
+        "Label": "POSTS",
+        "Attributes": {},
+        "From": "Me",
+        "To": "Tweet"
+    },
+    {
+        "Type": "Relation",
+        "Label": "POSTS",
+        "Attributes": {},
+        "From": "User",
+        "To": "Tweet"
+    }
+]

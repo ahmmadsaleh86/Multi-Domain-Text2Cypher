@@ -1,0 +1,188 @@
+[
+    {
+        "Category": "3-hop Node Level",
+        "Question": "For all BankAccounts connected to AccountHolders in the 'Finance' business who have made a purchase exceeding $5000, retrieve the respective BankAccount balances and account numbers.",
+        "Cypher": "MATCH (holder:AccountHolder)-[:FOR_SHOP]->(shop:Shop)\nWHERE shop.business=\"Finance\"\nMATCH (holder)-[:HAS_BANKACCOUNT]->(account:BankAccount)\nMATCH (holder)-[:WITH_LOGIN]->(login:Login)-[:WITH_CARD]->(purchase:Purchase)\nWHERE purchase.amount > 5000\nRETURN holder, shop, account, login, purchase, account.accountNumber, account.balance",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (holder:AccountHolder)-[relation5:FOR_SHOP]->(shop:Shop)\nWHERE shop.business=\"Finance\"\nMATCH (holder)-[relation6:HAS_BANKACCOUNT]->(account:BankAccount)\nMATCH (holder)-[relation7:WITH_LOGIN]->(login:Login)-[relation8:WITH_CARD]->(purchase:Purchase)\nWHERE purchase.amount > 5000\nRETURN relation8, relation7, relation6, relation5, holder, shop, account, login, purchase, account.accountNumber, account.balance",
+        "num-hop": 4,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Identify all delivery addresses used for high-value purchases (over $10000) related to AccountHolders living in 'California', and provide details of those AccountHolders.",
+        "Cypher": "MATCH (accountHolder:AccountHolder)-[has_address:HAS_ADDRESS]->(address:Address)\nWHERE address.state = \"California\"\nMATCH (accountHolder)-[has_bank:HAS_BANKACCOUNT]->(bankAccount:BankAccount)\nMATCH (purchase:Purchase)-[delivered_at:DELIVERED_AT]->(deliveryAddress:DeliveryAddress)\nWHERE purchase.amount > 10000\nRETURN accountHolder, has_address, address, has_bank, bankAccount, purchase, delivered_at, deliveryAddress, accountHolder.fullName, accountHolder.UniqueId, accountHolder.firstName, accountHolder.lastName, accountHolder.birthDate",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Find and provide details of all delivery addresses used for high-value purchases (exceeding $10000) associated with AccountHolders residing in 'California', along with the information on those AccountHolders."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "List all BankCards including security codes and balances that are connected through purchases made from IP addresses located in 'Texas'.",
+        "Cypher": "MATCH (card:BankCard)<-[with_card:WITH_CARD]-(purchase:Purchase)-[from_ip:FROM_IP]->(ip:IP)-[located:LOCATED_IN]->(state:State)\nWHERE state.name=\"Texas\"\nRETURN card, with_card, purchase, from_ip, ip, located, state, card.securityCode, card.balance",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Provide a list of all BankCards along with their security codes and balances, linked to transactions performed from IP addresses in 'Texas'."
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Retrieve the full names and birth dates of all Account Holders who have unsecured loans with APR greater than 5% and have made purchases in 'Florida'.",
+        "Cypher": "MATCH (holder:AccountHolder)-[has_loan:HAS_UNSECUREDLOAN]->(loan:UnsecuredLoan), (holder)-[has_purchase:HAS_BANKACCOUNT]->(account:BankAccount)-[from_account:SEND]->(purchase:Purchase)\nMATCH (purchase)-[delivered_at:DELIVERED_AT]->(deliveryAddress:DeliveryAddress)-[is_in:LOCATED_IN]->(state:State)\nWHERE loan.APR > 5.0 AND state.name=\"Florida\"\nRETURN holder, has_loan, loan, has_purchase, account, from_account, purchase, delivered_at, deliveryAddress, is_in, state, holder.fullName, holder.birthDate",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 5,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Display all CreditCard details linked to AccountHolders flagged as 'high-risk' who have made transactions flagged by IPs from 'Nevada'.",
+        "Cypher": "MATCH (flagged:Flagged)-[has_cc:HAS_CREDITCARD]->(creditCard:CreditCard)\nMATCH (flagged)-[has_addr:HAS_ADDRESS]->(addr:Address)-[:LOCATED_IN]->(state:State)\nMATCH (flagged)-[:HAS_BANKACCOUNT]->(account:BankAccount)-[:SEND]->(transfer:MoneyTransfer)-[:FROM_IP]->(ip:IP)-[:LOCATED_IN]->(state2:State)\nWHERE state2.name=\"Nevada\"\nRETURN flagged, has_cc, creditCard, has_addr, addr, state, account, transfer, ip, state2, creditCard.accountNumber, creditCard.securityCode, creditCard.expirationDate, creditCard.balance, creditCard.latePayments, creditCard.limit",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (flagged:Flagged)-[has_cc:HAS_CREDITCARD]->(creditCard:CreditCard)\nMATCH (flagged)-[has_addr:HAS_ADDRESS]->(addr:Address)-[relation14:LOCATED_IN]->(state:State)\nMATCH (flagged)-[relation10:HAS_BANKACCOUNT]->(account:BankAccount)-[relation12:SEND]->(transfer:MoneyTransfer)-[relation13:FROM_IP]->(ip:IP)-[:LOCATED_IN]->(state2:State)\nWHERE state2.name=\"Nevada\"\nRETURN relation14, relation13, relation12, relation11, relation10, flagged, has_cc, creditCard, has_addr, addr, state, account, transfer, ip, state2, creditCard.accountNumber, creditCard.securityCode, creditCard.expirationDate, creditCard.balance, creditCard.latePayments, creditCard.limit",
+        "num-hop": 7,
+        "Grammatical-Validation": false,
+        "Semantic-EQL-Question": "Can you detail the transactions, including personal and credit card information, for flagged individuals who have credit cards and bank accounts with transactions routed through Nevada IP addresses?",
+        "Max-Semantic-Score": 0.7700685262680054,
+        "Avg-Semantic-Score": 0.693212366104126
+    },
+    {
+        "Category": "3-hop Node Level",
+        "Question": "Extract all PhoneNumber information for transactions done through IPs within the '90210' zip code area, sorting them by the transaction amount.",
+        "Cypher": "MATCH (purchase:Purchase)-[from_ip:FROM_IP]->(ip:IP)-[located:LOCATED_IN]->(state:State)\nMATCH (purchase)-[with_login:WITH_LOGIN]->(login:Login)-[has_phone:HAS_PHONENUMBER]->(phone:PhoneNumber)\nWHERE state.name=\"90210\"\nRETURN purchase, from_ip, ip, located, state, with_login, login, has_phone, phone\nORDER BY purchase.amount",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (purchase:Purchase)-[from_ip:FROM_IP]->(ip:IP)-[located:LOCATED_IN]->(state:State)\nMATCH (purchase)-[with_login:WITH_LOGIN]->(login:Login)-[has_phone:HAS_PHONENUMBER]->(phone:PhoneNumber)\nWHERE state.name=\"90210\"\nRETURN phone, purchase, from_ip, ip, located, state, with_login, login, has_phone, phone\nORDER BY purchase.amount",
+        "num-hop": 4,
+        "Grammatical-Validation": false
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Show all transaction dates and amounts for MoneyTransfers that involved BankAccounts of AccountHolders with balances exceeding $10000 located in 'New York'.",
+        "Cypher": "MATCH (accountHolder:AccountHolder)-[has_bankAccount:HAS_BANKACCOUNT]->(bankAccount:BankAccount)-[send:SEND]->(moneyTransfer:MoneyTransfer)\nMATCH (bankAccount)-[from:FROM]->(financialInstitute:FinancialInstitute)-[:LOCATED_IN]->(state:State)\nWHERE bankAccount.balance > 10000 AND state.name = \"New York\"\nRETURN accountHolder, has_bankAccount, bankAccount, send, moneyTransfer, from, financialInstitute, state, moneyTransfer.transactionDate, moneyTransfer.amount",
+        "Schema-Validation": false,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (accountHolder:AccountHolder)-[has_bankAccount:HAS_BANKACCOUNT]->(bankAccount:BankAccount)-[send:SEND]->(moneyTransfer:MoneyTransfer)\nMATCH (bankAccount)-[from:FROM]->(financialInstitute:FinancialInstitute)-[relation8:LOCATED_IN]->(state:State)\nWHERE bankAccount.balance > 10000 AND state.name = \"New York\"\nRETURN relation8, accountHolder, has_bankAccount, bankAccount, send, moneyTransfer, from, financialInstitute, state, moneyTransfer.transactionDate, moneyTransfer.amount",
+        "num-hop": 4,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "List all interactions between Purchases made using IPs from 'Florida' and their corresponding linked BankCards, along with the last usage data of these cards.",
+        "Cypher": "MATCH (purchase:Purchase)-[from_ip:FROM_IP]->(ip:IP)-[located:LOCATED_IN]->(state:State)\nMATCH (purchase)-[with_card:WITH_CARD]->(bankCard:BankCard)\nWHERE state.name=\"Florida\"\nRETURN purchase, from_ip, ip, located, state, with_card, bankCard, with_card.lastUsed",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Can you provide the specific purchase codes of transactions that were conducted using CreditCards which have late payment data and are owned by 'Flagged' individuals from 'Illinois'?",
+        "Cypher": "MATCH (flagged:Flagged)-[has_creditcard:HAS_CREDITCARD]->(creditCard:CreditCard)-[used_with:WITH_CARD]->(purchase:Purchase)\nMATCH (flagged)-[has_address:HAS_ADDRESS]->(address:Address)\nWHERE address.state = \"Illinois\" AND creditCard.latePayments > 0 AND flagged:Flagged\nRETURN flagged, has_creditcard, creditCard, used_with, purchase, has_address, address, purchase.purchaseCode",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Identify all connections between flagged transactions and their related Phone Numbers, focusing on instances where the Phone Numbers are recycled or reused.",
+        "Cypher": "MATCH (flagged:Flagged)-[has_phone:HAS_PHONENUMBER]->(phone:PhoneNumber)<-[also_has_phone:HAS_PHONENUMBER]-(other:Flagged)\nWHERE flagged.UniqueId <> other.UniqueId\nRETURN flagged, has_phone, phone, also_has_phone, other, flagged.fullName, flagged.UniqueId, phone.phone, other.fullName, other.UniqueId",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Ascertain all links between marked transactions and associated Phone Numbers, particularly where the Phone Numbers are recycled or reused."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Detail the relationships between high-value purchases (above $7500) using BankCards and the Financial Institutes from which these cards were issued.",
+        "Cypher": "MATCH (purchase:Purchase)-[with_card:WITH_CARD]->(card:BankCard)-[:FROM]->(account:BankAccount)-[:FROM]->(institute:FinancialInstitute)\nWHERE purchase.amount > 7500\nRETURN purchase, with_card, card, account, institute, purchase.date, purchase.purchaseCode, purchase.amount, purchase.time, card.accountNumber, card.balance, card.latePayments, card.limit, card.securityCode, card.expirationDate, institute.name, institute.website",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (purchase:Purchase)-[with_card:WITH_CARD]->(card:BankCard)-[relation5:FROM]->(account:BankAccount)-[relation6:FROM]->(institute:FinancialInstitute)\nWHERE purchase.amount > 7500\nRETURN relation6, relation5, purchase, with_card, card, account, institute, purchase.date, purchase.purchaseCode, purchase.amount, purchase.time, card.accountNumber, card.balance, card.latePayments, card.limit, card.securityCode, card.expirationDate, institute.name, institute.website",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Explain the connections between high-value transactions (over $7500) made with BankCards and the Financial Institutes that issued these cards."
+    },
+    {
+        "Category": "3-hop Relation Level",
+        "Question": "Trace the linkage from MoneyTransfers with amounts above $20000 to their corresponding BankAccounts and assess if these BankAccounts have multiple account holders.",
+        "Cypher": "MATCH (transfer:MoneyTransfer)-[send_to:SEND]->(account:BankAccount)\nWHERE transfer.amount > 20000\nMATCH (account)<-[has_bank:HAS_BANKACCOUNT]-(holder:AccountHolder)\nRETURN transfer, send_to, account, has_bank, holder, COUNT(holder) AS numberOfHolders",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 2,
+        "Grammatical-Validation": true,
+        "Rewrite": "Map the connection from MoneyTransfers involving sums over $20000 to the respective BankAccounts and evaluate whether these BankAccounts are shared by multiple account holders."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the average balance of BankAccounts linked to high-risk Account Holders who have made Purchases of over $3000 from out-of-state IPs?",
+        "Cypher": "MATCH (accountHolder:AccountHolder)-[has_bank:HAS_BANKACCOUNT]->(bankAccount:BankAccount),\n      (accountHolder)-[:HAS_ADDRESS]->(accountAddress:Address),\n      (purchase:Purchase)-[:WITH_LOGIN]->(login:Login)-[:FOR_SHOP]->(shop:Shop),\n      (purchase)-[:FROM_IP]->(ip:IP)-[:LOCATED_IN]->(state:State)\nWHERE purchase.amount > 3000 AND state.name <> accountAddress.state\nRETURN AVG(bankAccount.balance)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (accountHolder:AccountHolder)-[has_bank:HAS_BANKACCOUNT]->(bankAccount:BankAccount),\n      (accountHolder)-[relation9:HAS_ADDRESS]->(accountAddress:Address),\n      (purchase:Purchase)-[relation10:WITH_LOGIN]->(login:Login)-[relation11:FOR_SHOP]->(shop:Shop),\n      (purchase)-[relation12:FROM_IP]->(ip:IP)-[relation13:LOCATED_IN]->(state:State)\nWHERE purchase.amount > 3000 AND state.name <> accountAddress.state\nRETURN AVG(bankAccount.balance)",
+        "num-hop": 6,
+        "Grammatical-Validation": true,
+        "Semantic-EQL-Question": "Could you tell me the average balance in the bank accounts of individuals who have transacted more than $3,000 in states different from where they live?",
+        "Max-Semantic-Score": 0.6432355642318726,
+        "Avg-Semantic-Score": 0.60330251455307,
+        "Rewrite": "What is the typical balance for BankAccounts associated with high-risk Account Holders who conducted Purchases exceeding $3000 from IPs outside their state?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Compute the total number of transactions exceeding $15000 handled through UnsecuredLoans held by customers with multiple Phone Numbers.",
+        "Cypher": "MATCH (holder:AccountHolder)-[has_phone:HAS_PHONENUMBER]->(phone:PhoneNumber)\nWITH holder, COUNT(phone) AS phoneCount\nWHERE phoneCount > 1\nMATCH (holder)-[has_loan:HAS_UNSECUREDLOAN]->(loan:UnsecuredLoan)-[loan_transfer:SEND]->(transfer:MoneyTransfer)\nWHERE transfer.amount > 15000\nRETURN COUNT(transfer) AS TotalHighValueTransactions",
+        "Schema-Validation": false,
+        "Is-Corrected": false,
+        "num-hop": 3,
+        "Grammatical-Validation": true
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Calculate the highest loan amount amongst UnsecuredLoans issued to customers from 'California' who have made multiple MoneyTransfers this year.",
+        "Cypher": "MATCH (customer:AccountHolder)-[has_address:HAS_ADDRESS]->(address:Address {state: \"California\"})\nMATCH (customer)-[has_loan:HAS_UNSECUREDLOAN]->(loan:UnsecuredLoan)\nMATCH (customer)-[has_bankaccount:HAS_BANKACCOUNT]->(bank_account:BankAccount)-[send:SEND]->(transfer:MoneyTransfer)\nWHERE transfer.transactionDate.year = date().year\nWITH customer, loan, COUNT(transfer) AS transfer_count\nWHERE transfer_count > 1\nRETURN MAX(loan.loanAmount)",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the maximum loan value of UnsecuredLoans given to clients in 'California' who have conducted several MoneyTransfers this year."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "What is the average limit on the CreditCards used in transactions from 'Boston' for flagged AccountHolders with more than one related Phone Number?",
+        "Cypher": "MATCH (flagged:Flagged)-[:HAS_ADDRESS]->(address:Address {city: \"Boston\"})\nMATCH (flagged)-[:HAS_PHONENUMBER]->(phoneNumber1:PhoneNumber)\nMATCH (flagged)-[:HAS_PHONENUMBER]->(phoneNumber2:PhoneNumber)\nWHERE phoneNumber1 <> phoneNumber2\nMATCH (flagged)-[:HAS_CREDITCARD]->(creditCard:CreditCard)\nRETURN AVG(creditCard.limit)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (flagged:Flagged)-[relation5:HAS_ADDRESS]->(address:Address {city: \"Boston\"})\nMATCH (flagged)-[relation6:HAS_PHONENUMBER]->(phoneNumber1:PhoneNumber)\nMATCH (flagged)-[relation7:HAS_PHONENUMBER]->(phoneNumber2:PhoneNumber)\nWHERE phoneNumber1 <> phoneNumber2\nMATCH (flagged)-[relation8:HAS_CREDITCARD]->(creditCard:CreditCard)\nRETURN AVG(creditCard.limit)",
+        "num-hop": 4,
+        "Grammatical-Validation": true,
+        "Rewrite": "What is the typical limit for CreditCards used in Boston-based transactions by flagged AccountHolders who have multiple associated Phone Numbers?"
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Identify the minimum and maximum balance maintained in BankCards linked to purchases made from IPs in 'Texas' over the last 2 months.",
+        "Cypher": "MATCH (purchase:Purchase)-[:FROM_IP]->(ip:IP)-[:LOCATED_IN]->(state:State {name: \"Texas\"})\nMATCH (purchase)-[:WITH_CARD]->(bankCard:BankCard)\nWHERE purchase.date >= date() - duration({months: 2})\nRETURN MIN(bankCard.balance), MAX(bankCard.balance)",
+        "Schema-Validation": true,
+        "Is-Corrected": true,
+        "Corrected-Cypher": "MATCH (purchase:Purchase)-[relation4:FROM_IP]->(ip:IP)-[relation5:LOCATED_IN]->(state:State {name: \"Texas\"})\nMATCH (purchase)-[relation6:WITH_CARD]->(bankCard:BankCard)\nWHERE purchase.date >= date() - duration({months: 2})\nRETURN MIN(bankCard.balance), MAX(bankCard.balance)",
+        "num-hop": 3,
+        "Grammatical-Validation": true,
+        "Rewrite": "Determine the lowest and highest balance held in BankCards associated with transactions from IPs located in 'Texas' during the past two months."
+    },
+    {
+        "Category": "3-hop Statistical Level",
+        "Question": "Determine the sum of all late payments recorded on BankCards used for transactions associated with purchases higher than $2000.",
+        "Cypher": "MATCH (purchase:Purchase)-[with_card:WITH_CARD]->(bank_card:BankCard)\nWHERE purchase.amount > 2000\nRETURN SUM(bank_card.latePayments) AS totalLatePayments",
+        "Schema-Validation": true,
+        "Is-Corrected": false,
+        "num-hop": 1,
+        "Grammatical-Validation": true,
+        "Rewrite": "Calculate the total of all overdue payments noted on BankCards for transactions involving purchases exceeding $2000."
+    }
+]
